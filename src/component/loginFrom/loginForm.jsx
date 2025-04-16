@@ -13,11 +13,9 @@ import * as Yup from 'yup';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import logo from '../../assets/sale.jpg'
 import { toast, ToastContainer } from 'react-toastify';
-// import logoback  from '../../assets/salesback.webp'
-// import { authAxios } from '../utils/authAxios';
-// import axios from 'axios';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router';
+import { authAxios } from '../utils/authAxios';
 const LoginForm = () => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = React.useState(false);
@@ -39,20 +37,19 @@ const LoginForm = () => {
 
   const formik = useFormik({
     initialValues: {
-      email: '',
+      user_name: '',
       password: '',
     },
     validationSchema: Yup.object({
-      email: Yup.string()
+      user_name: Yup.string()
         // .email('Enter a valid email')
-        .required('Email is required'),
+        .required('Username is required'),
       password: Yup.string()
         // .min(6, 'Password should be of minimum 6 characters length')
         .required('Password is required'),
     }),
     onSubmit: (values) => {
-    //   console.log('Form Submitted:', values);
-      const userData={"password":values.password,"email":values.email}
+      const userData={"password":values?.password,"user_name":values?.user_name}
       sendresponse(userData)
       console.log(userData)
     },
@@ -60,31 +57,35 @@ const LoginForm = () => {
 
   const sendresponse =  async  (values) => {
     try {
-      const response = await fetch('api/Api/Account/UserInfo', {
-        method: 'POST',
-        // headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: values.email,
-          password: values.password,
-        }),
+      await authAxios.post('/BituRep/Api/Account/Login', 
+      {
+          user_name: values?.user_name,
+          password: values?.password,
+        },
+      ).then(response => {
+        let message=response?.data?.message;
+        if(message === "login successfull"){
+          datanotInvalid(response?.data)
+        }
+        else if(message === "invalid password"){
+          Invalid_alert(message)
+        }
+        else if(message === "invalid user name"){
+          Invalid_alert(message)
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        Invalid_alert("some think went wrong")
       });
-  
-      const text = await response.text(); // safer than .json()
-      try {
-        const data = JSON.parse(text);
-        console.log("Parsed JSON:", data);
-      } catch {
-        console.log("Response is not JSON:", text);
-      }
-  
     } catch (error) {
-      // Invalid_alert
       console.error('Error:', error);
+      Invalid_alert("some think went wrong")
     }
   
   };
   function Invalid_alert(data){
-    toast.warn(data.message, {
+    toast.warn(data, {
       position: "top-left",
       autoClose: 5000,
       hideProgressBar: false,
@@ -95,9 +96,9 @@ const LoginForm = () => {
       theme: "light",
       });;
   }
-  function Success_alert(){
-    toast.success('Login Success', {
-      position: "top-left",
+  function Success_alert(data){
+    toast.success(data?.message, {
+      position: "top-right",
       autoClose: 5000,
       hideProgressBar: false,
       closeOnClick: true,
@@ -107,32 +108,18 @@ const LoginForm = () => {
       theme: "light",
       });
   }
-  // const  datanotInvalid =(data)=>{
-  //   Success_alert()
-  //   localStorage.setItem('token', data.token);
-  //   localStorage.setItem('refreshToken', data.refreshToken);
-  //   localStorage.setItem('FullName', data.firstName + ' ' + data.lastName);
-  //   localStorage.setItem('Username', data.username);
-  //   localStorage.setItem('email', data.email);
-  //   localStorage.setItem('UserId', data.id);
-  //   localStorage.setItem('Usergender', data.gender);
-  //   localStorage.setItem('UserImg', data.image);
-  //   navigate('/dashboard');
-  // }
-  return (
-    //  <Typography variant='div' >
-        
-      <Paper elevation={5}
-    //   style={{display:"flex",flexWrap:"wrap"}} md={{ p: 5, width: 640,borderRadius:3}}
+  const  datanotInvalid =(data)=>{
+    Success_alert(data)
+    console.log(data)
+    localStorage.setItem("userInfo", JSON.stringify({
+      login: data.login,
+      id: data.id,
+      pageView: data.pageView
+    }));
+    // navigate('/dashboard');
+  }
+  return (<Paper elevation={5}
        sx={{ p: 5, width: 320,borderRadius:3}}>
-        {/* <img src={logoback} alt=""  sx={{
-    display: {
-      xs: 'none', // hidden on small screens
-      md: 'block',
-      height:"100%",width:"100%" // visible as block on md and above
-    },
-  }} /> */}
-        {/* <div  > */}
         <ToastContainer 
         position="bottom-left"
         autoClose={5000}
@@ -158,15 +145,15 @@ const LoginForm = () => {
         <form onSubmit={formik.handleSubmit}>
           <TextField
             fullWidth
-            label="Email"
-            name="email"
+            label="User name"
+            name="user_name"
             margin="normal"
             size="small"
-            value={formik.values.email}
+            value={formik.values.user_name}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            error={formik.touched.email && Boolean(formik.errors.email)}
-            helperText={formik.touched.email && formik.errors.email}
+            error={formik.touched.user_name && Boolean(formik.errors.user_name)}
+            helperText={formik.touched.user_name && formik.errors.user_name}
           />
           <TextField
             fullWidth
@@ -208,8 +195,6 @@ const LoginForm = () => {
         {/* </div> */}
       </Paper>
       
-    //   </Typography>
-    // </Box>
   );
 };
 
