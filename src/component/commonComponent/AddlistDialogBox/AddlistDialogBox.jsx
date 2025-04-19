@@ -19,8 +19,12 @@ export default function AddlistDialogBox({
   userId,
   setAddtolist,
 }) {
+  
+  const [selectedName,setSelectedName] = React.useState("");
+  const [errors, setErrors] = React.useState("");
   const handleClose = () => {
     setOpen(false);
+    setAddtolist("Select")
   };
   function Updatename(name) {
     let keyname = paramName;
@@ -35,6 +39,7 @@ export default function AddlistDialogBox({
       .then((response) => {
         if (response?.data?.[0]?.massage === "Entry Inserted") {
           setAddtolist(name);
+          handleClose();
         } else {
           Invalid_alert(response?.data?.[0]?.massage);
         }
@@ -65,22 +70,29 @@ export default function AddlistDialogBox({
       theme: "light",
     });
   }
+  function handlesubmit(){
+      if(selectedName!==""){
+        setErrors("");
+        handleClose();
+      }else if(selectedName == ""){
+        setErrors(`${[dropname]} is required`);
+      }
+     
+      // Updatename(name);
+      
+  }
   return (
     <React.Fragment>
       <Dialog
         open={open}
-        onClose={handleClose}
+        onClose={(event, reason) => {
+          if (reason !== "backdropClick" && reason !== "escapeKeyDown") {
+            handleClose();
+          }
+        }}
         slotProps={{
           paper: {
-            component: "form",
-            onSubmit: (event) => {
-              event.preventDefault();
-              const formData = new FormData(event.currentTarget);
-              const formJson = Object.fromEntries(formData.entries());
-              const name = formJson.name;
-              Updatename(name);
-              handleClose();
-            },
+            component: "form"
           },
         }}
       >
@@ -95,8 +107,12 @@ export default function AddlistDialogBox({
             margin="dense"
             id="name"
             name="name"
+            value={selectedName}
+            onChange={(e)=>setSelectedName(e.target.value)}
             label={dropname}
             type="text"
+            error={!!errors}
+            helperText={errors}
             fullWidth
             variant="standard"
           />
@@ -105,7 +121,7 @@ export default function AddlistDialogBox({
           <Button variant="contained" onClick={handleClose} color="error">
             Cancel
           </Button>
-          <Button variant="contained" type="submit" color="success">
+          <Button variant="contained" type="button" onClick={handlesubmit} color="success">
             Submit
           </Button>
         </DialogActions>

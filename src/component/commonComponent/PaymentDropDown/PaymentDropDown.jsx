@@ -53,8 +53,12 @@ export default function PaymentDropDown({
   }, [selectedPayment]);
   useEffect(() => {
     if (addtolist !== "") {
+      if(addtolist ==="Select"){
+        setSelectedPayment(() => addtolist)
+      }else{
       setOptionlist((prev) => [...prev, { payment_list: addtolist }]);
       setSelectedPayment(() => addtolist);
+      }
     }
   }, [addtolist, setSelectedPayment]);
   return (

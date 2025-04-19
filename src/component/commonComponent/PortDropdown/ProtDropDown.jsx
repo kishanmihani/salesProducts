@@ -49,8 +49,12 @@ export default function PortDropDown({ selectedPort, setSelectedPort,errors }) {
   }, [selectedPort]);
   useEffect(() => {
     if (addtolist !== "") {
+      if(addtolist ==="Select"){
+        setSelectedPort(() => addtolist)
+      }else{
       setOptionlist((prev) => [...prev, { port_list: addtolist }]);
       setSelectedPort(() => addtolist);
+      }
     }
   }, [addtolist, setSelectedPort]);
   return (

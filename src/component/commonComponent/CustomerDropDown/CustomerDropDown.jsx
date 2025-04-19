@@ -47,8 +47,12 @@ export default function CustomerDropDown({
   }, [selectedCustomer]);
   useEffect(() => {
     if (addtolist !== "") {
+      if(addtolist ==="Select"){
+        setSelectedCustomer(() => addtolist)
+      }else{
       setOptionlist((prev) => [...prev, { customer_list: addtolist }]);
       setSelectedCustomer(() => addtolist);
+      }
     }
   }, [addtolist, setSelectedCustomer]);
   return (

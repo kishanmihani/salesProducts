@@ -43,8 +43,12 @@ export default function BillingDropDown({ billing, setBilling,errors }) {
   }, [billing]);
   useEffect(() => {
     if (addtolist !== "") {
+      if(addtolist ==="Select"){
+        setBilling(() => addtolist)
+      }else{
       setOptionlist((prev) => [...prev, { companylist: addtolist }]);
       setBilling(() => addtolist);
+      }
     }
   }, [addtolist, setBilling]);
   return (

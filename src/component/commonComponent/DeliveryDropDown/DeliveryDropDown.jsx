@@ -47,9 +47,14 @@ export default function DeliveryDropDown({
   }, [selectedDelivery]);
   useEffect(() => {
     if (addtolist !== "") {
+      if(addtolist ==="Select"){
+        setSelectedDelivery(() => addtolist)
+      }else{
       setOptionlist((prev) => [...prev, { delivery_list: addtolist }]);
       setSelectedDelivery(() => addtolist);
+      }
     }
+    
   }, [addtolist, setSelectedDelivery]);
   return (
     <React.Fragment>

@@ -53,8 +53,12 @@ export default function ProductDropDown({
   }, [selectedProduct]);
   useEffect(() => {
     if (addtolist !== "") {
+      if(addtolist ==="Select"){
+        setSelectedProduct(() => addtolist)
+      }else{
       setOptionlist((prev) => [...prev, { product_list: addtolist }]);
       setSelectedProduct(() => addtolist);
+      }
     }
   }, [addtolist, setSelectedProduct]);
   return (
