@@ -16,7 +16,7 @@ import { RxHamburgerMenu } from "react-icons/rx";
 import { Outlet, useNavigate } from "react-router";
 import Sidbar from "./Sidbar/Sidbar";
 import ErrorBoundary from "../ErrorBoundary";
-
+import MenuOpenIcon from '@mui/icons-material/MenuOpen';
 const drawerWidth = 250;
 
 // Styled components
@@ -51,6 +51,7 @@ function Dashboard() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [notmobileOpen, setNotMobileOpen] = useState(true);
   const navigate = useNavigate();
   const [userInfo] = useState(JSON.parse(localStorage.getItem("userInfo")));
   useEffect(() => {
@@ -76,8 +77,13 @@ function Dashboard() {
         <AppBar
           position="fixed"
           sx={{
-            width: { sm: `calc(100% - ${drawerWidth}px)` },
-            ml: { sm: `${drawerWidth}px` },
+            // width: { sm: `calc(100% - ${drawerWidth}px)` },
+            width: {
+              sm: notmobileOpen ? `calc(100% - ${drawerWidth}px)` : "100%",
+            },
+            ml: {
+              sm: notmobileOpen ? `calc(100% - ${drawerWidth}px)` : "100%",
+            },
             backgroundColor: "#fff",
             color: "#000",
           }}
@@ -91,7 +97,19 @@ function Dashboard() {
                 onClick={handleDrawerToggle}
                 sx={{ mr: 2 }}
               >
-                <RxHamburgerMenu />
+                {mobileOpen? <MenuOpenIcon /> : <RxHamburgerMenu />}
+              </IconButton>
+            )}
+            {!isMobile && (
+              <IconButton
+                color="inherit"
+                aria-label="open drawer"
+                edge="start"
+                onClick={()=>setNotMobileOpen(!notmobileOpen)
+                }
+                sx={{ mr: 2 }}
+              >
+              {notmobileOpen? <MenuOpenIcon /> : <RxHamburgerMenu />} 
               </IconButton>
             )}
             <Typography
@@ -116,7 +134,9 @@ function Dashboard() {
         {/* Sidebar Drawer */}
         <Box
           component="nav"
-          sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
+          
+          sx={{ width: {xs: 0,
+            sm: notmobileOpen ? drawerWidth : 0 }}}
           aria-label="sidebar navigation"
         >
           {/* Mobile Drawer */}
@@ -135,12 +155,13 @@ function Dashboard() {
 
           {/* Desktop Drawer */}
           <Drawer
-            variant="permanent"
+            variant="persistent"
+            ModalProps={{ keepMounted: true }}
             sx={{
               display: { xs: "none", sm: "block" },
               "& .MuiDrawer-paper": { width: drawerWidth },
             }}
-            open
+            open={notmobileOpen}
           >
             {drawer}
           </Drawer>

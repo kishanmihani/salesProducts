@@ -1,11 +1,12 @@
 import './App.css';
-import React, { lazy }  from 'react'
+import React  from 'react'
 import LoginForm from './component/loginFrom/loginForm';
 import { Box } from '@mui/material';
 import { Route, Routes } from 'react-router';
 import SalesRestitration from './component/sales/salesRestitration';
 import SalesForm from './component/sales/salesForm';
-const Dashboardfast = lazy(() => import('./component/Dashboard/Dashboard'));
+import Dashboard from './component/Dashboard/Dashboard';
+// const Dashboardfast = lazy(() => import('./component/Dashboard/Dashboard'));
 function App() {
 
   return (
@@ -23,7 +24,7 @@ function App() {
          <Route  path='' element={
           <LoginForm />
           } />
-          <Route path="Dashboard" element={<Dashboardfast />} >
+          <Route path="Dashboard" element={<Dashboard />} >
             <Route path="sales" element={<SalesForm />} >
             <Route index element={<SalesRestitration />} ></Route>
             </Route>

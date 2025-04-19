@@ -15,13 +15,13 @@ import {
 import { useNavigate, useLocation, NavLink } from "react-router";
 import { TbSettings2 } from "react-icons/tb";
 import { LiaProductHunt } from "react-icons/lia";
-import { MdCancel } from "react-icons/md";
+import { MdCancel, MdRadioButtonUnchecked } from "react-icons/md";
 import { FaChevronRight, FaChevronDown } from "react-icons/fa6";
 import logouticon from "../../../assets/logouticon.png";
 import logo from "../../../assets/sale.jpg";
 import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
 import RadioButtonCheckedIcon from "@mui/icons-material/RadioButtonChecked";
-const Sidbar = ({ message }) => {
+const Sidbar = ({ message}) => {
   let pagelist = [];
   let pageView = message?.[0]?.pageView;
   for (let key of pageView) {
@@ -57,9 +57,9 @@ const Sidbar = ({ message }) => {
   return (
     <Box
       sx={{
-        width: 250,
-        bgcolor: "#1a1a2e",
-        color: "white",
+        // width: 250,
+        bgcolor: "white",
+        color: "#1a1a2e",
         height: "100vh",
         display: "flex",
         flexDirection: "column",
@@ -74,7 +74,7 @@ const Sidbar = ({ message }) => {
           justifyContent: "space-between",
         }}
       >
-        {/* <IconButton onClick={hideSidebar} sx={{ color: 'white' }}>
+        {/* <IconButton  sx={{ color: 'white' }}>
           <MdCancel />
         </IconButton> */}
         <Typography variant="h6" sx={{ display: "flex", alignItems: "center" }}>
@@ -91,7 +91,7 @@ const Sidbar = ({ message }) => {
           to="/dashboard/sales"
           selected={location.pathname === "/dashboard/sales"}
         >
-          <ListItemIcon sx={{ color: "white" }}>
+          <ListItemIcon sx={{ color: "black" }}>
             <TbSettings2 />
           </ListItemIcon>
           <ListItemText primary="Sales" />
@@ -105,15 +105,18 @@ const Sidbar = ({ message }) => {
               selected={location.pathname === "/dashboard/sales"}
               sx={{ pl: 4 }} // nested indent
             >
-              <ListItemIcon sx={{ color: "white" }}>
+              <ListItemIcon color="#000">
                 {" "}
                 {location.pathname === "/dashboard/sales" ? (
+                  // <MdRadioButtonUnchecked fontWeight="900" style={{ height: 17, width: 17, mr: 2 }} />
+                  // <ImRadioUnchecked />
                   <RadioButtonCheckedIcon
                     style={{ height: 17, width: 17, mr: 2 }}
                   ></RadioButtonCheckedIcon>
                 ) : (
                   <RadioButtonUncheckedIcon
-                    style={{ height: 17, width: 17, mr: 2 }}
+                  
+                    style={{ height: 17, width: 17, mr: 2,color:"#000" }}
                   />
                 )}
               </ListItemIcon>

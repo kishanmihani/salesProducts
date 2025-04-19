@@ -12,6 +12,7 @@ import {
   Grid,
   Stack,
 } from "@mui/material";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import React, { useEffect, useState } from "react";
 import BillingDropDown from "../commonComponent/billingDropDown/billingDropDown";
 // import DemoContainer
@@ -25,6 +26,7 @@ import ProductDropDown from "../commonComponent/ProductDropDown/ProductDropDown"
 import PaymentDropDown from "../commonComponent/PaymentDropDown/PaymentDropDown";
 import { toast, ToastContainer } from "react-toastify";
 import { authAxios } from "../utils/authAxios";
+import { useNavigate } from "react-router";
 export default function SalesRestitration() {
   const [selectedBilling, setSelectedBilling] = useState("Select");
   const [selectedOrderDate, setSelectOrderDate] = useState(null);
@@ -49,6 +51,7 @@ export default function SalesRestitration() {
   const [selectedSellingValue, setSelectedSellingValue] = useState(0);
   const [errors, setErrors] = useState({});
   const [userId] = useState(JSON.parse(localStorage.getItem("userInfo"))?.id);
+  const navigate = useNavigate();
   useEffect(() => {
     const handler = setTimeout(() => {
       if (selectedTransportation == 0) {
@@ -236,9 +239,11 @@ export default function SalesRestitration() {
           bgcolor: "#ffff",
           borderBottom: 1,
           zIndex: 4,
+          display:"flex"
         }}
       >
-        <Typography variant="h5" align="center">
+        <button onClick={() => navigate(-1)} style={{borderRadius:"50%",border:1,borderColor:"#eee",width:40,position:"relative"}}><ArrowBackIcon width={90} color="#000"/></button>
+        <Typography variant="h5" align="center" width="100%">
           &nbsp;Sales Request Form
         </Typography>
       </Box>
@@ -433,7 +438,7 @@ export default function SalesRestitration() {
                   label="Transporter"
                   name="Transporter"
                   defaultValue="Select"
-                  // onChange={(e)=>setSelectedTransporter(e.target.value)}
+                  onChange={(e)=>setSelectedTransporter(e.target.value)}
                   error={!!errors?.['Transporter']}
                   helperText={errors?.['Transporter']}
                   MenuProps={{ disableAutoFocusItem: true }}

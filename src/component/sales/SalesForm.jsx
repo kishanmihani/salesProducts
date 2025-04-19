@@ -3,6 +3,7 @@ import React from "react";
 import SalesRestitration from "./salesRestitration";
 export default function SalesForm() {
   return (
+    <React.Fragment>
     <Box
       sx={{
         bgcolor: "#ffff",
@@ -14,5 +15,6 @@ export default function SalesForm() {
     >
       <SalesRestitration />
     </Box>
+    </React.Fragment>
   );
 }
