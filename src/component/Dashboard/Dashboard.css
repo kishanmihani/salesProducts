@@ -1,0 +1,112 @@
+
+#left-container{width:18%;background:#2a20c2;border-top-right-radius:15px;border-bottom-right-radius:15px}
+#right-container{width:82%;padding:2rem .15rem .15rem}
+#page-Container{display:flex;height:-webkit-fill-available;overflow:auto;background:#ecf2fc}
+#right-container #first-header{display:flex;justify-content:space-between}
+#profile-name > h3{font-weight:500;font-family:sans-serif}
+#profile-name{display:flex}
+#input-container{display:flex;position:relative}
+#input-container-product{display:flex;position:relative}
+#input-container > #input-search{background:#fff;border-radius:4px;height:1.8rem;padding-left:21px}
+#input-container-product > #input-search-product{background:#ecf2fc;border-radius:4px;height:1.8rem;padding-left:21px}
+#input-container > #search-icon{top:6px;left:3px;color:gray;position:absolute}
+#input-container-product > #search-icon-product{top:6px;left:3px;color:gray;position:absolute}
+#card{background:#fff;display:flex;width:15.5vw;border-radius:4px}
+#card-first-heading,#card-first-text,#card-first-rate{font-weight:700;font-size:7.8pt;font-family:sans-serif;letter-spacing:.5px;margin-bottom:0}
+#card-first-heading{color:#7e8888}
+#card-first-text{color:#393737}
+#card-first-rate{font-size:13pt}
+#card-text{text-align:left;height:inherit;margin:auto;margin-left:0}
+#card-image-container{width:100px}
+#card-image{font-size:37px;border-radius:70%;height:79px;margin:1rem .5rem}
+.card-image-zero{background:#00fa0087;color:green}
+.card-image-first{background:#ff00ff85;color:purple}
+.card-image-Second{background:#0093ff7a;color:blue}
+.card-image-third{background:#f900ff94;color:red}
+#card-image > svg{height:-webkit-fill-available}
+#handicon{color:#f28804}
+#card-container-only{display:flex;justify-content:space-between;margin:2rem 0}
+#product-first-header{display:flex;justify-content:space-between;padding:15px}
+#input-select-container{display:flex}
+.input-cntainer-table{padding-right:15px}
+#select-record{height:-webkit-fill-available;background:#ecf2fc;color:gray;border-radius:5px;padding:0 5px;height:1.8rem;padding-left:21px}
+#product-table-list{background:#fff;border-radius:15px}
+#product-table{width:100%;text-align:justify;padding:0 1rem}
+#product-table > thead > tr{border-bottom:1px solid gray;font-weight:500;font-size:8pt;color:gray;box-shadow:0 2px 4px -2px gray}
+#first-thead{width:72%!important}
+#product-table > tr th{width:9%}
+#contins-small{display:flex}
+#imgbox{width:63px;height:34px;margin:6px;border-radius:5px}
+#textbox{font-size:8pt;height:34px;margin-top:7px}
+#bold{font-weight:700;font-family:system-ui;letter-spacing:1px}
+#imgbox-img{width:inherit;height:inherit}
+#graph{display:flex}
+#graph-part-one{width:69%;height:390px;overflow:hidden;background:#fff;border-radius:15px;margin:3%;margin-top:0;margin-left:0;margin-right:0;position:relative}
+#graph-part-one .MuiChartsAxis-directionY,#graph-part-one .css-1k2u9zb-MuiChartsAxis-root .MuiChartsAxis-line,#graph-part-one .css-1k2u9zb-MuiChartsAxis-root .MuiChartsAxis-tick{display:none}
+#graph-part-two{width:28%;height: 390px;overflow:hidden;position:relative;background:#fff;border:1px solid #fff;border-radius:15px;margin:3%;margin-top:0;margin-right:0}
+#barchart-container{
+height:365px
+}
+#Customers-container,#header-part{position:absolute;text-align:justify;padding:6px}
+#Dashboardheading{color:#fff}
+li.list-menu{border-radius:8px;width:85%;list-style-type:none;color:#fff;text-align:justify}
+li.list-menu div{padding-top:.5rem}
+.list-menu-text{width:inherit;position:relative}
+.list-menu-first{padding:8px;vertical-align:text-bottom}
+#list-menu-last{position:absolute;left:89%}
+#graph-part-one .MuiChartsAxis-tickLabel{font-family:sans-serif;font-weight:600}
+#graph-part-one .MuiChartsLegend-series,#graph-part-one .MuiChartsLegend-row{display:none}
+#graph-part-one .css-34hspi .MuiChartsAxis-line{stroke-width:0}
+#graph-part-one .css-34hspi .MuiChartsAxis-tick{stroke:red;shape-rendering:crispedges}
+#header-prat-two{position:sticky;right:17px;background:#ecf2fc;padding:5px;top:13px;border-radius:5px;width:fit-content;margin-left:auto}
+#profile-conteiner-box{display:flex;color:#fff;background:#6363f1;border-radius:8px;width:85%;text-align:justify;margin:auto;position:relative;padding:0;height:3rem}
+#downicon{position:absolute;left:89%;top:14px}
+#profile-logo-contianer{padding:4px;margin-left:1px}
+#profile-container-text h4{font-size:9.8pt;padding-top:6px}
+#profile-container-text p{color:#ffffffb0;font-size:9.4pt}
+#cross-button{display:none}
+#dasboard-icon{vertical-align:text-top}
+#header-prat-two select{height:inherit;color:gray}
+.profit{color:green}
+.lose{color:red}
+#menu-list{margin-top:2.2rem}
+#PieChart{height:inherit;width:inherit}
+#menu-button{height:1.6rem;width:2rem;font-size:1.2rem;vertical-align:middle;border-radius:6px;color:#080808;margin-top:-3px;margin-right:1rem;}
+@media screen and (min-width: 1180px) and (max-width: 1350px){#card{width:17.4vw}}
+@media screen and (min-width: 1000px) and (max-width: 1180px){#graph-part-two{width:32%}#graph-part-one{width:65%}#card{width:18.5vw}}
+@media screen and (min-width: 1000px) and (max-width: 1055px){#graph-part-two{width:34%}#graph-part-one{width:63%}#card{width:18.5vw}}
+@media screen and (min-width: 320px) and (max-width: 1055px){
+    #left-container{width: calc(100% - 8px);background:#2a20c2;position:absolute;z-index:1;height:inherit;display:none}
+    li.list-menu{margin:1rem auto}
+    #card{width:21.5vw}
+    #graph-part-two{width:32%}
+    #graph-part-one{width:65%}
+    #right-container{width:99%;padding:2rem}
+    #cross-button{position:absolute;right:1rem;top:1rem;color:#fff;display:block;font-size:1.5rem}
+    #cross-button:hover{color:red}
+    #menu-button{display:block;padding-top:2px}
+    #page-Container{position:relative}
+}
+@media screen and (min-width: 320px) and (max-width: 870px){
+    #card{width:37.5vw;margin:1rem 0}
+    .Dashoard-routdiv {height: calc(100% - 117px) !important;margin: 16px;}
+    #card-image{font-size:20px;border-radius:70%;height:40px;width:40px;margin:1rem .5rem}
+    #card-container-only{flex-wrap:wrap;justify-content:space-around;margin:auto}
+    #graph{flex-wrap:wrap}
+    #graph-part-two,#graph-part-one{width:100%;margin:1rem;height:283px}
+    #right-container{padding:0}
+    #right-container #first-header{display:block;margin:auto;width:92%;margin-top:1rem}
+    #input-container > #input-search{width:inherit}
+    #input-container{display:flex;position:relative;width:100%;margin:.7rem 0;border:1px solid #000}
+    #product-table-list{margin:1rem}
+    #product-first-header{display:block}
+    #product-text-heading{margin:5px;margin-top:0}
+    #product-table-div{overflow:auto}
+    #product-table{min-width:500px}
+    #barchart-container{min-width:540px;height:calc(100% - 25px)!important}
+    #input-container-product{width:50%}
+    #input-container-product > #input-search-product{width:-webkit-fill-available}
+    #input-select-container{justify-content:center}
+    #first-thead{width:auto!important}
+}
+.Dashoard-routdiv{height:calc(100% - 35px)}

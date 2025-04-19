@@ -1,0 +1,19 @@
+.iconheight{
+    height:21px;
+    width:21px
+}
+.dropdown-item.active, .dropdown-item:active {
+    background-color: #fff4f4;
+}
+
+.list-menu > .active{
+	background:#6363f1;
+    text-decoration: auto;
+}
+
+.dropdown-profile{
+    left: 50%;
+    transform: translate(-50%, 47px);
+    width: 85%;
+ }
+ #profile-logo-image{border-radius:50%;width:40px;height:40px;font-size:xx-small}
