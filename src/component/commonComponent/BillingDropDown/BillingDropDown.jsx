@@ -75,11 +75,11 @@ export default function BillingDropDown({ billing, setBilling,errors }) {
           ))}
           <MenuItem value={"Not in List"}>Not in List</MenuItem>
         </Select>
-        {errors?.['Billing name'] && (
-    <p style={{ color: '#d32f2f',marginLeft:"14px", fontSize: '12px', marginTop: '4px' }}>
-      {errors['Billing name']}
-    </p>
-  )}
+              {errors?.['Billing name'] && (
+          <p style={{ color: '#d32f2f',marginLeft:"14px", fontSize: '12px', marginTop: '4px' }}>
+            {errors['Billing name']}
+          </p>
+        )}
       </FormControl>
       <AddlistDialogBox
         open={open}

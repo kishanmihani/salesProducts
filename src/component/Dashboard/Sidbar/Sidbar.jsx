@@ -18,7 +18,7 @@ import { LiaProductHunt } from "react-icons/lia";
 import { MdCancel, MdRadioButtonUnchecked } from "react-icons/md";
 import { FaChevronRight, FaChevronDown } from "react-icons/fa6";
 import logouticon from "../../../assets/logouticon.png";
-import logo from "../../../assets/sale.jpg";
+import logo from "../../../assets/sale.jpeg";
 import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
 import RadioButtonCheckedIcon from "@mui/icons-material/RadioButtonChecked";
 const Sidbar = ({ message}) => {
@@ -68,7 +68,7 @@ const Sidbar = ({ message}) => {
       {/* Top header with close and heading */}
       <Box
         sx={{
-          p: 2,
+          p: 1.5,
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
@@ -77,13 +77,13 @@ const Sidbar = ({ message}) => {
         {/* <IconButton  sx={{ color: 'white' }}>
           <MdCancel />
         </IconButton> */}
-        <Typography variant="h6" sx={{ display: "flex", alignItems: "center" }}>
-          <img src={logo} style={{ width: "220px", height: "55px" }} />
+        <Typography variant="h6" sx={{ margin:"auto", marginBottom:0,display: "flex", alignItems: "center",justifyContent:"center" }}>
+          <img src={logo} style={{ width: "140px", height: "50px" }} />
         </Typography>
       </Box>
 
       {/* Navigation List */}
-      <List sx={{ px: 1 }}>
+      <List sx={{ px: 1,marginTop:-1 }}>
         <ListItemButton
           sx={{ display: pagelist.includes("Sale_Form") ? "flex" : "none" }}
           component={NavLink}
@@ -103,13 +103,10 @@ const Sidbar = ({ message}) => {
               component={NavLink}
               to="/dashboard/sales"
               selected={location.pathname === "/dashboard/sales"}
-              sx={{ pl: 4 }} // nested indent
+              sx={{ pl: 4 }} 
             >
               <ListItemIcon color="#000">
-                {" "}
                 {location.pathname === "/dashboard/sales" ? (
-                  // <MdRadioButtonUnchecked fontWeight="900" style={{ height: 17, width: 17, mr: 2 }} />
-                  // <ImRadioUnchecked />
                   <RadioButtonCheckedIcon
                     style={{ height: 17, width: 17, mr: 2 }}
                   ></RadioButtonCheckedIcon>
@@ -125,10 +122,46 @@ const Sidbar = ({ message}) => {
                 primary="Sales Request Form"
               />
             </ListItemButton>
+            <ListItemButton
+              component={NavLink}
+              to="/dashboard/sales/sales_list"
+              selected={location.pathname === "/dashboard/sales/sales_list"}
+              sx={{ pl: 4 }} 
+            >
+              <ListItemIcon color="#000">
+                {location.pathname === "/dashboard/sales/sales_list" ? (
+                  <RadioButtonCheckedIcon
+                    style={{ height: 17, width: 17, mr: 2 }}
+                  ></RadioButtonCheckedIcon>
+                ) : (
+                  <RadioButtonUncheckedIcon
+                  
+                    style={{ height: 17, width: 17, mr: 2,color:"#000" }}
+                  />
+                )}
+              </ListItemIcon>
+              <ListItemText
+                primaryTypographyProps={{ fontSize: "13px" }}
+                primary="Sales list"
+              />
+            </ListItemButton>
 
           
           </List>
         </Collapse>
+        {/* <ListItemButton
+          sx={{ display: pagelist.includes("Sale_Form") ? "flex" : "none" }}
+          component={NavLink}
+          onClick={handleToggle}
+          to="/dashboard/Log"
+          selected={location.pathname === "/dashboard/sales"}
+        >
+          <ListItemIcon sx={{ color: "black" }}>
+            <TbSettings2 />
+          </ListItemIcon>
+          <ListItemText primary="Sales" />
+          {open ? <FaChevronDown /> : <FaChevronRight />}
+        </ListItemButton> */}
         {/* <ListItemButton
           component={NavLink}
           to="/dashboard/Productlist"

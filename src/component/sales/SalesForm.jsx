@@ -1,6 +1,7 @@
 import { Box } from "@mui/material";
 import React from "react";
 import SalesRestitration from "./salesRestitration";
+import { Outlet } from "react-router";
 export default function SalesForm() {
   return (
     <React.Fragment>
@@ -13,7 +14,7 @@ export default function SalesForm() {
         overflow: "auto",
       }}
     >
-      <SalesRestitration />
+      <Outlet />
     </Box>
     </React.Fragment>
   );

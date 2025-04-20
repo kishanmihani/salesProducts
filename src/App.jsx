@@ -6,6 +6,8 @@ import { Route, Routes } from 'react-router';
 import SalesRestitration from './component/sales/salesRestitration';
 import SalesForm from './component/sales/salesForm';
 import Dashboard from './component/Dashboard/Dashboard';
+import SalesList from './component/sales/Sales list/SalesList';
+// import SalesList from './component/sales/SalesList/SalesList';
 // const Dashboardfast = lazy(() => import('./component/Dashboard/Dashboard'));
 function App() {
 
@@ -26,7 +28,8 @@ function App() {
           } />
           <Route path="Dashboard" element={<Dashboard />} >
             <Route path="sales" element={<SalesForm />} >
-            <Route index element={<SalesRestitration />} ></Route>
+            <Route index element={<SalesRestitration />} />
+            <Route path='sales_list' element={<SalesList />} />
             </Route>
           </Route>
         </Routes>

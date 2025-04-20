@@ -24,7 +24,7 @@ export default function AddlistDialogBox({
   const [errors, setErrors] = React.useState("");
   const handleClose = () => {
     setOpen(false);
-    setAddtolist("Select")
+    setAddtolist("Select");
   };
   function Updatename(name) {
     let keyname = paramName;

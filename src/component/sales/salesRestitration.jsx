@@ -27,6 +27,7 @@ import PaymentDropDown from "../commonComponent/PaymentDropDown/PaymentDropDown"
 import { toast, ToastContainer } from "react-toastify";
 import { authAxios } from "../utils/authAxios";
 import { useNavigate } from "react-router";
+import CustomeAlerts from "../commonComponent/CustomeAlert/CustomeAlert";
 export default function SalesRestitration() {
   const [selectedBilling, setSelectedBilling] = useState("Select");
   const [selectedOrderDate, setSelectOrderDate] = useState(null);
@@ -51,22 +52,17 @@ export default function SalesRestitration() {
   const [selectedSellingValue, setSelectedSellingValue] = useState(0);
   const [selectTransporterName, setSelectTransporterName] = useState("");
   const [errors, setErrors] = useState({});
-  const [successalert,setSuccessalert] = useState(true);
-  const [invalidalert,setInvalidalert] = useState(true);
   const [userId] = useState(JSON.parse(localStorage.getItem("userInfo"))?.id);
+  const [submitDisabled,setSubmitDisabled] = useState(false);
+  const [custAlert, setCustAlert] = useState({});
   const navigate = useNavigate();
-  // useEffect(() => {
-  //   const handler = setTimeout(() => {
-  //     if (selectedTransportation == 0) {
-  //       setSelectedTransporter("Buyer");
-  //     } else if (selectedTransportation > 0) {
-  //       setSelectedTransporter("Seller");
-  //     }
-  //   }, 300);
-  //   return () => {
-  //     clearTimeout(handler); // cleanup to avoid multiple calls
-  //   };
-  // }, [selectedTransportation, selectedTransporter]);
+  const showSuccess = (data) => {
+    setCustAlert({ type: "success", message: data });
+  };
+  const showError = (data) => {
+    setCustAlert({ type: "error", message: data });
+  };
+
   useEffect(() => {
     const handler = setTimeout(() => {
       if (selectedBitumenPrice !== "" || selectedTransportation !== "") {
@@ -134,15 +130,40 @@ export default function SalesRestitration() {
           parseFloat(selectedSellingValue - selectedDiscountvalue).toFixed(2)
         );
       }
-    }, 300); // debounce delay in milliseconds
+    }, 300);
 
     return () => {
-      clearTimeout(handler); // cleanup to avoid multiple calls
+      clearTimeout(handler);
     };
   }, [selectedSellingValue, selectedDiscountvalue]);
-  async function formSubmithandler(event) {
-    event.preventDefault();
   
+  const resetForm = () => {
+    setSelectedBilling("Select");
+    setSelectOrderDate(null);
+    setSelectedValidityDate(null);
+    setSelectedPort("Select");
+    setSelectedProduct("Select");
+    setSelectedCustomer("Select");
+    setSelectedBitumenPrice(0);
+    setSelectedTransportation('');
+    setSelectedBillingPrice(0);
+    setSelectedGST(0);
+    setSelectedSellingPrice(0);
+    setSelectedDiscount(0);
+    setSelectedSellingValue(0);
+    setSelectedQuntity(0);
+    setSelectedDelivery("Select");
+    setSelectedRemark("");
+    setSelectedPayment("Select");
+    setSelectedDiscountvalue(0);
+    setSelectedNetPrice(0);
+    setSelectedTransporter("Select");
+    setSelectTransporterName("");
+  };
+  async function formSubmithandler(event) {
+    toast.dismiss("form-error");
+    event.preventDefault();
+    setSubmitDisabled(true)
     const formData = new FormData(event.currentTarget);
     const formJson = Object.fromEntries(formData.entries());
     let emptyFields = [];
@@ -179,17 +200,18 @@ export default function SalesRestitration() {
         }
       }
     }
-  
-    setErrors(newErrors);
-  
-    if (emptyFields.length !== 0) {
-      if(invalidalert === true){
-         Invalid_alert("Please fill required fields.");
-         setInvalidalert(false)
-        return;
-        }
+    
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      if (!toast.isActive("form-error")) {
+        // alert("Please fill required fields.")
+        showError("Please fill required fields.")
+        //  Invalid_alert("Please fill required fields.");
+      }
+         setSubmitDisabled(false)
+         return 
     }
-  
+  else if(emptyFields.length === 0){
     const data = {
       user_id: userId,
       Company_Name: formJson["Billing name"],
@@ -214,71 +236,51 @@ export default function SalesRestitration() {
       const res = await authAxios.post("BituRep/Api/Account/send_Sodata", data);
   
       if (res.data.message === "Email sent successfully") {
-        // Reset all states
-        setSelectedBilling("Select");
-        setSelectOrderDate(null);
-        setSelectedValidityDate(null);
-        setSelectedPort("Select");
-        setSelectedProduct("Select");
-        setSelectedCustomer("Select");
-        setSelectedBitumenPrice(0);
-        setSelectedTransportation('');
-        setSelectedBillingPrice(0);
-        setSelectedGST(0);
-        setSelectedSellingPrice(0);
-        setSelectedDiscount(0);
-        setSelectedSellingValue(0);
-        setSelectedQuntity(0);
-        setSelectedDelivery("Select");
-        setSelectedRemark("");
-        setSelectedPayment("Select");
-        setSelectedDiscountvalue(0);
-        setSelectedNetPrice(0);
-        setSelectedTransporter("Select");
-        setSelectTransporterName("");
-        if(successalert === true){
-        Success_alert("Email sent successfully");
-        setSuccessalert(false);  
-      }
+        // Success_alert("Email sent successfully")
+        showSuccess("Email sent successfully")
+        resetForm()
+        setSubmitDisabled(false)
+        return 
       } else {
-        if(invalidalert === true){
-         Invalid_alert(res.data.message);
-        setInvalidalert(false)
-        }
+        //  Invalid_alert(res.data.message);
+        showError(res.data.message)
+         setSubmitDisabled(false)
+         return
       }
     } catch (err) {
       console.error(err);
-      if(invalidalert === true){
       Invalid_alert("An error occurred while submitting the form.");
-      setInvalidalert(false)
-      }
     }
+  }
+    
   }
   
   function Success_alert(data) {
     toast.success(data, {
       position: "top-right",
       autoClose: 5000,
-      hideProgressBar: false,
+      hideProgressBar: true,
       closeOnClick: true,
       pauseOnHover: true,
       draggable: true,
-      progress: undefined,
       theme: "light",
     });
   }
   function Invalid_alert(data) {
     toast.warn(data, {
-      position: "top-left",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
+      toastId: "form-error",
+    position: "top-left",
+    autoClose: 5000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    theme: "light",
     });
   }
+  const handleClose = () => {
+   setCustAlert(null)
+  };
   return (
     <React.Fragment>
       <Box
@@ -593,13 +595,20 @@ export default function SalesRestitration() {
               variant="contained"
               color="success"
               size="small"
+              // className=""
               type="submit"
+              // onClick={formSubmithandler}
+              disabled={submitDisabled}
             >
               Submit
             </Button>
           </Box>
         </form>
       </Paper>
+
+      {custAlert && (
+        <CustomeAlerts type={custAlert.type} message={custAlert.message} onClose={handleClose} />
+      )}
       <ToastContainer
         position="bottom-left"
         autoClose={5000}
