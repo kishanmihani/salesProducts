@@ -74,9 +74,6 @@ const Sidbar = ({ message}) => {
           justifyContent: "space-between",
         }}
       >
-        {/* <IconButton  sx={{ color: 'white' }}>
-          <MdCancel />
-        </IconButton> */}
         <Typography variant="h6" sx={{ margin:"auto", marginBottom:0,display: "flex", alignItems: "center",justifyContent:"center" }}>
           <img src={logo} style={{ width: "140px", height: "50px" }} />
         </Typography>
@@ -89,7 +86,7 @@ const Sidbar = ({ message}) => {
           component={NavLink}
           onClick={handleToggle}
           to="/dashboard/sales"
-          selected={location.pathname === "/dashboard/sales"}
+          selected={location.pathname === "/dashboard/sales" || location.pathname.startsWith("/dashboard/sales")}
         >
           <ListItemIcon sx={{ color: "black" }}>
             <TbSettings2 />
@@ -118,18 +115,18 @@ const Sidbar = ({ message}) => {
                 )}
               </ListItemIcon>
               <ListItemText
-                primaryTypographyProps={{ fontSize: "13px" }}
+                primaryTypographyProps={{ fontSize: "12px" }}
                 primary="Sales Request Form"
               />
             </ListItemButton>
             <ListItemButton
               component={NavLink}
-              to="/dashboard/sales/sales_list"
-              selected={location.pathname === "/dashboard/sales/sales_list"}
+              to="/dashboard/sales/PendingApprovalForm"
+              selected={location.pathname === "/dashboard/sales/PendingApprovalForm"}
               sx={{ pl: 4 }} 
             >
               <ListItemIcon color="#000">
-                {location.pathname === "/dashboard/sales/sales_list" ? (
+                {location.pathname === "/dashboard/sales/PendingApprovalForm" ? (
                   <RadioButtonCheckedIcon
                     style={{ height: 17, width: 17, mr: 2 }}
                   ></RadioButtonCheckedIcon>
@@ -141,8 +138,31 @@ const Sidbar = ({ message}) => {
                 )}
               </ListItemIcon>
               <ListItemText
-                primaryTypographyProps={{ fontSize: "13px" }}
-                primary="Sales list"
+                primaryTypographyProps={{ fontSize: "12px" }}
+                primary="Pending Approval Form"
+              />
+            </ListItemButton>
+            <ListItemButton
+              component={NavLink}
+              to="/dashboard/sales/Approval_Request_form"
+              selected={location.pathname === "/dashboard/sales/Approval_Request_form"}
+              sx={{ pl: 4 }} 
+            >
+              <ListItemIcon color="#000">
+                {location.pathname === "/dashboard/sales/Approval_Request_form" ? (
+                  <RadioButtonCheckedIcon
+                    style={{ height: 17, width: 17, mr: 2 }}
+                  ></RadioButtonCheckedIcon>
+                ) : (
+                  <RadioButtonUncheckedIcon
+                  
+                    style={{ height: 17, width: 17, mr: 2,color:"#000" }}
+                  />
+                )}
+              </ListItemIcon>
+              <ListItemText
+                primaryTypographyProps={{ fontSize: "12px" }}
+                primary="Approval Request form"
               />
             </ListItemButton>
 
@@ -161,16 +181,16 @@ const Sidbar = ({ message}) => {
           </ListItemIcon>
           <ListItemText primary="Sales" />
           {open ? <FaChevronDown /> : <FaChevronRight />}
-        </ListItemButton> */}
-        {/* <ListItemButton
+        </ListItemButton>  */}
+         <ListItemButton
           component={NavLink}
-          to="/dashboard/Productlist"
-          selected={location.pathname.includes("/dashboard/Productlist")}
+          to="/dashboard/Logistic"
+          selected={location.pathname.includes("/dashboard/Logistic")}
         >
           <ListItemIcon sx={{ color: 'white' }}><LiaProductHunt /></ListItemIcon>
-          <ListItemText primary="Product" />
+          <ListItemText primary="Logistic" />
           <FaChevronRight />
-        </ListItemButton> */}
+        </ListItemButton>
       </List>
 
       {/* Spacer to push profile section to the bottom */}

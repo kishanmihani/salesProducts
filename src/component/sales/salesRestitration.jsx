@@ -54,7 +54,7 @@ export default function SalesRestitration() {
   const [errors, setErrors] = useState({});
   const [userId] = useState(JSON.parse(localStorage.getItem("userInfo"))?.id);
   const [submitDisabled,setSubmitDisabled] = useState(false);
-  const [custAlert, setCustAlert] = useState({});
+  const [custAlert, setCustAlert] = useState(null);
   const navigate = useNavigate();
   const showSuccess = (data) => {
     setCustAlert({ type: "success", message: data });
