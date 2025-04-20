@@ -12,7 +12,7 @@ import {
   Grid,
   Stack,
 } from "@mui/material";
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import React, { useEffect, useState } from "react";
 import BillingDropDown from "../commonComponent/billingDropDown/billingDropDown";
 // import DemoContainer
@@ -49,21 +49,24 @@ export default function SalesRestitration() {
   const [selectedNetPrice, setSelectedNetPrice] = useState(0);
   const [selectedTransporter, setSelectedTransporter] = useState("Select");
   const [selectedSellingValue, setSelectedSellingValue] = useState(0);
+  const [selectTransporterName, setSelectTransporterName] = useState("");
   const [errors, setErrors] = useState({});
+  const [successalert,setSuccessalert] = useState(true);
+  const [invalidalert,setInvalidalert] = useState(true);
   const [userId] = useState(JSON.parse(localStorage.getItem("userInfo"))?.id);
   const navigate = useNavigate();
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      if (selectedTransportation == 0) {
-        setSelectedTransporter("Buyer");
-      } else if (selectedTransportation > 0) {
-        setSelectedTransporter("Seller");
-      }
-    }, 300);
-    return () => {
-      clearTimeout(handler); // cleanup to avoid multiple calls
-    };
-  }, [selectedTransportation,selectedTransporter]);
+  // useEffect(() => {
+  //   const handler = setTimeout(() => {
+  //     if (selectedTransportation == 0) {
+  //       setSelectedTransporter("Buyer");
+  //     } else if (selectedTransportation > 0) {
+  //       setSelectedTransporter("Seller");
+  //     }
+  //   }, 300);
+  //   return () => {
+  //     clearTimeout(handler); // cleanup to avoid multiple calls
+  //   };
+  // }, [selectedTransportation, selectedTransporter]);
   useEffect(() => {
     const handler = setTimeout(() => {
       if (selectedBitumenPrice !== "" || selectedTransportation !== "") {
@@ -75,7 +78,7 @@ export default function SalesRestitration() {
     return () => {
       clearTimeout(handler); // cleanup to avoid multiple calls
     };
-  }, [selectedTransportation, selectedBitumenPrice,selectedBillingPrice]);
+  }, [selectedTransportation, selectedBitumenPrice, selectedBillingPrice]);
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -137,98 +140,145 @@ export default function SalesRestitration() {
       clearTimeout(handler); // cleanup to avoid multiple calls
     };
   }, [selectedSellingValue, selectedDiscountvalue]);
- async function formSubmithandler(event){
+  async function formSubmithandler(event) {
     event.preventDefault();
+  
     const formData = new FormData(event.currentTarget);
     const formJson = Object.fromEntries(formData.entries());
-    let emptyfeild=[];
+    let emptyFields = [];
     const newErrors = {};
-    for(let key in formJson){
-      if(formJson?.[key] == "" || formJson?.[key] == "0" ||formJson?.[key] == "Select"){
-        if(formJson?.['Transportation'] == "0"){
-          formJson?.['Transportation']
-        }else{
-        emptyfeild.push(key);
+  
+    for (let key in formJson) {
+      const value = formJson[key];
+  
+      // General check for empty or "Select"
+      if (key === "Remark") continue;
+
+      if (value === "" || value === "Select") {
         newErrors[key] = `${key} is required`;
+        emptyFields.push(key);
+        continue;
+      }
+  
+      // Check for negative numbers in specific fields
+      if (["Transportation", "Bitumen Price", "Discount", "Quntity"].includes(key)) {
+        if (parseFloat(value) < 0) {
+          newErrors[key] = `${key} value must not be negative`;
+        }
+      }
+      if(["Bitumen Price","Quntity","Bitumen Price"].includes(key)){
+        if (parseFloat(value) == 0) {
+          newErrors[key] = `${key} not be zero`;
+        }
+      }
+      if(['Transporter name'].includes(key)){
+        if(formJson?.['Transporter'] ==="Seller"){
+          if(key === ""){
+            newErrors[key] = `${key} name not be zero`;
+          }
         }
       }
     }
+  
     setErrors(newErrors);
-    if(emptyfeild.length !==0){
-      Invalid_alert("All fields are required")
-    }else{
-       var data={
-        "user_id": userId,
-        "Company_Name": formJson?.['Billing name'],
-        "Customer_Name": formJson?.['Customer name'],
-        "Transport_Name": formJson?.['Transporter'],
-        "Port_Name": formJson?.['Port name'],
-        "Delivery_Type":formJson?.['Delivery name'],
-        "Payment_Type": formJson?.['Payment name'],
-        "Product_Name": formJson?.['Product name']        ,
-        "price": formJson?.['Bitumen Price'],
-        "Transport": formJson?.['Transportation']        ,
-        "Gst": formJson?.['GST 18%'],
-        "Discount": formJson?.['Discount'],
-        "Quantity": formJson?.['Quntity'],
-        "Entry_Date": formJson?.['Order Date'],
-        "Validity_Date":formJson?.['Validity Date']        ,
-        "Remark": formJson?.['Remark']
-      }
-      await authAxios.post('BituRep/Api/Account/send_Sodata',data)
-    .then(res =>{if(res.data.message === "Email sent successfully"){
-      Success_alert("Email sent successfully")
-      setSelectedBilling("Select");
-      setSelectOrderDate(null);
-      setSelectedValidityDate(null);
-      setSelectedPort("Select")
-      setSelectedProduct("Select")
-      setSelectedCustomer("Select");
-      setSelectedBitumenPrice(0);
-      setSelectedTransportation(null);
-      setSelectedBillingPrice(0);
-      setSelectedGST(0)
-      setSelectedSellingPrice(0)
-      setSelectedDiscount(0)
-      setSelectedSellingValue(0);
-      setSelectedQuntity(0);
-      setSelectedDelivery("Select");
-      setSelectedRemark("");
-      setSelectedPayment("Select");
-      setSelectedDiscountvalue(0);
-      setSelectedNetPrice(0);
-      setSelectedTransporter("Select")
-    }else{
-      Invalid_alert(res.data.message)
+  
+    if (emptyFields.length !== 0) {
+      if(invalidalert === true){
+         Invalid_alert("Please fill required fields.");
+         setInvalidalert(false)
+        return;
+        }
     }
-  } )
-    .catch(err => console.error(err.data))
+  
+    const data = {
+      user_id: userId,
+      Company_Name: formJson["Billing name"],
+      Customer_Name: formJson["Customer name"],
+      Transport_Name: formJson["Transporter name"],
+      Transport_ON: formJson["Transporter"],
+      Port_Name: formJson["Port name"],
+      Delivery_Type: formJson["Delivery name"],
+      Payment_Type: formJson["Payment name"],
+      Product_Name: formJson["Product name"],
+      price: formJson["Bitumen Price"],
+      Transport: formJson["Transportation"],
+      Gst: formJson["GST 18%"],
+      Discount: formJson["Discount"],
+      Quantity: formJson["Quntity"],
+      Entry_Date: formJson["Order Date"],
+      Validity_Date: formJson["Validity Date"],
+      Remark: formJson["Remark"],
+    };
+  
+    try {
+      const res = await authAxios.post("BituRep/Api/Account/send_Sodata", data);
+  
+      if (res.data.message === "Email sent successfully") {
+        // Reset all states
+        setSelectedBilling("Select");
+        setSelectOrderDate(null);
+        setSelectedValidityDate(null);
+        setSelectedPort("Select");
+        setSelectedProduct("Select");
+        setSelectedCustomer("Select");
+        setSelectedBitumenPrice(0);
+        setSelectedTransportation('');
+        setSelectedBillingPrice(0);
+        setSelectedGST(0);
+        setSelectedSellingPrice(0);
+        setSelectedDiscount(0);
+        setSelectedSellingValue(0);
+        setSelectedQuntity(0);
+        setSelectedDelivery("Select");
+        setSelectedRemark("");
+        setSelectedPayment("Select");
+        setSelectedDiscountvalue(0);
+        setSelectedNetPrice(0);
+        setSelectedTransporter("Select");
+        setSelectTransporterName("");
+        if(successalert === true){
+        Success_alert("Email sent successfully");
+        setSuccessalert(false);  
+      }
+      } else {
+        if(invalidalert === true){
+         Invalid_alert(res.data.message);
+        setInvalidalert(false)
+        }
+      }
+    } catch (err) {
+      console.error(err);
+      if(invalidalert === true){
+      Invalid_alert("An error occurred while submitting the form.");
+      setInvalidalert(false)
+      }
     }
   }
+  
   function Success_alert(data) {
-      toast.success(data, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
-    }
-    function Invalid_alert(data) {
-      toast.warn(data, {
-        position: "top-left",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
-    } 
+    toast.success(data, {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
+  }
+  function Invalid_alert(data) {
+    toast.warn(data, {
+      position: "top-left",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
+  }
   return (
     <React.Fragment>
       <Box
@@ -239,10 +289,21 @@ export default function SalesRestitration() {
           bgcolor: "#ffff",
           borderBottom: 1,
           zIndex: 4,
-          display:"flex"
+          display: "flex",
         }}
       >
-        <button onClick={() => navigate(-1)} style={{borderRadius:"50%",border:1,borderColor:"#eee",width:40,position:"relative"}}><ArrowBackIcon width={90} color="#000"/></button>
+        <button
+          onClick={() => navigate(-1)}
+          style={{
+            borderRadius: "50%",
+            border: 1,
+            borderColor: "#eee",
+            width: 40,
+            position: "relative",
+          }}
+        >
+          <ArrowBackIcon width={90} color="#000" />
+        </button>
         <Typography variant="h5" align="center" width="100%">
           &nbsp;Sales Request Form
         </Typography>
@@ -252,7 +313,7 @@ export default function SalesRestitration() {
           <Stack
             spacing={2}
             direction={{ xs: "column", md: "row" }}
-            sx={{ p: 2, justifyContent: "start" }}
+            sx={{ p: 2, pb: 0, justifyContent: "start" }}
           >
             <Box sx={{ width: "100%" }} md={{ width: "50%" }}>
               <BillingDropDown
@@ -276,9 +337,9 @@ export default function SalesRestitration() {
                       textField: {
                         size: "small",
                         fullWidth: true,
-                        id:"order-date-picker",
-                        error:!!errors?.['Order Date'],
-                        helperText:errors?.['Order Date'],
+                        id: "order-date-picker",
+                        error: !!errors?.["Order Date"],
+                        helperText: errors?.["Order Date"],
                       },
                     }}
                   />
@@ -307,8 +368,8 @@ export default function SalesRestitration() {
                 onChange={(e) => {
                   setSelectedBitumenPrice(e.target.value);
                 }}
-                error={!!errors?.['Bitumen Price']}
-                helperText={errors?.['Bitumen Price']}
+                error={!!errors?.["Bitumen Price"]}
+                helperText={errors?.["Bitumen Price"]}
               />
               <TextField
                 fullWidth
@@ -319,12 +380,24 @@ export default function SalesRestitration() {
                 size="small"
                 value={selectedTransportation}
                 onChange={(e) => {
-                  let value=e.target.value;
+                  let value = e.target.value;
+                  // debugger;
                   setSelectedTransportation(value);
+                  if(value == 0){
+                    setSelectedTransporter("Buyer")
+                  //  setErrors(`Transportation is required`);
+                  }else if(value > 0){
+                    setSelectedTransporter("Seller")
+                    // setErrors(`Transportation cost not be negative`);
+                  }else {
+                    // setErrors(``);
+                  }
+
                 }}
-                error={!!errors?.['Transportation']}
-                helperText={errors?.['Transportation']}
+                error={!!errors?.["Transportation"]}
+                helperText={errors?.["Transportation"]}
               />
+
               <TextField
                 fullWidth
                 label="Billing Price"
@@ -333,8 +406,6 @@ export default function SalesRestitration() {
                 type="number"
                 size="small"
                 value={selectedBillingPrice}
-                error={!!errors?.['Billing_Price']}
-                helperText={errors?.['Billing_Price']}
               />
               <TextField
                 fullWidth
@@ -343,8 +414,6 @@ export default function SalesRestitration() {
                 margin="normal"
                 type="number"
                 size="small"
-                error={!!errors?.["GST 18%"]}
-                helperText={errors?.["GST 18%"]}
                 value={selectedGST}
               />
               <TextField
@@ -354,8 +423,6 @@ export default function SalesRestitration() {
                 margin="normal"
                 type="number"
                 size="small"
-                error={!!errors?.["Selling Price"]}
-                helperText={errors?.["Selling Price"]}
                 value={selectedSellingPrice}
               />
               <TextField
@@ -405,8 +472,8 @@ export default function SalesRestitration() {
                         size: "small",
                         id: "validity-date-picker",
                         fullWidth: true,
-                        error:!!errors?.['Validity Date'],
-                        helperText:errors?.['Validity Date'],
+                        error: !!errors?.["Validity Date"],
+                        helperText: errors?.["Validity Date"],
                       },
                     }}
                     renderInput={(params) => (
@@ -438,9 +505,9 @@ export default function SalesRestitration() {
                   label="Transporter"
                   name="Transporter"
                   defaultValue="Select"
-                  onChange={(e)=>setSelectedTransporter(e.target.value)}
-                  error={!!errors?.['Transporter']}
-                  helperText={errors?.['Transporter']}
+                  onChange={(e) => setSelectedTransporter(e.target.value)}
+                  error={!!errors?.["Transporter"]}
+                  helperText={errors?.["Transporter"]}
                   MenuProps={{ disableAutoFocusItem: true }}
                 >
                   <MenuItem disabled value={"Select"}>
@@ -451,6 +518,28 @@ export default function SalesRestitration() {
                   <MenuItem value={"Other"}>Other</MenuItem>
                 </Select>
               </FormControl>
+              <TextField
+                fullWidth
+                label="Transporter name"
+                name="Transporter name"
+                margin="normal"
+                size="small"
+                 disabled={selectedTransporter === "Buyer"}
+                type="text"
+                error={!!errors?.["Transporter name"]}
+                helperText={errors?.["Transporter name"]}
+                value={selectTransporterName}
+                
+                onChange={(e) =>{ 
+                  if(selectedTransporter === "Seller"){
+                  setSelectTransporterName(e.target.value)
+                }else if(selectedTransporter === "Buyer"){
+                  setSelectTransporterName("")
+                }
+                  }
+                  
+                }
+              />
               <TextField
                 fullWidth
                 label="Selling value"
@@ -477,21 +566,27 @@ export default function SalesRestitration() {
                 size="small"
                 value={selectedNetPrice}
               />
-              <TextField
-                fullWidth
-                size="small"
-                margin="normal"
-                id="Remark"
-                name="Remark"
-                label="Remark"
-                multiline
-                rows={2}
-                value={selectedRemark}
-                error={!!errors?.["Remark"]}
-                helperText={errors?.["Remark"]}
-                onChange={(e) => setSelectedRemark(e.target.value)}
-              />
             </Box>
+          </Stack>
+          <Stack
+            spacing={2}
+            direction={{ xs: "column", md: "row" }}
+            sx={{ p: 2, justifyContent: "start" }}
+          >
+            <TextField
+              fullWidth
+              size="small"
+              margin="normal"
+              id="Remark"
+              name="Remark"
+              label="Remark"
+              multiline
+              rows={2}
+              value={selectedRemark}
+              error={!!errors?.["Remark"]}
+              helperText={errors?.["Remark"]}
+              onChange={(e) => setSelectedRemark(e.target.value)}
+            />
           </Stack>
           <Box mr={2} align="right">
             <Button
@@ -506,17 +601,17 @@ export default function SalesRestitration() {
         </form>
       </Paper>
       <ToastContainer
-              position="bottom-left"
-              autoClose={5000}
-              hideProgressBar={false}
-              newestOnTop={false}
-              closeOnClick
-              rtl={false}
-              pauseOnFocusLoss
-              draggable
-              pauseOnHover
-              theme="light"
-            ></ToastContainer>
+        position="bottom-left"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      ></ToastContainer>
     </React.Fragment>
   );
 }

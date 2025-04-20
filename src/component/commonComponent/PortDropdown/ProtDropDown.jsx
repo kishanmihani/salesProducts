@@ -50,10 +50,12 @@ export default function PortDropDown({ selectedPort, setSelectedPort,errors }) {
   useEffect(() => {
     if (addtolist !== "") {
       if(addtolist ==="Select"){
-        setSelectedPort(() => addtolist)
+        setSelectedPort(() => addtolist);
+        setAddtolist("");
       }else{
       setOptionlist((prev) => [...prev, { port_list: addtolist }]);
-      setSelectedPort(() => addtolist);
+      setSelectedPort(() => addtolist);;
+      setAddtolist("");
       }
     }
   }, [addtolist, setSelectedPort]);

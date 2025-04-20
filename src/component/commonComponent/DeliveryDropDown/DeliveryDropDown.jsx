@@ -49,9 +49,11 @@ export default function DeliveryDropDown({
     if (addtolist !== "") {
       if(addtolist ==="Select"){
         setSelectedDelivery(() => addtolist)
+        setAddtolist("")
       }else{
       setOptionlist((prev) => [...prev, { delivery_list: addtolist }]);
       setSelectedDelivery(() => addtolist);
+      setAddtolist("")
       }
     }
     

@@ -49,9 +49,11 @@ export default function CustomerDropDown({
     if (addtolist !== "") {
       if(addtolist ==="Select"){
         setSelectedCustomer(() => addtolist)
+        setAddtolist("")
       }else{
       setOptionlist((prev) => [...prev, { customer_list: addtolist }]);
       setSelectedCustomer(() => addtolist);
+      setAddtolist("")
       }
     }
   }, [addtolist, setSelectedCustomer]);

@@ -54,10 +54,12 @@ export default function PaymentDropDown({
   useEffect(() => {
     if (addtolist !== "") {
       if(addtolist ==="Select"){
-        setSelectedPayment(() => addtolist)
+        setSelectedPayment(() => addtolist);
+        setAddtolist("");
       }else{
       setOptionlist((prev) => [...prev, { payment_list: addtolist }]);
       setSelectedPayment(() => addtolist);
+      setAddtolist("")
       }
     }
   }, [addtolist, setSelectedPayment]);
@@ -83,12 +85,12 @@ export default function PaymentDropDown({
             <MenuItem value={data.payment_list}>{data.payment_list}</MenuItem>
           ))}
           <MenuItem value={"Not in List"}>Not in List</MenuItem>
-          {errors?.['Payment name'] && (
+        </Select>
+        {errors?.['Payment name'] && (
     <p style={{ color: '#d32f2f',marginLeft:"14px", fontSize: '12px', marginTop: '4px' }}>
       {errors['Payment name']}
     </p>
   )}
-        </Select>
       </FormControl>
       <AddlistDialogBox
         open={open}

@@ -73,12 +73,13 @@ export default function AddlistDialogBox({
   function handlesubmit(){
       if(selectedName!==""){
         setErrors("");
-        handleClose();
+        Updatename(name);
+        setOpen(false);
       }else if(selectedName == ""){
         setErrors(`${[dropname]} is required`);
       }
      
-      // Updatename(name);
+      
       
   }
   return (

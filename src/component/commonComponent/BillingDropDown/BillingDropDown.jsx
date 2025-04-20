@@ -45,9 +45,11 @@ export default function BillingDropDown({ billing, setBilling,errors }) {
     if (addtolist !== "") {
       if(addtolist ==="Select"){
         setBilling(() => addtolist)
+        setAddtolist("")
       }else{
       setOptionlist((prev) => [...prev, { companylist: addtolist }]);
       setBilling(() => addtolist);
+      setAddtolist("")
       }
     }
   }, [addtolist, setBilling]);
