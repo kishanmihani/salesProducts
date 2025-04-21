@@ -5,7 +5,7 @@ import {
     FormHelperText,
     TextField
   } from "@mui/material";
-  import React, { useEffect } from "react";
+  import React from "react";
   import { useNavigate } from "react-router";
   import ArrowBackIcon from "@mui/icons-material/ArrowBack";
   
@@ -17,11 +17,9 @@ import {
 import CustomerDropDownTwo from "../../../commonComponent/CustomerDropDown/CustomerDropDowntwo";
 import PortDropDownTwo from "../../../commonComponent/PortDropdown/ProtDropDowntwo";
 import { authAxios } from "../../../utils/authAxios";
+import CustomeAlerts from "../../../commonComponent/CustomeAlert/CustomeAlert";
   export default function LogicRequestForm() {
     const navigate = useNavigate();
-  
-    // const [customerList, setCustomerList] = React.useState([]);
-    // const [portList, setPortList] = React.useState([]);
     const [customerName, setCustomerName] = React.useState('Select');
     const [portName, setPortName] = React.useState('Select');
     
@@ -32,8 +30,15 @@ import { authAxios } from "../../../utils/authAxios";
     const [errorsCustomerName, setErrorsCustomerName] = React.useState(false);
     const [errorsPortName, setErrorsPortName] = React.useState(false);
     const [remark, setRemark] = React.useState("");
+    const [custAlert, setCustAlert] = React.useState(null);
     const [userId] = React.useState(JSON.parse(localStorage.getItem("userInfo"))?.id);
-    
+    const showSuccess = (data) => {
+      setCustAlert({ type: "success", message: data });
+    };
+    const showError = (data) => {
+      setCustAlert({ type: "error", message: data });
+    };
+  
     const handleAddFields = () => {
       setFields([...fields, { vehicleName: "", quantity: 0 }]);
     };
@@ -60,7 +65,6 @@ import { authAxios } from "../../../utils/authAxios";
       const updatedFields = fields.map((field) => {
         const updatedField = { ...field };
     
-        // Vehicle Name Validation
         if (field.vehicleName.trim() === "") {
           updatedField.vehicleNameError = "Vehicle Name is required";
           hasError = true;
@@ -71,7 +75,6 @@ import { authAxios } from "../../../utils/authAxios";
           updatedField.vehicleNameError = "";
         }
     
-        // Quantity Validation
         if (field.quantity === "" || Number(field.quantity) === 0) {
           updatedField.quantityError = "Quantity must be greater than 0";
           hasError = true;
@@ -86,7 +89,6 @@ import { authAxios } from "../../../utils/authAxios";
       });
     
       setFields(updatedFields);
-      // setErrors(newErrors);
     
       if (!hasError) {
         console.log("Form Data Submitted:", {
@@ -95,8 +97,11 @@ import { authAxios } from "../../../utils/authAxios";
           fields: updatedFields,
           remark,
         });
+        // var count=0;
+        let count=0;
         for(let arr of fields){
           
+          count++;
          var data={
           "user_id": userId,
           "Customer_Name": customerName,
@@ -105,26 +110,42 @@ import { authAxios } from "../../../utils/authAxios";
           "Quantity": arr.quantity,
           "Remark": remark
         }
-       await authAxios.post('BituRep/Api/Account/logistic_data',JSON.stringify(data))
-        .then((res)=>console.log(res.data))
-        .catch((err)=>console.log(err.data))
+          await authAxios.post('BituRep/Api/Account/logistic_data',JSON.stringify(data))
+          .then((res)=>{
+          if (res.data.massage == "Entry Done") {
+                      showSuccess("Records Submited")
+                      }else {
+                        showError(res.data.message)
+                      }
+                      if(count === fields.length ){
+                        handleReset()
+                      }
+         })
+          .catch((err)=>{if (err.massage == "Network Error") {
+          showError("Network Error")
+          }else {
+            showError(err.message)
+          }})
         }
     
         
       }
     };
     const handleReset = () => {
-      setCustomerName("");
-      setPortName("");
+      setCustomerName("Select");
+      setPortName("Select");
       setRemark("");
       setFields([{vehicleName: '',
         vehicleNameError: '',
         quantity: '',
         quantityError: '', }]);
       setErrorsCustomerName(false)
-      setErrorsPortName("false")
+      setErrorsPortName(false)
      
     };
+    const handleClose = () => {
+      setCustAlert(null)
+     };
     return (
       <React.Fragment>
         <Box
@@ -300,6 +321,9 @@ import { authAxios } from "../../../utils/authAxios";
             </Stack>
           </Paper>
         </form>
+        {custAlert && (
+        <CustomeAlerts type={custAlert.type} message={custAlert.message} onClose={handleClose} />
+      )}
       </React.Fragment>
     );
   }
