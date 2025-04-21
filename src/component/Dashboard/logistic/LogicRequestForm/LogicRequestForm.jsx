@@ -8,12 +8,8 @@ import {
   import React from "react";
   import { useNavigate } from "react-router";
   import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-  
   import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOutlined";
   import DeleteIcon from "@mui/icons-material/Delete";
-// import { authAxios } from "../../../utils/authAxios";
-  import PortDropDown from "../../../commonComponent/PortDropdown/ProtDropDown";
-  import CustomerDropDown from "../../../commonComponent/CustomerDropDown/CustomerDropDown";
 import CustomerDropDownTwo from "../../../commonComponent/CustomerDropDown/CustomerDropDowntwo";
 import PortDropDownTwo from "../../../commonComponent/PortDropdown/ProtDropDowntwo";
 import { authAxios } from "../../../utils/authAxios";
@@ -97,7 +93,6 @@ import CustomeAlerts from "../../../commonComponent/CustomeAlert/CustomeAlert";
           fields: updatedFields,
           remark,
         });
-        // var count=0;
         let count=0;
         for(let arr of fields){
           
@@ -197,7 +192,6 @@ import CustomeAlerts from "../../../commonComponent/CustomeAlert/CustomeAlert";
                 value={remark}
                 onChange={(e) => setRemark(e.target.value)}
               />
-              {/* </Box> */}
             </Stack>
   
             <Box sx={{ p: 2 }}>

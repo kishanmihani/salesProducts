@@ -13,7 +13,7 @@ export default function ApprovalRequestForm() {
     const [userId] = React.useState(JSON.parse(localStorage.getItem("userInfo"))?.id);
     const [userName] = React.useState(JSON.parse(localStorage.getItem("userInfo"))?.login);
     const [page, setPage] = React.useState(0); // current page
-    const [rowsPerPage, setRowsPerPage] = React.useState(5);
+    const [rowsPerPage, setRowsPerPage] = React.useState(10);
     const [custAlert, setCustAlert] = React.useState(null);
     const showSuccess = (data) => {
         setCustAlert({ type: "success", message: data });

@@ -10,11 +10,8 @@ import Saleslist from './component/sales/Sales list/SalesList';
 import ApprovalRequestForm from './component/sales/ApprovalRequestForm';
 import LogicRequestForm from './component/Dashboard/logistic/LogicRequestForm/LogicRequestForm';
 import LogicForm from './component/Dashboard/logistic/LogicForm';
-// import PendingApprovalForm from './component/sales/Sales list/Saleslist';
-// import SalesList from './component/sales/SalesList/SalesList';
-// const Dashboardfast = lazy(() => import('./component/Dashboard/Dashboard'));
+import LogisticList from './component/Dashboard/logistic/LogisticList/LogisticList';
 function App() {
-
   return (
     <React.Fragment>
       <Box
@@ -39,10 +36,10 @@ function App() {
 
             <Route path="logistic" element={<LogicForm />} >
             <Route index  element={<LogicRequestForm />} />
+            <Route path='logistic_Pending_form' element={<LogisticList />} />
             </Route>
           </Route>
         </Routes>
-      {/* <LoginForm /> */}
       </Box>
     </React.Fragment>
   )

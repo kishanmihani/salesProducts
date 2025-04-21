@@ -4,18 +4,15 @@ import {
   Select,
   MenuItem,
   FormControl,
-  FormHelperText,
   InputLabel,
   TextField,
   Typography,
   Paper,
-  Grid,
   Stack,
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import React, { useEffect, useState } from "react";
 import BillingDropDown from "../commonComponent/billingDropDown/billingDropDown";
-// import DemoContainer
 import PortDropDown from "../commonComponent/PortDropdown/ProtDropDown";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -24,7 +21,6 @@ import CustomerDropDown from "../commonComponent/CustomerDropDown/CustomerDropDo
 import DeliveryDropDown from "../commonComponent/DeliveryDropDown/DeliveryDropDown";
 import ProductDropDown from "../commonComponent/ProductDropDown/ProductDropDown";
 import PaymentDropDown from "../commonComponent/PaymentDropDown/PaymentDropDown";
-import { toast, ToastContainer } from "react-toastify";
 import { authAxios } from "../utils/authAxios";
 import { useNavigate } from "react-router";
 import CustomeAlerts from "../commonComponent/CustomeAlert/CustomeAlert";
@@ -38,7 +34,6 @@ export default function SalesRestitration() {
   const [selectedBitumenPrice, setSelectedBitumenPrice] = useState(0);
   const [selectedTransportation, setSelectedTransportation] = useState(null);
   const [selectedBillingPrice, setSelectedBillingPrice] = useState(0);
-  // const [BillingPriceError, setBillingPriceError] = useState("");
   const [selectedGST, setSelectedGST] = useState(0);
   const [selectedSellingPrice, setSelectedSellingPrice] = useState(0);
   const [selectedDiscount, setSelectedDiscount] = useState(0);
@@ -72,7 +67,7 @@ export default function SalesRestitration() {
       }
     }, 300);
     return () => {
-      clearTimeout(handler); // cleanup to avoid multiple calls
+      clearTimeout(handler);
     };
   }, [selectedTransportation, selectedBitumenPrice, selectedBillingPrice]);
 
@@ -102,7 +97,7 @@ export default function SalesRestitration() {
       }
     }, 300);
     return () => {
-      clearTimeout(handler); // cleanup to avoid multiple calls
+      clearTimeout(handler);
     };
   }, [
     selectedBillingPrice,
@@ -119,7 +114,7 @@ export default function SalesRestitration() {
       }
     }, 300);
     return () => {
-      clearTimeout(handler); // cleanup to avoid multiple calls
+      clearTimeout(handler);
     };
   }, [selectedQuntity, selectedDiscount]);
 
@@ -161,7 +156,6 @@ export default function SalesRestitration() {
     setSelectTransporterName("");
   };
   async function formSubmithandler(event) {
-    toast.dismiss("form-error");
     event.preventDefault();
     setSubmitDisabled(true)
     const formData = new FormData(event.currentTarget);
@@ -172,7 +166,6 @@ export default function SalesRestitration() {
     for (let key in formJson) {
       const value = formJson[key];
   
-      // General check for empty or "Select"
       if (key === "Remark") continue;
 
       if (value === "" || value === "Select") {
@@ -181,7 +174,6 @@ export default function SalesRestitration() {
         continue;
       }
   
-      // Check for negative numbers in specific fields
       if (["Transportation", "Bitumen Price", "Discount", "Quntity"].includes(key)) {
         if (parseFloat(value) < 0) {
           newErrors[key] = `${key} value must not be negative`;
@@ -203,11 +195,8 @@ export default function SalesRestitration() {
     
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
-      if (!toast.isActive("form-error")) {
-        // alert("Please fill required fields.")
         showError("Please fill required fields.")
-        //  Invalid_alert("Please fill required fields.");
-      }
+
          setSubmitDisabled(false)
          return 
     }
@@ -236,48 +225,24 @@ export default function SalesRestitration() {
       const res = await authAxios.post("BituRep/Api/Account/send_Sodata", data);
   
       if (res.data.message === "Email sent successfully") {
-        // Success_alert("Email sent successfully")
         showSuccess("Email sent successfully")
         resetForm()
         setSubmitDisabled(false)
         return 
       } else {
-        //  Invalid_alert(res.data.message);
         showError(res.data.message)
          setSubmitDisabled(false)
          return
       }
     } catch (err) {
       console.error(err);
-      Invalid_alert("An error occurred while submitting the form.");
+      showError("An error occurred while submitting the form.")
     }
   }
     
   }
   
-  function Success_alert(data) {
-    toast.success(data, {
-      position: "top-right",
-      autoClose: 5000,
-      hideProgressBar: true,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      theme: "light",
-    });
-  }
-  function Invalid_alert(data) {
-    toast.warn(data, {
-      toastId: "form-error",
-    position: "top-left",
-    autoClose: 5000,
-    hideProgressBar: false,
-    closeOnClick: true,
-    pauseOnHover: true,
-    draggable: true,
-    theme: "light",
-    });
-  }
+
   const handleClose = () => {
    setCustAlert(null)
   };
@@ -347,7 +312,6 @@ export default function SalesRestitration() {
                   />
                 </LocalizationProvider>
               </FormControl>
-              {/* </Localizatio/</Paper>nProvider> */}
               <ProductDropDown
                 selectedProduct={selectedProduct}
                 setSelectedProduct={setSelectedProduct}
@@ -383,16 +347,11 @@ export default function SalesRestitration() {
                 value={selectedTransportation}
                 onChange={(e) => {
                   let value = e.target.value;
-                  // debugger;
                   setSelectedTransportation(value);
                   if(value == 0){
                     setSelectedTransporter("Buyer")
-                  //  setErrors(`Transportation is required`);
                   }else if(value > 0){
                     setSelectedTransporter("Seller")
-                    // setErrors(`Transportation cost not be negative`);
-                  }else {
-                    // setErrors(``);
                   }
 
                 }}
@@ -595,9 +554,7 @@ export default function SalesRestitration() {
               variant="contained"
               color="success"
               size="small"
-              // className=""
               type="submit"
-              // onClick={formSubmithandler}
               disabled={submitDisabled}
             >
               Submit
@@ -609,18 +566,6 @@ export default function SalesRestitration() {
       {custAlert && (
         <CustomeAlerts type={custAlert.type} message={custAlert.message} onClose={handleClose} />
       )}
-      <ToastContainer
-        position="bottom-left"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-      ></ToastContainer>
     </React.Fragment>
   );
 }
