@@ -21,6 +21,8 @@ import logouticon from "../../../assets/logouticon.png";
 import logo from "../../../assets/sale.jpeg";
 import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
 import RadioButtonCheckedIcon from "@mui/icons-material/RadioButtonChecked";
+import Logisticicon from "../../../assets/logistic.png";
+import salesicon from "../../../assets/sales.png";
 const Sidbar = ({ message}) => {
   let pagelist = [];
   let pageView = message?.[0]?.pageView;
@@ -34,6 +36,7 @@ const Sidbar = ({ message}) => {
   const location = useLocation();
   const user = message?.[0];
   const [open, setOpen] = useState(false);
+  const [openLogistic,setOpenLogistic] = useState(false)
   const handleProfileClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -89,7 +92,7 @@ const Sidbar = ({ message}) => {
           selected={location.pathname === "/dashboard/sales" || location.pathname.startsWith("/dashboard/sales")}
         >
           <ListItemIcon sx={{ color: "black" }}>
-            <TbSettings2 />
+            <img src={salesicon} width={20} alt="salesicon" />
           </ListItemIcon>
           <ListItemText primary="Sales" />
           {open ? <FaChevronDown /> : <FaChevronRight />}
@@ -184,13 +187,40 @@ const Sidbar = ({ message}) => {
         </ListItemButton>  */}
          <ListItemButton
           component={NavLink}
+          onClick={()=>setOpenLogistic(!openLogistic)}
           to="/dashboard/Logistic"
           selected={location.pathname.includes("/dashboard/Logistic")}
         >
-          <ListItemIcon sx={{ color: 'white' }}><LiaProductHunt /></ListItemIcon>
+          <ListItemIcon sx={{ color: 'white' }}><img src={Logisticicon} width={20} alt="Logistic"></img></ListItemIcon>
           <ListItemText primary="Logistic" />
           <FaChevronRight />
         </ListItemButton>
+        <Collapse in={openLogistic} timeout="auto" unmountOnExit>
+          <List component="div" Padding>
+            <ListItemButton
+              component={NavLink}
+              to="/dashboard/Logistic"
+              selected={location.pathname === "/dashboard/Logistic"}
+              sx={{ pl: 4 }} 
+            >
+              <ListItemIcon color="#000">
+                {location.pathname === "/dashboard/Logistic" ? (
+                  <RadioButtonCheckedIcon
+                    style={{ height: 17, width: 17, mr: 2 }}
+                  ></RadioButtonCheckedIcon>
+                ) : (
+                  <RadioButtonUncheckedIcon
+                  
+                    style={{ height: 17, width: 17, mr: 2,color:"#000" }}
+                  />
+                )}
+              </ListItemIcon>
+              <ListItemText
+                primaryTypographyProps={{ fontSize: "12px" }}
+                primary="Logistic Request Form"
+              />
+            </ListItemButton>
+          </List></Collapse>
       </List>
 
       {/* Spacer to push profile section to the bottom */}

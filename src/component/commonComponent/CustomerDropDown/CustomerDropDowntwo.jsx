@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
+import { FormControl, FormHelperText, InputLabel, MenuItem, Select } from "@mui/material";
 import { authAxios } from "../../utils/authAxios";
 import AddlistDialogBox from "../AddlistDialogBox/AddlistDialogBox";
 import { alhabetelysort } from "../../utils/Sorted";
-export default function CustomerDropDown({
-  selectedCustomer,
-  setSelectedCustomer,
-  errors,
+export default function CustomerDropDownTwo({
+  errorsCustomerName, selectedCustomer, setSelectedCustomer,setErrorsCustomerName
 }) {
   const [optionlist, setOptionlist] = useState([]);
   const [optionlistCheck, setOptionlistCheck] = useState(false);
@@ -17,7 +15,14 @@ export default function CustomerDropDown({
   const [addPortlink, setAddPortlink] = useState("");
   const [userId] = useState(JSON.parse(localStorage.getItem("userInfo"))?.id);
   const handleChange = (event) => {
-    setSelectedCustomer(event.target.value);
+    let value=event.target.value;
+    setSelectedCustomer(value);
+    if(value == "Select"){
+      setErrorsCustomerName(true)
+    }else if(value !== "Select"){
+      setErrorsCustomerName(false)
+    }
+  
   };
   useEffect(() => {
     if (optionlist?.length == 0 && !optionlistCheck)
@@ -57,9 +62,10 @@ export default function CustomerDropDown({
       }
     }
   }, [addtolist, setSelectedCustomer]);
+  useEffect
   return (
     <React.Fragment>
-      <FormControl fullWidth size="small" margin="normal"error={!!errors?.['Customer name']}>
+      <FormControl fullWidth size="small" margin="normal"error={errorsCustomerName}>
         <InputLabel id="demo-simple-select-label">Customer name</InputLabel>
         <Select
           labelId="demo-simple-select-label"
@@ -78,11 +84,8 @@ export default function CustomerDropDown({
           ))}
           <MenuItem value={"Not in List"}>Not in List</MenuItem>
         </Select>
-        {errors?.['Customer name'] && (
-    <p style={{ color: '#d32f2f',marginLeft:"14px", fontSize: '12px', marginTop: '4px' }}>
-      {errors['Customer name']}
-    </p>
-  )}
+        {errorsCustomerName && <FormHelperText>Customer name is required</FormHelperText>}
+    
       </FormControl>
       <AddlistDialogBox
         open={open}
@@ -96,11 +99,11 @@ export default function CustomerDropDown({
     </React.Fragment>
   );
 }
-CustomerDropDown.propType = {
+CustomerDropDownTwo.propType = {
   selectedCustomer: PropTypes.func,
   setSelectedCustomer: PropTypes.string,
 };
-CustomerDropDown.defaultProps = {
+CustomerDropDownTwo.defaultProps = {
   selectedCustomer: "Select",
   setSelectedCustomer: () => {},
 };

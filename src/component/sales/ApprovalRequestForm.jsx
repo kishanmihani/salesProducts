@@ -1,5 +1,5 @@
 import { Box, Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Typography } from '@mui/material';
-import React, { useEffect ,useState} from 'react'
+import React, { useEffect } from 'react'
 import { useNavigate } from "react-router";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { authAxios } from '../utils/authAxios';
@@ -18,9 +18,7 @@ export default function ApprovalRequestForm() {
     const showSuccess = (data) => {
         setCustAlert({ type: "success", message: data });
       };
-      const showError = (data) => {
-        setCustAlert({ type: "error", message: data });
-      };
+      
       const handleClose = () => {
         setCustAlert(null)
        };

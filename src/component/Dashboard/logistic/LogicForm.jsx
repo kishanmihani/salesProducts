@@ -1,7 +1,7 @@
 import { Box } from "@mui/material";
 import React from "react";
 import { Outlet } from "react-router";
-export default function SalesForm() {
+export default function LogicForm() {
   return (
     <React.Fragment>
     <Box

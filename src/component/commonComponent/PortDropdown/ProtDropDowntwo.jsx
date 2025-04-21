@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
+import {
+  FormControl,
+  FormHelperText,
+  InputLabel,
+  MenuItem,
+  NativeSelect,
+  Select,
+} from "@mui/material";
 import { authAxios } from "../../utils/authAxios";
 import AddlistDialogBox from "../AddlistDialogBox/AddlistDialogBox";
 import { alhabetelysort } from "../../utils/Sorted";
-export default function CustomerDropDown({
-  selectedCustomer,
-  setSelectedCustomer,
-  errors,
-}) {
+export default function PortDropDownTwo({ selectedPort, setSelectedPort,errorsPortName ,setErrorsPortName}) {
   const [optionlist, setOptionlist] = useState([]);
   const [optionlistCheck, setOptionlistCheck] = useState(false);
   const [open, setOpen] = useState(false);
@@ -17,13 +20,19 @@ export default function CustomerDropDown({
   const [addPortlink, setAddPortlink] = useState("");
   const [userId] = useState(JSON.parse(localStorage.getItem("userInfo"))?.id);
   const handleChange = (event) => {
-    setSelectedCustomer(event.target.value);
+    let value=event.target.value;
+    setSelectedPort(value);
+    if(value == "Select"){
+        setErrorsPortName(true)
+      }else if(value !== "Select"){
+        setErrorsPortName(false)
+      }
   };
   useEffect(() => {
     if (optionlist?.length == 0 && !optionlistCheck)
       authAxios
         .post(
-          "BituRep/Api/Account/Customer_List",
+          "BituRep/Api/Account/Post_List",
           JSON.stringify({
             user_id: userId,
           })
@@ -38,69 +47,67 @@ export default function CustomerDropDown({
         });
   }, [optionlist, userId, optionlistCheck]);
   useEffect(() => {
-    if (selectedCustomer === "Not in List") {
+    if (selectedPort === "Not in List") {
       setOpen(true);
-      setAddlabelPopup("Add Customer List");
+      setAddlabelPopup("Add Port List");
 
-      setAddPortlink("BituRep/Api/Account/Customer_List_Update");
+      setAddPortlink("BituRep/Api/Account/Port_List_Update");
     }
-  }, [selectedCustomer]);
+  }, [selectedPort]);
   useEffect(() => {
     if (addtolist !== "") {
       if(addtolist ==="Select"){
-        setSelectedCustomer(() => addtolist)
-        setAddtolist("")
+        setSelectedPort(() => addtolist);
+        setAddtolist("");
       }else{
-      setOptionlist((prev) => [...prev, { customer_list: addtolist }]);
-      setSelectedCustomer(() => addtolist);
-      setAddtolist("")
+      setOptionlist((prev) => [...prev, { port_list: addtolist }]);
+      setSelectedPort(() => addtolist);;
+      setAddtolist("");
       }
     }
-  }, [addtolist, setSelectedCustomer]);
+  }, [addtolist, setSelectedPort]);
   return (
     <React.Fragment>
-      <FormControl fullWidth size="small" margin="normal"error={!!errors?.['Customer name']}>
-        <InputLabel id="demo-simple-select-label">Customer name</InputLabel>
+      <FormControl fullWidth size="small" margin="normal" error={errorsPortName}>
+        <InputLabel id="demo-simple-select-label">Port</InputLabel>
         <Select
           labelId="demo-simple-select-label"
           id="demo-simple-select"
-          value={selectedCustomer}
-          name="Customer name"
-          label="Customer name"
+          value={selectedPort}
+          label="Port"
+          name="Port name"
           defaultValue="Select"
           onChange={handleChange}
+          MenuProps={{ disableAutoFocusItem: true }}
+          // helperText={errors?.['Port name']}
         >
           <MenuItem disabled value={"Select"}>
             Please select
           </MenuItem>
-          {alhabetelysort(optionlist, "customer_list").map((data) => (
-            <MenuItem value={data.customer_list}>{data.customer_list}</MenuItem>
+          {alhabetelysort(optionlist, "port_list").map((data) => (
+            <MenuItem value={data.port_list}>{data.port_list}</MenuItem>
           ))}
           <MenuItem value={"Not in List"}>Not in List</MenuItem>
         </Select>
-        {errors?.['Customer name'] && (
-    <p style={{ color: '#d32f2f',marginLeft:"14px", fontSize: '12px', marginTop: '4px' }}>
-      {errors['Customer name']}
-    </p>
-  )}
+        {errorsPortName && <FormHelperText>Port name is required</FormHelperText>}
       </FormControl>
       <AddlistDialogBox
         open={open}
         setOpen={setOpen}
-        paramName="Customer_List_Update"
         label={addlabelPopup}
-        setAddtolist={setAddtolist}
+        paramName="Port_List_Update"
         apilink={addPortlink}
-        dropname="Customer name"
+        setAddtolist={setAddtolist}
+        dropname="Port name"
       />
     </React.Fragment>
   );
 }
-CustomerDropDown.propType = {
-  selectedCustomer: PropTypes.func,
-  setSelectedCustomer: PropTypes.string,
+PortDropDownTwo.propType = {
+  selectedPort: PropTypes.func,
+  setSelectedPort: PropTypes.string,
 };
-CustomerDropDown.defaultProps = {
-  selectedCustomer: "Select",
-  setSelectedCustomer: () => {},
+PortDropDownTwo.defaultProps = {
+  selectedPort: "Select",
+  setSelectedPort: () => {},
 };

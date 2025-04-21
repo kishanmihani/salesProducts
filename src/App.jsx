@@ -8,6 +8,8 @@ import SalesForm from './component/sales/salesForm';
 import Dashboard from './component/Dashboard/Dashboard';
 import Saleslist from './component/sales/Sales list/SalesList';
 import ApprovalRequestForm from './component/sales/ApprovalRequestForm';
+import LogicRequestForm from './component/Dashboard/logistic/LogicRequestForm/LogicRequestForm';
+import LogicForm from './component/Dashboard/logistic/LogicForm';
 // import PendingApprovalForm from './component/sales/Sales list/Saleslist';
 // import SalesList from './component/sales/SalesList/SalesList';
 // const Dashboardfast = lazy(() => import('./component/Dashboard/Dashboard'));
@@ -33,6 +35,10 @@ function App() {
             <Route index  element={<SalesRestitration />} />
             <Route path='PendingApprovalForm' element={<Saleslist  />} />
             <Route path='Approval_Request_form' element={<ApprovalRequestForm  />} />
+            </Route>
+
+            <Route path="logistic" element={<LogicForm />} >
+            <Route index  element={<LogicRequestForm />} />
             </Route>
           </Route>
         </Routes>
