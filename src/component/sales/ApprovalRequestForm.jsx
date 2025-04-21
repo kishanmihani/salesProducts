@@ -43,7 +43,7 @@ export default function ApprovalRequestForm() {
             "BituRep/Api/Account/send_sodata_userwise",
             JSON.stringify({
               user_id: userId,
-              Role: "entry",
+              Role: "1",
             })
           );
         let  filterdata= response.data.filter(row => row.user_Name === userName )
