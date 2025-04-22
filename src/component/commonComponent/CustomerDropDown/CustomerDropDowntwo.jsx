@@ -62,7 +62,6 @@ export default function CustomerDropDownTwo({
       }
     }
   }, [addtolist, setSelectedCustomer]);
-  useEffect
   return (
     <React.Fragment>
       <FormControl fullWidth size="small" margin="normal"error={errorsCustomerName}>
