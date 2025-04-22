@@ -11,6 +11,7 @@ import ApprovalRequestForm from './component/sales/ApprovalRequestForm';
 import LogicRequestForm from './component/Dashboard/logistic/LogicRequestForm/LogicRequestForm';
 import LogicForm from './component/Dashboard/logistic/LogicForm';
 import LogisticList from './component/Dashboard/logistic/LogisticList/LogisticList';
+import VessalRequestForm from './component/Dashboard/logistic/VessalRequestForm/VessalRequestForm';
 function App() {
   return (
     <React.Fragment>
@@ -37,6 +38,7 @@ function App() {
             <Route path="logistic" element={<LogicForm />} >
             <Route index  element={<LogicRequestForm />} />
             <Route path='logistic_Pending_form' element={<LogisticList />} />
+            <Route path='Vessal_Request_Form' element={<VessalRequestForm />} />
             </Route>
           </Route>
         </Routes>

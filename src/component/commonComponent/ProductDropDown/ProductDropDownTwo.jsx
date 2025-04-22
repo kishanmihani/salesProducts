@@ -5,34 +5,40 @@ import {
   FormHelperText,
   InputLabel,
   MenuItem,
-  NativeSelect,
   Select,
 } from "@mui/material";
 import { authAxios } from "../../utils/authAxios";
 import AddlistDialogBox from "../AddlistDialogBox/AddlistDialogBox";
 import { alhabetelysort } from "../../utils/Sorted";
-export default function PortDropDownTwo({ selectedPort, setSelectedPort,errorsPortName ,setErrorsPortName,variant}) {
+export default function ProductDropDownTwo({
+  selectedProduct,
+  setSelectedProduct,
+  errorsProduct,
+  setErrorsProduct,
+  variant
+}) {
   const [optionlist, setOptionlist] = useState([]);
   const [optionlistCheck, setOptionlistCheck] = useState(false);
   const [open, setOpen] = useState(false);
   const [addtolist, setAddtolist] = useState("");
-  const [addlabelPopup, setAddlabelPopup] = useState("");
+  const [addlabelPopup, setAddlabelPopup] = useState("Add Port list");
   const [addPortlink, setAddPortlink] = useState("");
   const [userId] = useState(JSON.parse(localStorage.getItem("userInfo"))?.id);
   const handleChange = (event) => {
-    let value=event.target.value;
-    setSelectedPort(value);
+    setSelectedProduct(event.target.value);
+    let value=event.target.value
     if(value == "Select"){
-        setErrorsPortName(true)
-      }else if(value !== "Select"){
-        setErrorsPortName(false)
-      }
+      setErrorsProduct(true)
+    }else if(value !== "Select"){
+      setErrorsProduct(false)
+    }
+    setSelectedProduct(value);
   };
   useEffect(() => {
     if (optionlist?.length == 0 && !optionlistCheck)
       authAxios
         .post(
-          "BituRep/Api/Account/Post_List",
+          "BituRep/Api/Account/Product_List",
           JSON.stringify({
             user_id: userId,
           })
@@ -47,73 +53,74 @@ export default function PortDropDownTwo({ selectedPort, setSelectedPort,errorsPo
         });
   }, [optionlist, userId, optionlistCheck]);
   useEffect(() => {
-    if (selectedPort === "Not in List") {
+    if (selectedProduct === "Not in List") {
       setOpen(true);
-      setAddlabelPopup("Add Port List");
+      setAddlabelPopup("Add Product List");
 
-      setAddPortlink("BituRep/Api/Account/Port_List_Update");
+      setAddPortlink("BituRep/Api/Account/Product_List_Update");
     }
-  }, [selectedPort]);
+  }, [selectedProduct]);
   useEffect(() => {
+    debugger;
     if (addtolist !== "") {
       if(addtolist ==="Select"){
-        setSelectedPort(() => addtolist);
+        setSelectedProduct( addtolist);
         setAddtolist("");
       }else{
-      setOptionlist((prev) => [...prev, { port_list: addtolist }]);
-      setSelectedPort(() => addtolist);;
+      setOptionlist((prev) => [...prev, { product_list: addtolist }]);
+      setSelectedProduct( addtolist);
       setAddtolist("");
       }
     }
-  }, [addtolist, setSelectedPort]);
+  }, [addtolist, setSelectedProduct]);
   return (
     <React.Fragment>
-      <FormControl variant={variant} fullWidth size="small" margin="normal" error={errorsPortName}>
-        <InputLabel id="demo-simple-select-label">Port</InputLabel>
+      <FormControl variant={variant} fullWidth size="small" margin="normal"error={errorsProduct}>
+        <InputLabel id="demo-simple-select-label">Product name</InputLabel>
         <Select
           labelId="demo-simple-select-label"
           id="demo-simple-select"
-          value={selectedPort}
-          label="Port"
-          name="Port name"
+          name="Product name"
+          value={selectedProduct}
+          label="Product name"
           defaultValue="Select"
           onChange={handleChange}
           MenuProps={{ disableAutoFocusItem: true }}
-          // helperText={errors?.['Port name']}
         >
           <MenuItem disabled value={"Select"}>
             Please select
           </MenuItem>
-          {alhabetelysort(optionlist, "port_list").map((data) => (
-            <MenuItem value={data.port_list}>{data.port_list}</MenuItem>
+          {alhabetelysort(optionlist, "product_list").map((data) => (
+            <MenuItem value={data.product_list}>{data.product_list}</MenuItem>
           ))}
           <MenuItem value={"Not in List"}>Not in List</MenuItem>
         </Select>
-        {errorsPortName && <FormHelperText>Port name is required</FormHelperText>}
+       {errorsProduct && <FormHelperText>Product name is required</FormHelperText>}
       </FormControl>
       <AddlistDialogBox
         open={open}
         setOpen={setOpen}
         label={addlabelPopup}
-        paramName="Port_List_Update"
         apilink={addPortlink}
+        paramName="Product_List_Update"
         setAddtolist={setAddtolist}
-        dropname="Port name"
+        userId={userId}
+        dropname="Product name"
       />
     </React.Fragment>
   );
 }
-PortDropDownTwo.propType = {
-  selectedPort: PropTypes.string,
-  setSelectedPort: PropTypes.func,
-  errorsPortName:PropTypes.bool,
-  setErrorsPortName:PropTypes.func,
+ProductDropDownTwo.propType = {
+  selectedProduct: PropTypes.func,
+  setSelectedProduct: PropTypes.string,
+  errorsProduct:PropTypes.bool,
+  setErrorsProduct:PropTypes.func,
   variant:PropTypes.string
 };
-PortDropDownTwo.defaultProps = {
-  selectedPort: "Select",
-  setSelectedPort: () => {},
-  errorsPortName:false,
-  setErrorsPortName: () => {},
+ProductDropDownTwo.defaultProps = {
+  selectedProduct: "Select",
+  setSelectedProduct: () => {},
+  errorsProduct:false,
+  setErrorsProduct: () => {},
   variant:"outlined"
 };

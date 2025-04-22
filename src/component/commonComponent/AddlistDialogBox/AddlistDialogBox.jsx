@@ -73,7 +73,7 @@ export default function AddlistDialogBox({
   function handlesubmit(){
       if(selectedName!==""){
         setErrors("");
-        Updatename(name);
+        Updatename(selectedName);
         setOpen(false);
       }else if(selectedName == ""){
         setErrors(`${[dropname]} is required`);
@@ -144,14 +144,21 @@ export default function AddlistDialogBox({
 }
 
 AddlistDialogBox.propType = {
-  setBilling: PropTypes.func,
+  setOpen: PropTypes.func,
   open: PropTypes.bool,
   label: PropTypes.string,
   apilink: PropTypes.string,
+  paramName:PropTypes.string,
+  setAddtolist:PropTypes.func,
+  userId:PropTypes.string,
 };
 AddlistDialogBox.defaultProps = {
   apilink: "",
   label: "",
   open: false,
   setOpen: () => {},
+  userId:"",
+  dropname:"",
+  paramName:"",
+  setAddtolist:() => {}
 };

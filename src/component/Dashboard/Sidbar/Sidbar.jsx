@@ -243,6 +243,29 @@ const Sidbar = ({ message}) => {
                 primary="Logistic Pending form"
               />
             </ListItemButton>
+            <ListItemButton
+              component={NavLink}
+              to="/dashboard/Logistic/Vessal_Request_Form"
+              selected={location.pathname === "/dashboard/Logistic/Vessal_Request_Form"}
+              sx={{ pl: 4 }} 
+            >
+              <ListItemIcon color="#000">
+                {location.pathname === "/dashboard/Logistic/Vessal_Request_Form" ? (
+                  <RadioButtonCheckedIcon
+                    style={{ height: 17, width: 17, mr: 2 }}
+                  ></RadioButtonCheckedIcon>
+                ) : (
+                  <RadioButtonUncheckedIcon
+                  
+                    style={{ height: 17, width: 17, mr: 2,color:"#000" }}
+                  />
+                )}
+              </ListItemIcon>
+              <ListItemText
+                primaryTypographyProps={{ fontSize: "12px" }}
+                primary="Vessal Request Form"
+              />
+            </ListItemButton>
           </List>
           </Collapse>
       </List>

@@ -93,14 +93,14 @@ export default function Logisticlist() {
             (
             
             <TableRow
-              key={row.name}
+              key={row.table_id}
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
             >
               <TableCell align="left">{row.table_id}</TableCell>
               <TableCell align="left">{row.customer_Name}</TableCell>
               <TableCell align="left">{row.port_Name}</TableCell>
-              <TableCell align="left">{row.vehicle_Name}</TableCell>
               <TableCell align="left">{row.quantity}</TableCell>
+              <TableCell align="left">{row.vehicle_Name}</TableCell>
               <TableCell align="left">{row.remark}</TableCell>
             </TableRow>
             
