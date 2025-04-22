@@ -61,7 +61,6 @@ export default function ProductDropDownTwo({
     }
   }, [selectedProduct]);
   useEffect(() => {
-    debugger;
     if (addtolist !== "") {
       if(addtolist ==="Select"){
         setSelectedProduct( addtolist);
