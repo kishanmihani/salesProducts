@@ -4,7 +4,6 @@ import {
   FormControl,
   InputLabel,
   MenuItem,
-  NativeSelect,
   Select,
 } from "@mui/material";
 import { authAxios } from "../../utils/authAxios";
