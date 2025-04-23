@@ -8,11 +8,7 @@ const __dirname = path.dirname(__filename);
 
 export default defineConfig({
   plugins: [react()],
-  resolve: {
-    alias: {
-      '@toolpad/core': path.resolve(__dirname, 'node_modules/@mui/toolpad-core'),
-    },
-  },
+ 
   server: {
     proxy: {
       '/api': {
