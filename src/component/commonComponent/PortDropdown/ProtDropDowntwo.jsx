@@ -11,7 +11,7 @@ import {
 import { authAxios } from "../../utils/authAxios";
 import AddlistDialogBox from "../AddlistDialogBox/AddlistDialogBox";
 import { alhabetelysort } from "../../utils/Sorted";
-export default function PortDropDownTwo({ selectedPort, setSelectedPort,errorsPortName ,setErrorsPortName,variant}) {
+export default function PortDropDownTwo({ selectedPort, setSelectedPort,errorsPortName ,setErrorsPortName,variant,NotIsList}) {
   const [optionlist, setOptionlist] = useState([]);
   const [optionlistCheck, setOptionlistCheck] = useState(false);
   const [open, setOpen] = useState(false);
@@ -87,7 +87,7 @@ export default function PortDropDownTwo({ selectedPort, setSelectedPort,errorsPo
           {alhabetelysort(optionlist, "port_list").map((data) => (
             <MenuItem value={data.port_list}>{data.port_list}</MenuItem>
           ))}
-          <MenuItem value={"Not in List"}>Not in List</MenuItem>
+          { NotIsList !== true && <MenuItem value={"Not in List"}>Not in List</MenuItem>}
         </Select>
         {errorsPortName && <FormHelperText>Port name is required</FormHelperText>}
       </FormControl>

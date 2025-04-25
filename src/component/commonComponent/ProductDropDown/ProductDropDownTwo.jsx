@@ -15,7 +15,8 @@ export default function ProductDropDownTwo({
   setSelectedProduct,
   errorsProduct,
   setErrorsProduct,
-  variant
+  variant,
+  NotIsList
 }) {
   const [optionlist, setOptionlist] = useState([]);
   const [optionlistCheck, setOptionlistCheck] = useState(false);
@@ -92,7 +93,7 @@ export default function ProductDropDownTwo({
           {alhabetelysort(optionlist, "product_list").map((data) => (
             <MenuItem value={data.product_list}>{data.product_list}</MenuItem>
           ))}
-          <MenuItem value={"Not in List"}>Not in List</MenuItem>
+         { NotIsList !== true && <MenuItem value={"Not in List"}>Not in List</MenuItem>}
         </Select>
        {errorsProduct && <FormHelperText>Product name is required</FormHelperText>}
       </FormControl>

@@ -12,6 +12,9 @@ import LogicRequestForm from './component/Dashboard/logistic/LogicRequestForm/Lo
 import LogicForm from './component/Dashboard/logistic/LogicForm';
 import LogisticList from './component/Dashboard/logistic/LogisticList/LogisticList';
 import VessalRequestForm from './component/Dashboard/logistic/VessalRequestForm/VessalRequestForm';
+import { PDFViewer } from '@react-pdf/renderer';
+import { MyDocument } from './component/commonComponent/PdfIntegrations/MyDocument';
+import Pdfbilles from './component/sales/Pdfbilles/Pdfbilles';
 function App() {
   return (
     <React.Fragment>
@@ -39,10 +42,12 @@ function App() {
             <Route index  element={<LogicRequestForm />} />
             <Route path='logistic_Pending_form' element={<LogisticList />} />
             <Route path='Vessal_Request_Form' element={<VessalRequestForm />} />
+            <Route path='Pdf_Bill' element={<Pdfbilles />} />
             </Route>
           </Route>
         </Routes>
       </Box>
+      
     </React.Fragment>
   )
 }

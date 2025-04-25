@@ -4,7 +4,7 @@ import { FormControl,FormHelperText, InputLabel, MenuItem, Select } from "@mui/m
 import { authAxios } from "../../utils/authAxios";
 import AddlistDialogBox from "../AddlistDialogBox/AddlistDialogBox";
 import { alhabetelysort } from "../../utils/Sorted";
-export default function BillingDropDownTwo({ billing, setBilling,errorsBilling,setErrorsBilling,variant }) {
+export default function BillingDropDownTwo({ billing, setBilling,errorsBilling,setErrorsBilling,variant,NotIsList }) {
   const [optionlist, setOptionlist] = useState([]);
   const [open, setOpen] = useState(false);
   const [addlabelPopup, setAddlabelPopup] = useState("");
@@ -78,7 +78,7 @@ export default function BillingDropDownTwo({ billing, setBilling,errorsBilling,s
           {alhabetelysort(optionlist, "companylist").map((data) => (
             <MenuItem value={data.companylist}>{data.companylist}</MenuItem>
           ))}
-          <MenuItem value={"Not in List"}>Not in List</MenuItem>
+          { NotIsList !== true && <MenuItem value={"Not in List"}>Not in List</MenuItem>}
         </Select>
          
         {errorsBilling && <FormHelperText>Billing name is required</FormHelperText>}
