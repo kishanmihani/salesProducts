@@ -17,7 +17,7 @@ import { Outlet, useNavigate } from "react-router";
 import Sidbar from "./Sidbar/Sidbar";
 import ErrorBoundary from "../ErrorBoundary";
 import MenuOpenIcon from '@mui/icons-material/MenuOpen';
-const drawerWidth = 250;
+const drawerWidth = 270;
 
 // Styled components
 const Search = styled("div")(({ theme }) => ({
@@ -159,7 +159,7 @@ function Dashboard() {
             ModalProps={{ keepMounted: true }}
             sx={{
               display: { xs: "none", sm: "block" },
-              "& .MuiDrawer-paper": { width: drawerWidth },
+              "& .MuiDrawer-paper": { width: drawerWidth,overflow:"auto",overflowX:"hidden" },
             }}
             open={notmobileOpen}
           >

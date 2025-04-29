@@ -15,13 +15,16 @@ import VessalRequestForm from './component/Dashboard/logistic/VessalRequestForm/
 import { PDFViewer } from '@react-pdf/renderer';
 import { MyDocument } from './component/commonComponent/PdfIntegrations/MyDocument';
 import Pdfbilles from './component/sales/Pdfbilles/Pdfbilles';
+import LogisticListEdit from './component/Dashboard/logistic/LogisticList/LogisticListEdit';
+import LogicInvoiceDo from './component/sales/Pdfbilles/LogicInvoiceDo';
+import "@fontsource/inter";
 function App() {
   return (
     <React.Fragment>
       <Box
       sx={{
         height: '100vh',
-        backgroundColor: '#8fc7ff',
+        backgroundColor: 'rgba(25, 118, 210, 0.08)',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
@@ -41,8 +44,11 @@ function App() {
             <Route path="logistic" element={<LogicForm />} >
             <Route index  element={<LogicRequestForm />} />
             <Route path='logistic_Pending_form' element={<LogisticList />} />
+            <Route path='logistic_list_Edit_Form/:id?' element={<LogisticListEdit />} />
+            
             <Route path='Vessal_Request_Form' element={<VessalRequestForm />} />
             <Route path='Pdf_Bill' element={<Pdfbilles />} />
+            <Route path='Logistic_InVoice_Delivery' element={<LogicInvoiceDo />} />
             </Route>
           </Route>
         </Routes>

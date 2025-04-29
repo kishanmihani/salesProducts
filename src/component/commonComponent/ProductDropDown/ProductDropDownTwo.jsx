@@ -26,8 +26,7 @@ export default function ProductDropDownTwo({
   const [addPortlink, setAddPortlink] = useState("");
   const [userId] = useState(JSON.parse(localStorage.getItem("userInfo"))?.id);
   const handleChange = (event) => {
-    setSelectedProduct(event.target.value);
-    let value=event.target.value
+    let value=event.target.value;
     if(value == "Select"){
       setErrorsProduct(true)
     }else if(value !== "Select"){
@@ -115,12 +114,14 @@ ProductDropDownTwo.propType = {
   setSelectedProduct: PropTypes.string,
   errorsProduct:PropTypes.bool,
   setErrorsProduct:PropTypes.func,
-  variant:PropTypes.string
+  variant:PropTypes.string,
+  NotIsList:PropTypes.bool
 };
 ProductDropDownTwo.defaultProps = {
   selectedProduct: "Select",
   setSelectedProduct: () => {},
   errorsProduct:false,
   setErrorsProduct: () => {},
-  variant:"outlined"
+  variant:"outlined",
+  NotIsList:false
 };

@@ -3,9 +3,6 @@ import {
   Box,
   Stack,
   FormControl,
-  FormHelperText,
-  Input,
-  InputLabel,
   TextField,
   IconButton,
   Typography,
@@ -193,9 +190,7 @@ const BeDetailsItem = ({
                       helperText: !!field.beDateError && "Be Date is required",
                     },
                   }}
-                  renderInput={(params) => (
-                    <TextField {...params} id="beDate" size="small" />
-                  )}
+                  
                 />
               </LocalizationProvider>
             </FormControl>
@@ -255,7 +250,7 @@ const BeDetailsItem = ({
             />
           </Box>
         </Stack>
-        <Stack
+        {/* <Stack
           key={index}
           spacing={2}
           direction={{ xs: "column", md: "row" }}
@@ -325,7 +320,7 @@ const BeDetailsItem = ({
               helperText={field.surveyerNameError}
             />
           </Box>
-        </Stack>
+        </Stack> */}
 
         <Box sx={{ display: "flex", width: "100%", justifyContent: "center" }}>
           <IconButton

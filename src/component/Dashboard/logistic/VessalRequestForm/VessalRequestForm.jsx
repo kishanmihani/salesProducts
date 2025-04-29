@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, {  useMemo, useState } from "react";
 
 import CustomPageHeader from "../../../commonComponent/CustomPageHeader/CustomPageHeader";
 import {
@@ -7,6 +7,7 @@ import {
   Checkbox,
   FormControl,
   FormControlLabel,
+  IconButton,
   Paper,
   Stack,
   TextField,
@@ -22,7 +23,13 @@ import BlDataItems from "./blDataItems/BlDataItems";
 import { authAxios } from "../../../utils/authAxios";
 import dayjs from "dayjs";
 import CustomeAlerts from "../../../commonComponent/CustomeAlert/CustomeAlert";
-
+import DeleteIcon from "@mui/icons-material/Delete";
+import PortDropDownTwo from "../../../commonComponent/PortDropdown/ProtDropDowntwo";
+import ProductDropDownTwo from "../../../commonComponent/ProductDropDown/ProductDropDownTwo";
+import TankDropDownTwo from "../../../commonComponent/TankDropDown/TankDropDownTwo";
+import SurveyorDropDown from "../../../commonComponent/SurveyorDropDown/SurveyorDropDown";
+import WhereHourseDropDown from "../../../commonComponent/WhereHourseDropDown/WhereHourseDropDown";
+import { vessalDataListapi, VesselDataBEapi, VesselDataBLapi, VesselDataTankapi } from "../../../Config/Api";
 const instialValueBedetails = [
   {
     billing: "Select",
@@ -37,8 +44,8 @@ const instialValueBedetails = [
     netQuntityError: "",
     billOfEntry: "",
     billOfEntryError: "",
-    whereHouseName: "",
-    whereHouseNameError: "",
+    // whereHouseName: "",
+    // whereHouseNameError: "",
     surveyerName: "",
     surveyerNameError: "",
   },
@@ -68,6 +75,8 @@ const instialValueBlData = [
 export default function VessalRequestForm() {
   const [vessalName, setVessalName] = useState("");
   const [vessalNameError, setVessalNameError] = useState(false);
+  const [chaName, setChaName] = useState("");
+  const [chaNameError, setChaNameError] = useState(false);
   const [vessalNumber, setVessalNumber] = useState("");
   const [vessalNumberError, setVessalNumberError] = useState({
     error: "",
@@ -77,8 +86,12 @@ export default function VessalRequestForm() {
   const [dischargeDateError, setDischargeDateError] = useState(false);
   const [fields, setFields] = useState(instialValueBlData);
   const [beDetailsfields, setBeDetailsfields] = useState(instialValueBedetails);
+  const [tankFields,setTanktankFields] = useState([{
+    Tank:"Select",TankError:"",WH_Name:"Select",WH_NameEerror:"",S_Name:"Select",S_NameError:"",portName:"Select",portNameError:false,Product:"Select",ProductError:false,Quantity:0,QuantityError:"" 
+  }])
   const [blDataCheck, setBlDataCheck] = useState(true);
   const [bedetailsCheck, setBedetailsCheck] = useState(true);
+  const [tankDetailsCheck,setTankDetailsCheck] = useState(true);
   const [custAlert, setCustAlert] = React.useState(null);
   const [userId] = useState(JSON.parse(localStorage.getItem("userInfo"))?.id);
   const handleAddFieldsBlData = () => {
@@ -105,8 +118,8 @@ export default function VessalRequestForm() {
     setBeDetailsfields([
       ...beDetailsfields,
       {
-        surveyerName: "",
-        whereHouseName: "",
+        // surveyerName: "",
+        // whereHouseName: "",
         beProductName: "Select",
         billing: "Select",
         billOfEntry: "",
@@ -115,6 +128,24 @@ export default function VessalRequestForm() {
         netQuntity: 0,
       },
     ]);
+  };
+  const handleAddFeildTank = () =>{
+    setTanktankFields([
+      ...tankFields,{
+        Tank:"Select",
+        WH_Name:"Select",
+        S_Name:"Select",
+        portName:"Select",
+        Product:"Select",
+        Quantity:0, 
+      }
+    ])
+  }
+  const handleRemoveFeildTank = (index) => {
+    const updatedFieldsBedetails = tankFields.filter(
+      (_, i) => i !== index
+    );
+    setTanktankFields(updatedFieldsBedetails);
   };
   const handleRemoveFieldBeDetails = (index) => {
     const updatedFieldsBedetails = beDetailsfields.filter(
@@ -146,8 +177,8 @@ export default function VessalRequestForm() {
       beDateError: false,
       netQuntityError: "",
       billOfEntryError: "",
-      whereHouseNameError: "",
-      surveyerNameError: "",
+      // whereHouseNameError: "",
+      // surveyerNameError: "",
     }));
   }, [beDetailsfields]);
   // useEffect(() => {
@@ -174,6 +205,12 @@ export default function VessalRequestForm() {
       setDischargeDateError(false);
       // hasError =false;
     }
+    if (chaName === "") {
+      setChaNameError(true);
+      hasError = true;
+    } else if (chaName !== "") {
+      setChaNameError(false);
+    }
 
     const { error, isValid } = validateVesselNumber(vessalNumber);
     setVessalNumberError({ error: error, valid: isValid });
@@ -181,7 +218,7 @@ export default function VessalRequestForm() {
       hasError = true;
     }
 
-    var updatedFields;
+    let updatedFields;
     if (blDataCheck == true) {
       updatedFields = fields.map((field) => {
         const updatedField = { ...field };
@@ -269,7 +306,51 @@ export default function VessalRequestForm() {
       });
       setFields(updatedFields);
     }
-    var updatedFieldsBedetails;
+    let updatedFieldTank;
+    if(tankDetailsCheck == true){
+      updatedFieldTank = tankFields.map(tankField=>{
+       const updatedField = {...tankField};
+       if(tankField.Product === null || tankField.Product === "Select"){
+        updatedField.ProductError = true;
+        hasError = true;
+       }else{
+        updatedField.ProductError = false;
+       }
+       if(tankField.portName === null || tankField.portName === "Select"){
+        updatedField.portNameError = true;
+        hasError = true;
+       }else{
+        updatedField.portNameError = false;
+       }
+       if(tankField.WH_Name === null || tankField.WH_Name === "Select"){
+        updatedField.WH_NameEerror = "Where House name is required";
+        hasError = true;
+       }else{
+        updatedField.WH_NameEerror = false;
+       }
+       if(tankField.S_Name === null || tankField.S_Name === "Select"){
+        updatedField.S_NameError = "Surveyer name is required";
+        hasError = true;
+       }else{
+        updatedField.S_NameError = false;
+       }
+       if(tankField.Tank === null || tankField.Tank === "Select"){
+        updatedField.TankError = true
+        hasError = true;
+       }else{
+        updatedField.TankError = false;
+       }
+       if(tankField.Quantity === "" || tankField.Quantity === 0){
+        updatedField.QuantityError = "Net Quanttity is required"
+        hasError = true;
+       }else{
+        updatedField.TankError = "";
+       }
+       return updatedField 
+      })
+      setTanktankFields(updatedFieldTank)
+    }
+    let updatedFieldsBedetails;
     if (bedetailsCheck == true) {
       updatedFieldsBedetails = beDetailsfields.map((beDetailsfield) => {
         const updatedFieldBedetail = { ...beDetailsfield };
@@ -312,21 +393,6 @@ export default function VessalRequestForm() {
         } else {
           updatedFieldBedetail.billingError = false;
         }
-        if (beDetailsfield.whereHouseName == "") {
-          updatedFieldBedetail.whereHouseNameError =
-            "where House Name is required";
-          hasError = true;
-        } else {
-          updatedFieldBedetail.whereHouseNameError = "";
-        }
-        if (beDetailsfield.surveyerName == "") {
-          updatedFieldBedetail.surveyerNameError = "Surveyer Name is required";
-          hasError = true;
-        } else {
-          updatedFieldBedetail.surveyerNameError = "";
-        }
-        // billOfEntry
-        // netQuntity:
         return updatedFieldBedetail;
       });
       setBeDetailsfields(updatedFieldsBedetails);
@@ -358,7 +424,7 @@ export default function VessalRequestForm() {
             COMPANY: arr.billing,
           };
           await authAxios
-            .post("BituRep/Api/Account/Vessel_data_BE", JSON.stringify(data))
+            .post(VesselDataBEapi, JSON.stringify(data))
             .then((res) => {
               if (res.data.massage == "Entry Done") {
                 showSuccess("Records Submited");
@@ -366,7 +432,8 @@ export default function VessalRequestForm() {
                 showError(res.data.message);
               }
               if (count === fields.length) {
-                handleReset();
+                BeReset()
+                vessalData()
               }
             })
             .catch((err) => {
@@ -404,7 +471,7 @@ export default function VessalRequestForm() {
             IGST: arr.iGst,
           };
           await authAxios
-            .post("BituRep/Api/Account/Vessel_data_BL", JSON.stringify(data))
+            .post(VesselDataBLapi, JSON.stringify(data))
             .then((res) => {
               if (res.data.massage == "Entry Done") {
                 showSuccess("Records Submited");
@@ -412,7 +479,8 @@ export default function VessalRequestForm() {
                 showError(res.data.message);
               }
               if (count === fields.length) {
-                handleReset();
+                BlReset()
+                vessalData();
               }
             })
             .catch((err) => {
@@ -424,20 +492,81 @@ export default function VessalRequestForm() {
             });
         }
       }
+      if(tankDetailsCheck == true){
+
+        let count=0;
+        for(let arr of tankFields){
+          count++;
+        const data ={
+          "User_Id": userId,
+          "Vessal_Name": vessalName,
+          "Vessal_No": vessalNumber,
+          "Discarge_Date": dischargeDate,
+          "Tank": arr.Tank,
+          "WH_NAME": arr.WH_Name,
+          "S_NAME": arr.S_Name,
+          "PORT": arr.portName,
+          "PRODUCE": arr.Product,
+          "Quantity":arr.Quantity
+        }
+        await authAxios
+            .post(VesselDataTankapi, JSON.stringify(data))
+            .then((res) => {
+              if (res.data.massage == "Entry Done") {
+                showSuccess("Records Submited");
+              } else {
+                showError(res.data.message);
+              }
+              if (count === fields.length) {
+                tankReset()
+                vessalData()
+              }
+            })
+            .catch((err) => {
+              if (err.massage == "Network Error") {
+                showError("Network Error");
+              } else {
+                showError(err.message);
+              }
+            })
+           
+        console.log("Submit tank data")
+      }}
     }
+  }
+  function tankReset(){
+    setTanktankFields([{
+      Tank:"Select",TankError:"",WH_Name:"Select",WH_NameEerror:"",S_Name:"Select",S_NameError:"",portName:"Select",portNameError:false,Product:"Select",ProductError:false,Quantity:0,QuantityError:"" 
+    }])
+  }
+ async function vessalData(){
+    var data={
+      "User_Id": userId,
+      "Vessal_Name": vessalName,
+      "Vessal_No": vessalNumber,
+      "Discarge_Date": dischargeDate,
+      "CHA_Name":chaName
+    }
+    await authAxios.post(vessalDataListapi,JSON.stringify(data))
+          // .then((res)=>)
+  }
+  function BeReset(){
+    setBeDetailsfields(instialValueBedetails);
+  }
+  function BlReset(){
+    setFields(instialValueBlData);
   }
   function handleReset() {
     setVessalName("");
     setVessalNameError(false);
+    setChaName("");
+    setChaNameError(false)
     setVessalNumber("");
     setVessalNumberError({ error: "", valid: true });
     setDisChargeDate(null);
-    if (bedetailsCheck) {
-      setBeDetailsfields(instialValueBedetails);
-    }
-    if (blDataCheck) {
-      setFields(instialValueBlData);
-    }
+    tankReset()
+    BeReset()
+    BlReset()
   }
   function vessalNameChange(event) {
     let value = event.target.value;
@@ -447,6 +576,15 @@ export default function VessalRequestForm() {
       setVessalNameError(false);
     }
     setVessalName(value);
+  }
+  function ChaNameChange(event) {
+    let value = event.target.value;
+    if (value === "") {
+      setChaNameError(true);
+    } else {
+      setChaNameError(false);
+    }
+    setChaName(value);
   }
   function vessalNumberChange(event) {
     const value = event.target.value;
@@ -480,7 +618,7 @@ export default function VessalRequestForm() {
   }
   return (
     <React.Fragment>
-      <CustomPageHeader pageHeaderText="Vessal Request Form" />
+      <CustomPageHeader pageHeaderText="Vessal Form" />
       <form onSubmit={handleSubmit}>
         <Paper elevation={0}>
           <Box
@@ -556,16 +694,29 @@ export default function VessalRequestForm() {
                           dischargeDateError && "Discharge Date is required",
                       },
                     }}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        id="validity-date-picker"
-                        size="small"
-                      />
-                    )}
+                    // renderInput={(params) => (
+                    //   <TextField
+                    //     {...params}
+                    //     id="validity-date-picker"
+                    //     size="small"
+                    //   />
+                    // )}
                   />
                 </LocalizationProvider>
               </FormControl>
+              <TextField
+                fullWidth
+                size="small"
+                margin="normal"
+                id="chaName"
+                name="ChaName"
+                type="text"
+                label="Cha Name"
+                value={chaName}
+                onChange={ChaNameChange}
+                error={chaNameError}
+                helperText={chaNameError && "Cha Name is required"}
+              />
             </Stack>
           </Box>
           {/* <Stack></Stack> */}
@@ -678,6 +829,308 @@ export default function VessalRequestForm() {
               setBeDetailsfields={setBeDetailsfields}
               handleRemoveFieldBeDetails={handleRemoveFieldBeDetails}
             />
+          ))}
+          <Box sx={{ p: 2 }}>
+            <Button
+              disabled={!tankDetailsCheck }
+              variant="outlined"
+              sx={{
+                p: 1,
+                pr: 3,
+                fontSize: "12px",
+                borderRadius: 6,
+                textTransform: "capitalize",
+              }}
+              color="success"
+              onClick={handleAddFeildTank}
+            >
+              <AddCircleOutlineOutlinedIcon sx={{ mr: 1 }} />
+              Add Tank Details
+            </Button>
+
+            <Button
+              variant="outlined"
+              color="success"
+              sx={{ m: 0, ml: 3, p: 0, borderRadius: 6 }}
+            >
+              <FormControlLabel
+                sx={{
+                  p: 1,
+                  pt: 0,
+                  pb: 0,
+                  textTransform: "capitalize",
+                  "& .MuiFormControlLabel-label": {
+                    fontSize: "0.68rem",
+                  },
+                }}
+                control={
+                  <Checkbox
+                    defaultChecked
+                    value={tankDetailsCheck}
+                    onChange={()=>setTankDetailsCheck(!tankDetailsCheck)}
+                    color="success"
+                  />
+                }
+                label="Tank Details"
+              />
+            </Button>
+          </Box>
+          {tankFields.map((field, index)=>(
+            <Stack key={index} 
+            spacing={2}
+      style={{ display: !tankDetailsCheck ? "none" : "block" }}
+      direction={{ xs: "column" }}
+      sx={{
+        p: 2,
+        pb: 0,
+
+        justifyContent: "start",
+        borderWidth: 1,
+        display: "flex",
+        borderColor: "black",
+      }}
+      wrap="wrap"
+            >
+            <Box
+                    sx={{
+                      position: "relative",
+                      border: "1px solid #ccc",
+                      // bgcolor: !tankDetailsCheck ? "rgb(0 0 0 / 9%)" : "#ffff",
+                      borderRadius: 2,
+                      p: 2,
+                      m: 2,
+                      mt: 2,
+                    }}
+                  >
+                    {/* Title on top border */}
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        position: "absolute",
+                        top: -10,
+                        left: 12,
+                        backgroundColor: "#fff",
+                        px: 1,
+                        fontWeight: 500,
+                        color: "#555",
+                      }}
+                    >
+                      Tank Details {index + 1}
+                    </Typography>
+                    
+                    <Stack
+                              key={index}
+                              spacing={2}
+                              direction={{ xs: "column", md: "row" }}
+                              sx={{
+                                p: 2,
+                                pb: 0,
+                                justifyContent: "start",
+                                borderWidth: 1,
+                                display: "flex",
+                                borderColor: "black",
+                              }}
+                              wrap="wrap"
+                            >
+                               <Box sx={{ width: "100%"}}>
+                                <TankDropDownTwo 
+                                variant="standard"
+                                selectedTank={field.Tank}
+                                setSelectedTank={(value) => {
+                                  if (value === "Select") {
+                                    field.TankError = false;
+                                  } else {
+                                    field.TankError = "";
+                                  }
+                                  const updatedFields = [...tankFields];
+                                  updatedFields[index].Tank = value;
+                                  setTanktankFields(updatedFields);
+                                }}
+                                errorsTank={field.TankError}
+                                setErrorsTank={(value) => {
+                                  const updatedFields = [...tankFields];
+                                  updatedFields[index].TankError = value;
+                                  setTanktankFields(updatedFields);
+                                }}
+                                NotIsList={true}
+                                />
+                               {/* <TextField
+                                  fullWidth
+                                  margin="normal"
+                                  size="small"
+                                  label="Tank"
+                                  id={`Tank_number_${index}`}
+                                  type="number"
+                                  value={field.Tank}
+                                  onChange={(e) => {
+                                    const newFields = [...tankFields];
+                                    const value = e.target.value;
+                    
+                                    if (value === "" || Number(value) === 0) {
+                                      newFields[index].TankError = "Tank is reqired";
+                                    }else if (value < 0) {
+                                      newFields[index].TankError = "Tank number is required";
+                                    }
+                                     else {
+                                      newFields[index].TankError = "";
+                                    }
+                    
+                                    newFields[index].Tank = value;
+                                    setTanktankFields(newFields);
+                                  }}
+                                  error={!!field.TankError}
+                                  helperText={field.TankError || ""}
+                                  variant="standard"
+                                /> */}
+                              </Box>
+                              <Box sx={{ width: "100%"}}>
+                               <WhereHourseDropDown 
+                               variant="standard"
+                               selectedWhereHouse={field.WH_Name}
+                               setSelectedWhereHouse={(value) => {
+                                 if (value === "Select") {
+                                   field.WH_NameEerror = true;
+                                 } else {
+                                   field.WH_NameEerror = false;
+                                 }
+                                 const updatedFields = [...tankFields];
+                                 updatedFields[index].WH_Name = value;
+                                 setTanktankFields(updatedFields);
+                               }}
+                               errorsWhereHouse={field.S_NameError}
+                               setErrorsWhereHouse={(value) => {
+                                 const updatedFields = [...tankFields];
+                                 updatedFields[index].WH_NameEerror = value;
+                                 setTanktankFields(updatedFields);
+                               }}
+                               NotIsList={true}
+                               />
+                              </Box>
+                              <Box sx={{ width: "100%"}}>
+                              <SurveyorDropDown
+                                variant="standard"
+                                selectedSurveyor={field.S_Name}
+                                setSelectedSurveyor={(value) => {
+                                  if (value === "Select") {
+                                    field.S_NameError = true;
+                                  } else {
+                                    field.S_NameError = false;
+                                  }
+                                  const updatedFields = [...tankFields];
+                                  updatedFields[index].S_Name = value;
+                                  setTanktankFields(updatedFields);
+                                }}
+                                errorsSurveyor={field.S_NameError}
+                                setErrorsSurveyor={(value) => {
+                                  const updatedFields = [...tankFields];
+                                  updatedFields[index].S_NameError = value;
+                                  setTanktankFields(updatedFields);
+                                }}
+                                NotIsList={true}
+                                />
+                              </Box>
+                              </Stack>
+                              <Stack 
+                              spacing={2}
+                              direction={{ xs: "column", md: "row" }}
+                              sx={{
+                                p: 2,
+                                pb: 0,
+                                justifyContent: "start",
+                                borderWidth: 1,
+                                display: "flex",
+                                borderColor: "black",
+                              }}
+                              wrap="wrap">
+                              <Box sx={{ width: "100%"}}>
+                                <TextField
+                                  fullWidth
+                                  margin="normal"
+                                  size="small"
+                                  label="Net Quantity"
+                                  id={`bNet_Quntity_${index}`}
+                                  type="number"
+                                  value={field.Quantity}
+                                  onChange={(e) => {
+                                    const newFields = [...tankFields];
+                                    const value = e.target.value;
+                    
+                                    if (value === "" || Number(value) === 0) {
+                                      newFields[index].QuantityError = "Net Quntity is reqired";
+                                    } else {
+                                      newFields[index].QuantityError = "";
+                                    }
+                    
+                                    newFields[index].Quantity = value;
+                                    setTanktankFields(newFields);
+                                  }}
+                                  error={!!field.QuantityError}
+                                  helperText={field.QuantityError || ""}
+                                  variant="standard"
+                                />
+                              </Box>
+                                        
+                           <Box sx={{ width: "100%" }}>
+                         <PortDropDownTwo
+                                     variant="standard"
+                                     selectedPort={field.portName}
+                                     setSelectedPort={(value) => {
+                                       if (value === "Select") {
+                                         field.portNameError = "Port name is required";
+                                       } else {
+                                         field.portNameError = "";
+                                       }
+                                       const updatedFields = [...tankFields];
+                                       updatedFields[index].portName = value;
+                                       setTanktankFields(updatedFields);
+                                     }}
+                                     errorsPortName={field.portNameError}
+                                     setErrorsPortName={(value) => {
+                                       const updatedFields = [...tankFields];
+                                       updatedFields[index].portNameError = value;
+                                       setTanktankFields(updatedFields);
+                                     }}
+                                     NotIsList={true}
+                                   />
+                            </Box>
+                                   <Box sx={{ width: "100%" }}>
+                      <ProductDropDownTwo
+                                  variant="standard"
+                                  selectedProduct={field.Product}
+                                  setSelectedProduct={(value) => {
+                                    if (value === "Select") {
+                                      field.ProductError = true;
+                                    } else {
+                                      field.ProductError = false;
+                                    }
+                                    const updatedFields = [...tankFields];
+                                    updatedFields[index].Product = value;
+                                    setTanktankFields(updatedFields);
+                                  }}
+                                  errorsProduct={field.ProductError}
+                                  setErrorsProduct={(value) => {
+                                    const updatedFields = [...tankFields];
+                                    updatedFields[index].ProductError = value;
+                                    setTanktankFields(updatedFields);
+                                  }}
+                                  NotIsList={true}
+                                />
+                              </Box>
+                             
+                    </Stack>
+             <Box sx={{ display:  "flex", width: "100%", justifyContent: "center" }}>
+          <IconButton
+            aria-label="delete"
+            color="error"
+            size="medium"
+            onClick={() => handleRemoveFeildTank(index)}
+            disabled={tankFields.length === 1}
+          >
+            <DeleteIcon />
+          </IconButton>
+        </Box>
+        </Box>
+            </Stack>
           ))}
           <Stack
             spacing={2}

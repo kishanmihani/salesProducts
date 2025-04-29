@@ -21,8 +21,8 @@ import logouticon from "../../../assets/logouticon.png";
 import logo from "../../../assets/sale.jpeg";
 import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
 import RadioButtonCheckedIcon from "@mui/icons-material/RadioButtonChecked";
-import Logisticicon from "../../../assets/logistic.png";
-import salesicon from "../../../assets/sales.png";
+import { GrMoney } from "react-icons/gr";
+import { RiMoneyDollarBoxFill } from "react-icons/ri";
 const Sidbar = ({ message}) => {
   let pagelist = [];
   let pageView = message?.[0]?.pageView;
@@ -62,10 +62,11 @@ const Sidbar = ({ message}) => {
       sx={{
         // width: 250,
         bgcolor: "white",
-        color: "#1a1a2e",
+        color: "#756f6f",
         height: "100vh",
         display: "flex",
         flexDirection: "column",
+        overflow:"hidden"
       }}
     >
       {/* Top header with close and heading */}
@@ -91,8 +92,9 @@ const Sidbar = ({ message}) => {
           to="/dashboard/sales"
           selected={location.pathname === "/dashboard/sales" || location.pathname.startsWith("/dashboard/sales")}
         >
-          <ListItemIcon sx={{ color: "black" }}>
-            <img src={salesicon} width={20} alt="salesicon" />
+          <ListItemIcon sx={{ color: "#756f6f",fontSize:22 }}>
+          <RiMoneyDollarBoxFill  />
+            {/* <img src={salesicon} width={20} alt="salesicon" /> */}
           </ListItemIcon>
           <ListItemText primary="Sales" />
           {open ? <FaChevronDown /> : <FaChevronRight />}
@@ -105,7 +107,7 @@ const Sidbar = ({ message}) => {
               selected={location.pathname === "/dashboard/sales"}
               sx={{ pl: 4 }} 
             >
-              <ListItemIcon color="#000">
+              <ListItemIcon color="#756f6f">
                 {location.pathname === "/dashboard/sales" ? (
                   <RadioButtonCheckedIcon
                     style={{ height: 17, width: 17, mr: 2 }}
@@ -113,7 +115,7 @@ const Sidbar = ({ message}) => {
                 ) : (
                   <RadioButtonUncheckedIcon
                   
-                    style={{ height: 17, width: 17, mr: 2,color:"#000" }}
+                    style={{ height: 17, width: 17, mr: 2,color:"#756f6f" }}
                   />
                 )}
               </ListItemIcon>
@@ -128,7 +130,7 @@ const Sidbar = ({ message}) => {
               selected={location.pathname === "/dashboard/sales/PendingApprovalForm"}
               sx={{ pl: 4 }} 
             >
-              <ListItemIcon color="#000">
+              <ListItemIcon color="#756f6f">
                 {location.pathname === "/dashboard/sales/PendingApprovalForm" ? (
                   <RadioButtonCheckedIcon
                     style={{ height: 17, width: 17, mr: 2 }}
@@ -136,7 +138,7 @@ const Sidbar = ({ message}) => {
                 ) : (
                   <RadioButtonUncheckedIcon
                   
-                    style={{ height: 17, width: 17, mr: 2,color:"#000" }}
+                    style={{ height: 17, width: 17, mr: 2,color:"#756f6f" }}
                   />
                 )}
               </ListItemIcon>
@@ -151,7 +153,7 @@ const Sidbar = ({ message}) => {
               selected={location.pathname === "/dashboard/sales/Approval_Request_form"}
               sx={{ pl: 4 }} 
             >
-              <ListItemIcon color="#000">
+              <ListItemIcon color="#756f6f">
                 {location.pathname === "/dashboard/sales/Approval_Request_form" ? (
                   <RadioButtonCheckedIcon
                     style={{ height: 17, width: 17, mr: 2 }}
@@ -159,7 +161,7 @@ const Sidbar = ({ message}) => {
                 ) : (
                   <RadioButtonUncheckedIcon
                   
-                    style={{ height: 17, width: 17, mr: 2,color:"#000" }}
+                    style={{ height: 17, width: 17, mr: 2,color:"#756f6f" }}
                   />
                 )}
               </ListItemIcon>
@@ -191,7 +193,10 @@ const Sidbar = ({ message}) => {
           to="/dashboard/Logistic"
           selected={location.pathname.includes("/dashboard/Logistic")}
         >
-          <ListItemIcon sx={{ color: 'white' }}><img src={Logisticicon} width={20} alt="Logistic"></img></ListItemIcon>
+          <ListItemIcon sx={{ color: '#756f6f' ,fontSize:22}}>
+          <GrMoney />
+            {/* <img src={Logisticicon} width={20} alt="Logistic"></img> */}
+            </ListItemIcon>
           <ListItemText primary="Logistic" />
           <FaChevronRight />
         </ListItemButton>
@@ -203,7 +208,7 @@ const Sidbar = ({ message}) => {
               selected={location.pathname === "/dashboard/Logistic"}
               sx={{ pl: 4 }} 
             >
-              <ListItemIcon color="#000">
+              <ListItemIcon color="#756f6f">
                 {location.pathname === "/dashboard/Logistic" ? (
                   <RadioButtonCheckedIcon
                     style={{ height: 17, width: 17, mr: 2 }}
@@ -211,13 +216,13 @@ const Sidbar = ({ message}) => {
                 ) : (
                   <RadioButtonUncheckedIcon
                   
-                    style={{ height: 17, width: 17, mr: 2,color:"#000" }}
+                    style={{ height: 17, width: 17, mr: 2,color:"#756f6f" }}
                   />
                 )}
               </ListItemIcon>
               <ListItemText
                 primaryTypographyProps={{ fontSize: "12px" }}
-                primary="Logistic Request Form"
+                primary="Vhicle Form"
               />
             </ListItemButton>
             <ListItemButton
@@ -226,7 +231,7 @@ const Sidbar = ({ message}) => {
               selected={location.pathname === "/dashboard/Logistic/Logistic_Pending_form"}
               sx={{ pl: 4 }} 
             >
-              <ListItemIcon color="#000">
+              <ListItemIcon color="#756f6f">
                 {location.pathname === "/dashboard/Logistic/Logistic_Pending_form" ? (
                   <RadioButtonCheckedIcon
                     style={{ height: 17, width: 17, mr: 2 }}
@@ -234,13 +239,13 @@ const Sidbar = ({ message}) => {
                 ) : (
                   <RadioButtonUncheckedIcon
                   
-                    style={{ height: 17, width: 17, mr: 2,color:"#000" }}
+                    style={{ height: 17, width: 17, mr: 2,color:"#756f6f" }}
                   />
                 )}
               </ListItemIcon>
               <ListItemText
                 primaryTypographyProps={{ fontSize: "12px" }}
-                primary="Logistic Pending form"
+                primary="Vhicle Pull"
               />
             </ListItemButton>
             <ListItemButton
@@ -249,7 +254,7 @@ const Sidbar = ({ message}) => {
               selected={location.pathname === "/dashboard/Logistic/Vessal_Request_Form"}
               sx={{ pl: 4 }} 
             >
-              <ListItemIcon color="#000">
+              <ListItemIcon color="#756f6f">
                 {location.pathname === "/dashboard/Logistic/Vessal_Request_Form" ? (
                   <RadioButtonCheckedIcon
                     style={{ height: 17, width: 17, mr: 2 }}
@@ -257,22 +262,22 @@ const Sidbar = ({ message}) => {
                 ) : (
                   <RadioButtonUncheckedIcon
                   
-                    style={{ height: 17, width: 17, mr: 2,color:"#000" }}
+                    style={{ height: 17, width: 17, mr: 2,color:"#756f6f" }}
                   />
                 )}
               </ListItemIcon>
               <ListItemText
                 primaryTypographyProps={{ fontSize: "12px" }}
-                primary="Vessal Request Form"
+                primary="Vessal Form"
               />
             </ListItemButton>
-            <ListItemButton
+            {/* <ListItemButton
               component={NavLink}
               to="/dashboard/Logistic/Pdf_Bill"
               selected={location.pathname === "/dashboard/Logistic/Pdf_Bill"}
               sx={{ pl: 4 }} 
             >
-              <ListItemIcon color="#000">
+              <ListItemIcon color="#756f6f">
                 {location.pathname === "/dashboard/Logistic/Pdf_Bill" ? (
                   <RadioButtonCheckedIcon
                     style={{ height: 17, width: 17, mr: 2 }}
@@ -280,7 +285,7 @@ const Sidbar = ({ message}) => {
                 ) : (
                   <RadioButtonUncheckedIcon
                   
-                    style={{ height: 17, width: 17, mr: 2,color:"#000" }}
+                    style={{ height: 17, width: 17, mr: 2,color:"#756f6f" }}
                   />
                 )}
               </ListItemIcon>
@@ -288,7 +293,30 @@ const Sidbar = ({ message}) => {
                 primaryTypographyProps={{ fontSize: "12px" }}
                 primary="Logistic Invoice Bill"
               />
-            </ListItemButton>
+            </ListItemButton> */}
+            {/* <ListItemButton
+              component={NavLink}
+              to="/dashboard/Logistic/Logistic_InVoice_Delivery"
+              selected={location.pathname === "/dashboard/Logistic/Logistic_InVoice_Delivery"}
+              sx={{ pl: 4 }} 
+            >
+              <ListItemIcon color="#756f6f">
+                {location.pathname === "/dashboard/Logistic/Logistic_InVoice_Delivery" ? (
+                  <RadioButtonCheckedIcon
+                    style={{ height: 17, width: 17, mr: 2 }}
+                  ></RadioButtonCheckedIcon>
+                ) : (
+                  <RadioButtonUncheckedIcon
+                  
+                    style={{ height: 17, width: 17, mr: 2,color:"#756f6f" }}
+                  />
+                )}
+              </ListItemIcon>
+              <ListItemText
+                primaryTypographyProps={{ fontSize: "11.5px" }}
+                primary="Logistic Invoice Delivery"
+              />
+            </ListItemButton> */}
           </List>
           </Collapse>
       </List>
