@@ -139,9 +139,7 @@ const TblvessalDetails=[vessal_Name,vessal_No,formatDateToUS(discarge_Date),chA_
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={12}>
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Box sx={{ margin: 1 }}>
-              <Typography variant="h6" gutterBottom component="div">
-                Vessal Details
-              </Typography>
+              
                  {vessalLoading && <p>Loading . . .</p>}
         {vessalError && <p>error {vessalError}</p>}
           { vessaldata.length !==0 && 

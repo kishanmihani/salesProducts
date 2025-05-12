@@ -11,6 +11,7 @@ import {
   Typography,
   Button,
 } from "@mui/material";
+import PropTypes from "prop-types";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -22,22 +23,23 @@ import ProductDropDownTwo from "../../../../commonComponent/ProductDropDown/Prod
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import TankForm from "../TankForm/TankForm";
 import XBondForm from "../XBondFrom/XBondFrom";
+
 export default function BlDataItems({
-  field,
+  field,//
   disabled,
-  index,
-  fields,
-  setFields,
+  index,//
+  fields,//
+  setFields,//
   handleRemoveFieldBlData,
-  validateFields,
-  vessalInfo
+  validateFields,//
+  vessalInfo//
 }) {
   const [dataInfo,setDataInfo] = useState({BlNo:0,NetQuantity:0,grossQuantity:0,vessalName:0, vessalNumber:0})
   const [isValid,setIsValid] = useState(false);
   const [open, setOpen] = useState(false);
   const [userId] = useState(JSON.parse(localStorage.getItem("userInfo"))?.id);
   const [xbondOpen,setXbondOpen] = useState(false)
-  const verify = async (e) => {
+  const verify = (e) => {
     let value=e.target.value;
     setIsValid(validateFields(field, index));
     setDataInfo({BlNo:field.BLNo,NetQuantity:field.quantity,grossQuantity:field.grossQuantity,otrQut:field.otrQut,vessalName:vessalInfo[0], vessalNumber:vessalInfo[1]})
@@ -514,3 +516,23 @@ const calculatePercentage = () => {
     </React.Fragment>
   );
 }
+BlDataItems.propType = {
+  vessalInfo:PropTypes.array,
+  index:PropTypes.any,
+  validateFields:PropTypes.func,
+  setFields:PropTypes.func,
+  handleRemoveFieldBlData:PropTypes.func,
+  field:PropTypes.object,
+  fields:PropTypes.array,
+   disabled:PropTypes.bool
+};
+BlDataItems.defaultProps = {
+  vessalInfo:[],
+  index:0,
+  validateFields:()=>{},
+  setFields:()=>{},
+  handleRemoveFieldBlData:()=>{},
+  field:{},
+  fields:[],
+   disabled:false
+};

@@ -7,7 +7,6 @@ import {
   Checkbox,
   FormControl,
   FormControlLabel,
-  IconButton,
   Paper,
   Stack,
   TextField,
@@ -18,20 +17,26 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOutlined";
-import BeDetailsItem from "./BeDetailsItems/BeDetailsItems";
 import BlDataItems from "./blDataItems/BlDataItems";
 import { authAxios } from "../../../utils/authAxios";
 import dayjs from "dayjs";
 import CustomeAlerts from "../../../commonComponent/CustomeAlert/CustomeAlert";
-// import DeleteIcon from "@mui/icons-material/Delete";
-// import PortDropDownTwo from "../../../commonComponent/PortDropdown/ProtDropDowntwo";
-// import ProductDropDownTwo from "../../../commonComponent/ProductDropDown/ProductDropDownTwo";
-// import TankDropDownTwo from "../../../commonComponent/TankDropDown/TankDropDownTwo";
-// import SurveyorDropDown from "../../../commonComponent/SurveyorDropDown/SurveyorDropDown";
-// import WhereHourseDropDown from "../../../commonComponent/WhereHourseDropDown/WhereHourseDropDown";
-import { vessalDataListapi, VesselDataBEapi, VesselDataBLapi, VesselDataTankapi } from "../../../Config/Api";
+import { vessalDataListapi, VesselDataBLapi} from "../../../Config/Api";
 
-const instialValueBlData = [
+export default function VessalRequestForm() {
+  const BlId=useId()
+  const [vessalName, setVessalName] = useState("");
+  const [vessalNameError, setVessalNameError] = useState(false);
+  const [chaName, setChaName] = useState("");
+  const [chaNameError, setChaNameError] = useState(false);
+  const [vessalNumber, setVessalNumber] = useState("");
+  const [vessalNumberError, setVessalNumberError] = useState({
+    error: "",
+    valid: true,
+  });
+  const [dischargeDate, setDisChargeDate] = useState(null);
+  const [dischargeDateError, setDischargeDateError] = useState(false);
+  const [fields, setFields] = useState([
   {
     shippingName: "",
     shippingNameError: "",
@@ -58,21 +63,7 @@ const instialValueBlData = [
     otrpersent:0,
     otrpersentError:""
   }
-];
-export default function VessalRequestForm() {
-  const BlId=useId()
-  const [vessalName, setVessalName] = useState("");
-  const [vessalNameError, setVessalNameError] = useState(false);
-  const [chaName, setChaName] = useState("");
-  const [chaNameError, setChaNameError] = useState(false);
-  const [vessalNumber, setVessalNumber] = useState("");
-  const [vessalNumberError, setVessalNumberError] = useState({
-    error: "",
-    valid: true,
-  });
-  const [dischargeDate, setDisChargeDate] = useState(null);
-  const [dischargeDateError, setDischargeDateError] = useState(false);
-  const [fields, setFields] = useState(instialValueBlData);
+]);
   // const [beDetailsfields, setBeDetailsfields] = useState(instialValueBedetails);
   
   const [blDataCheck, setBlDataCheck] = useState(true);
@@ -303,18 +294,47 @@ export default function VessalRequestForm() {
   }
   
   function BlReset(){
-    setFields(instialValueBlData);
+    setFields([
+  {
+    shippingName: "",
+    shippingNameError: "",
+    quantity: 0,
+    quantityError: "",
+    BLNo: 0,
+    BLNoError: "",
+    blDate: null,
+    blDateError: false,
+    billing:"Select",
+    billingError:false,
+    portName:"Select",
+    portNameError:false,
+    ProductName:"Select",
+    ProductNameError:false,
+    billOfEntryError:"",
+    billOfEntry:"",
+    beDate:null,
+    beDateError:false,
+    grossQuantity:0,
+    grossQuantityError:"",
+    otrQut:0,
+    otrQutError:"",
+    otrpersent:0,
+    otrpersentError:""
+  }]);//
   }
   function handleReset() {
-    setVessalName("");
-    setVessalNameError(false);
-    setChaName("");
-    setChaNameError(false)
-    setVessalNumber("");
-    setVessalNumberError({ error: "", valid: true });
-    setDisChargeDate(null);
-    // BeReset()
-    BlReset()
+     setVessalName("");
+  setVessalNameError(false);
+
+  setChaName("");
+  setChaNameError(false);
+
+  setVessalNumber("");
+  setVessalNumberError({ error: "", valid: true });
+
+  setDisChargeDate(null);
+
+  BlReset();
   }
   function vessalNameChange(event) {
     let value = event.target.value;
@@ -478,7 +498,9 @@ export default function VessalRequestForm() {
     console.log(isValid + "" + index);
     return isValid;
   };
-  
+  React.useEffect(() => {
+  handleReset() // reset when component mounts
+}, []);
   return (
     <React.Fragment>
       <CustomPageHeader pageHeaderText="Vessal Form" />
