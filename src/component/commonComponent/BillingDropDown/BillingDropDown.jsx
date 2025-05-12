@@ -16,8 +16,12 @@ export default function BillingDropDown({ billing, setBilling,errors }) {
     setBilling(event.target.value);
   };
   useEffect(() => {
-    if (optionlist?.length == 0 && !optionlistCheck)
-      authAxios
+    if (optionlist?.length == 0 && !optionlistCheck){
+      fatchList(userId);
+    }
+  }, [optionlist, optionlistCheck,userId]);
+  function fatchList(){
+    authAxios
         .post(
           "BituRep/Api/Account/Company_List",
           JSON.stringify({
@@ -32,7 +36,7 @@ export default function BillingDropDown({ billing, setBilling,errors }) {
           console.error(err);
           setOptionlistCheck(true);
         });
-  }, [optionlist, userId, optionlistCheck]);
+  }
   useEffect(() => {
     if (billing === "Not in List") {
       setOpen(true);
@@ -49,8 +53,11 @@ export default function BillingDropDown({ billing, setBilling,errors }) {
       }else{
       setOptionlist((prev) => [...prev, { companylist: addtolist }]);
       setBilling(() => addtolist);
-      setAddtolist("")
+      // setOptionlistCheck(false); 
+      // setOptionlist([])
+      fatchList(userId)
       }
+      setAddtolist("")
     }
   }, [addtolist, setBilling]);
   return (

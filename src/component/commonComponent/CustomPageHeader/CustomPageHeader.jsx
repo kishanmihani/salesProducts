@@ -19,7 +19,7 @@ export default function CustomPageHeader({pageHeaderText=""}) {
                     display: "flex",
                   }}
                 >
-                  <Button
+                <Button
                     onClick={() => navigate(-1)}
                     style={{
                       borderRadius: "50%",
@@ -30,7 +30,7 @@ export default function CustomPageHeader({pageHeaderText=""}) {
                     }}
                   >
                     <ArrowBackIcon width={80} color="#000" />
-                  </Button>
+                  </Button> 
                   <Typography variant="h5" align="center" width="100%">
                     {pageHeaderText}
                   </Typography>

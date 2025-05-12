@@ -68,7 +68,7 @@ export default function PortDropDownTwo({ selectedPort, setSelectedPort,errorsPo
   }, [addtolist, setSelectedPort]);
   return (
     <React.Fragment>
-      <FormControl variant={variant} fullWidth size="small" margin="normal" error={errorsPortName}>
+      <FormControl variant={variant} fullWidth size="small" error={errorsPortName}>
         <InputLabel id="demo-simple-select-label">Port</InputLabel>
         <Select
           labelId="demo-simple-select-label"

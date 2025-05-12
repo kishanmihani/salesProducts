@@ -18,6 +18,7 @@ import Pdfbilles from './component/sales/Pdfbilles/Pdfbilles';
 import LogisticListEdit from './component/Dashboard/logistic/LogisticList/LogisticListEdit';
 import LogicInvoiceDo from './component/sales/Pdfbilles/LogicInvoiceDo';
 import "@fontsource/inter";
+import VessalList from './component/Dashboard/logistic/vessalList/VessalList';
 function App() {
   return (
     <React.Fragment>
@@ -47,6 +48,7 @@ function App() {
             <Route path='logistic_list_Edit_Form/:id?' element={<LogisticListEdit />} />
             
             <Route path='Vessal_Request_Form' element={<VessalRequestForm />} />
+            <Route path='Vessal_List' element={<VessalList />} />
             <Route path='Pdf_Bill' element={<Pdfbilles />} />
             <Route path='Logistic_InVoice_Delivery' element={<LogicInvoiceDo />} />
             </Route>

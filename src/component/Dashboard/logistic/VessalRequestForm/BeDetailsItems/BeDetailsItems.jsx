@@ -68,84 +68,7 @@ const BeDetailsItem = ({
         >
           Be details {index + 1}
         </Typography>
-        <Stack
-          key={index}
-          spacing={2}
-          direction={{ xs: "column", md: "row" }}
-          sx={{
-            p: 2,
-            pb: 0,
-            justifyContent: "start",
-            borderWidth: 1,
-            display: "flex",
-            borderColor: "black",
-          }}
-          wrap="wrap"
-        >
-          <BillingDropDownTwo
-            billing={field.billing}
-            variant="standard"
-            setBilling={(value) => {
-              if (value === "Select") {
-                field.billingError = true;
-              } else {
-                field.billingError = false;
-              }
-              const updatedFields = [...beDetailsfields];
-              updatedFields[index].billing = value;
-              setBeDetailsfields(updatedFields);
-            }}
-            errorsBilling={field.billingError}
-            setErrorsBilling={(value) => {
-              const updatedFields = [...beDetailsfields];
-              updatedFields[index].billingError = value;
-              setBeDetailsfields(updatedFields);
-            }}
-            NotIsList={true}
-          />
-          <ProductDropDownTwo
-            variant="standard"
-            selectedProduct={field.beProductName}
-            setSelectedProduct={(value) => {
-              if (value === "Select") {
-                field.beProductNameError = true;
-              } else {
-                field.beProductNameError = false;
-              }
-              const updatedFields = [...beDetailsfields];
-              updatedFields[index].beProductName = value;
-              setBeDetailsfields(updatedFields);
-            }}
-            errorsProduct={field.beProductNameError}
-            setErrorsProduct={(value) => {
-              const updatedFields = [...beDetailsfields];
-              updatedFields[index].beProductNameError = value;
-              setBeDetailsfields(updatedFields);
-            }}
-            NotIsList={true}
-          />
-          <PortDropDownTwo
-            variant="standard"
-            selectedPort={field.portName}
-            setSelectedPort={(value) => {
-              if (value === "Select") {
-                field.portNameError = "Port name is required";
-              } else {
-                field.portNameError = "";
-              }
-              const updatedFields = [...beDetailsfields];
-              updatedFields[index].portName = value;
-              setBeDetailsfields(updatedFields);
-            }}
-            errorsPortName={field.portNameError}
-            setErrorsPortName={(value) => {
-              const updatedFields = [...beDetailsfields];
-              updatedFields[index].portNameError = value;
-              setBeDetailsfields(updatedFields);
-            }}
-            NotIsList={true}
-          />
-        </Stack>
+        
         <Stack
           key={index}
           spacing={2}
@@ -223,7 +146,7 @@ const BeDetailsItem = ({
             />
           </Box>
 
-          <Box sx={{ width: "100%" }}>
+          {/* <Box sx={{ width: "100%" }}>
             <TextField
               fullWidth
               size="small"
@@ -248,7 +171,7 @@ const BeDetailsItem = ({
               helperText={field.netQuntityError || ""}
               variant="standard"
             />
-          </Box>
+          </Box> */}
         </Stack>
         {/* <Stack
           key={index}

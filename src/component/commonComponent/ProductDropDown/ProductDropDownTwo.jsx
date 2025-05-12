@@ -74,7 +74,7 @@ export default function ProductDropDownTwo({
   }, [addtolist, setSelectedProduct]);
   return (
     <React.Fragment>
-      <FormControl variant={variant} fullWidth size="small" margin="normal"error={errorsProduct}>
+      <FormControl variant={variant} fullWidth size="small" error={errorsProduct}>
         <InputLabel id="demo-simple-select-label">Product name</InputLabel>
         <Select
           labelId="demo-simple-select-label"

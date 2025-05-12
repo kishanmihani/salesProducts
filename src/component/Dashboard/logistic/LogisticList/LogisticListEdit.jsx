@@ -62,10 +62,9 @@ import ProductDropDownTwo from "../../../commonComponent/ProductDropDown/Product
           );
 
           console.log(table_id)
-          response.data.filter(data =>{ debugger;if(data.Table_id == table_id){
-            console.log(data)
-          }})
-          setTableData(response.data);
+          setTableData(response.data.filter(data =>data.table_id == 53));
+          // setVessalNmae(tableData.)
+          
         } catch (error) {
           console.error(error);
         } finally {
@@ -76,7 +75,11 @@ import ProductDropDownTwo from "../../../commonComponent/ProductDropDown/Product
       if (!checkTableData && tableData.length === 0) {
         fetchTableData();
       }
-    }, [checkTableData, tableData, userId]);
+      if(tableData.length !== 0){
+        console.log(tableData?.[0].customer_Name);
+        
+      }
+    }, [checkTableData, setTableData,tableData, userId]);
     const handleSubmit = async (e) => {
       e.preventDefault();
     

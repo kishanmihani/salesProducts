@@ -4,7 +4,7 @@ import { FormControl,FormHelperText, InputLabel, MenuItem, Select } from "@mui/m
 import { authAxios } from "../../utils/authAxios";
 import AddlistDialogBox from "../AddlistDialogBox/AddlistDialogBox";
 import { alhabetelysort } from "../../utils/Sorted";
-export default function BillingDropDownTwo({ billing, setBilling,errorsBilling,setErrorsBilling,variant,NotIsList }) {
+export default function BillingDropDownTwo({ billing, setBilling,errorsBilling,setErrorsBilling,variant,NotIsList,label }) {
   const [optionlist, setOptionlist] = useState([]);
   const [open, setOpen] = useState(false);
   const [addlabelPopup, setAddlabelPopup] = useState("");
@@ -61,14 +61,14 @@ export default function BillingDropDownTwo({ billing, setBilling,errorsBilling,s
   }, [addtolist, setBilling]);
   return (
     <React.Fragment>
-      <FormControl variant={variant} fullWidth size="small" margin="normal"error={errorsBilling}>
-        <InputLabel id="demo-simple-select-label">Billing</InputLabel>
+      <FormControl variant={variant} fullWidth size="small"error={errorsBilling}>
+        <InputLabel id="demo-simple-select-label">{label !=="" ? label :  "Billing"}</InputLabel>
         <Select
           labelId="demo-simple-select-label"
           id="demo-simple-select"
           value={billing}
           name="Billing name"
-          label="Billing"
+          label={label !=="" ? label :  "Billing"}
           defaultValue="Select"
           onChange={handleChange}
         >
@@ -101,11 +101,13 @@ BillingDropDownTwo.propType = {
   errorsBilling: PropTypes.bool.isRequired,
   setErrorsBilling: PropTypes.func.isRequired,
   variant:PropTypes.string,
+  label:PropTypes.string
 };
 BillingDropDownTwo.defaultProps = {
   billing: "Select",
   setBilling: () => {},
   errorsBilling:false,
   setErrorsBilling:() => {} ,
-  variant:"outlined"
+  variant:"outlined",
+  label:""
 };

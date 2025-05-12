@@ -113,7 +113,7 @@ export default function Logisticlist() {
       email: 'Email: logistic@combustenergy.com',
       contact: 'Contact: 9136964775 / 8796856716',
       deliveryOrderTitle: 'DELIVERY ORDER',
-      date: `Date: ${row?.entry_Date}`,
+      date: `Date: ${(row?.entry_Date)}`,
       recipient: 'To,',
       consignee: 'AGIES TERMINAL',
       location: row?.port_Name,
