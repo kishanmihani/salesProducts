@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import {
   FormControl,
@@ -42,6 +42,19 @@ export default function ProductDropDown({
           setOptionlistCheck(true);
         });
   }, [optionlist, userId, optionlistCheck]);
+ const fetchList = useCallback(async () => {
+  try {
+    const res = await authAxios.post(
+      'BituRep/Api/Account/Product_List',
+      JSON.stringify({ user_id: userId })
+    );
+    setOptionlist(res.data);
+    // setOptionlistCheck(true);
+  } catch (err) {
+    console.error(err);
+    // setOptionlistCheck(true);
+  }
+}, [userId]);
   useEffect(() => {
     if (selectedProduct === "Not in List") {
       setOpen(true);
@@ -55,13 +68,15 @@ export default function ProductDropDown({
       if(addtolist ==="Select"){
         setSelectedProduct(() => addtolist);
         setAddtolist("");
+        fetchList();
       }else{
+        fetchList();
       setOptionlist((prev) => [...prev, { product_list: addtolist }]);
       setSelectedProduct(() => addtolist);
       setAddtolist("");
       }
     }
-  }, [addtolist, setSelectedProduct]);
+  }, [addtolist, setSelectedProduct,fetchList]);
   return (
     <React.Fragment>
       <FormControl fullWidth size="small" margin="normal"helperText={errors?.['Product name']} error={!!errors?.['Product name']}>

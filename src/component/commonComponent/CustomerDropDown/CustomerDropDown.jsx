@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { authAxios } from "../../utils/authAxios";
@@ -48,15 +48,30 @@ export default function CustomerDropDown({
   useEffect(() => {
     if (addtolist !== "") {
       if(addtolist ==="Select"){
-        setSelectedCustomer(() => addtolist)
-        setAddtolist("")
+        setSelectedCustomer(() => addtolist);
+        setAddtolist("");
+        fetchList();
       }else{
+        fetchList();
       setOptionlist((prev) => [...prev, { customer_list: addtolist }]);
       setSelectedCustomer(() => addtolist);
       setAddtolist("")
       }
     }
-  }, [addtolist, setSelectedCustomer]);
+  }, [addtolist, setSelectedCustomer,fetchList]);
+  const fetchList = useCallback(async () => {
+                     try {
+                       const res = await authAxios.post(
+                         "BituRep/Api/Account/Customer_List",
+                         JSON.stringify({ user_id: userId })
+                       );
+                       setOptionlist(res.data);
+                       // setOptionlistCheck(true);
+                     } catch (err) {
+                       console.error(err);
+                       // setOptionlistCheck(true);
+                     }
+                   }, [userId]);
   return (
     <React.Fragment>
       <FormControl fullWidth size="small" margin="normal"error={!!errors?.['Customer name']}>

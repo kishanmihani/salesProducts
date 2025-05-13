@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import PropTypes from "prop-types";
 import { authAxios } from "../../utils/authAxios";
 import {
@@ -56,7 +56,7 @@ export default function TankDropDownTwo({selectedTank,
           setOpen(true);
           setAddlabelPopup("Add Tank List");
     
-          setAddPortlink("BituRep/Api/Account/Tank_List_Update");
+          setAddPortlink("BituRep/Api/Account/Tank_List");
         }
       }, [selectedTank]);
       useEffect(() => {
@@ -64,13 +64,28 @@ export default function TankDropDownTwo({selectedTank,
             if(addtolist ==="Select"){
               setSelectedTank( addtolist);
               setAddtolist("");
+              fetchList();
             }else{
+              fetchList();
             setOptionlist((prev) => [...prev, { tank_list: addtolist }]);
             setSelectedTank( addtolist);
             setAddtolist("");
             }
           }
-        }, [addtolist, setSelectedTank]);
+        }, [addtolist, setSelectedTank,fetchList]);
+        const fetchList = useCallback(async () => {
+               try {
+                 const res = await authAxios.post(
+                   "BituRep/Api/Account/Tank_List",
+                   JSON.stringify({ user_id: userId })
+                 );
+                 setOptionlist(res.data);
+                 // setOptionlistCheck(true);
+               } catch (err) {
+                 console.error(err);
+                 // setOptionlistCheck(true);
+               }
+             }, [userId]);
   return (
     <React.Fragment>
       <FormControl variant={variant} fullWidth size="small" margin="normal"error={errorsTank}>

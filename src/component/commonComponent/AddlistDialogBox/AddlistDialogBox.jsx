@@ -42,6 +42,7 @@ export default function AddlistDialogBox({
           handleClose();
         } else {
           Invalid_alert(response?.data?.[0]?.massage);
+          setAddtolist("Select")
         }
       })
       .catch((err) => Invalid_alert(err?.data?.[0]?.massage));

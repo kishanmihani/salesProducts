@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { FormControl,FormHelperText, InputLabel, MenuItem, Select } from "@mui/material";
 import { authAxios } from "../../utils/authAxios";
@@ -51,14 +51,29 @@ export default function BillingDropDownTwo({ billing, setBilling,errorsBilling,s
     if (addtolist !== "") {
       if(addtolist ==="Select"){
         setBilling(() => addtolist)
-        setAddtolist("")
+        setAddtolist("");
+        fetchList();
       }else{
+        fetchList();
       setOptionlist((prev) => [...prev, { companylist: addtolist }]);
       setBilling(() => addtolist);
       setAddtolist("")
       }
     }
-  }, [addtolist, setBilling]);
+  }, [addtolist, setBilling,fetchList]);
+  const fetchList = useCallback(async () => {
+     try {
+       const res = await authAxios.post(
+         "BituRep/Api/Account/Company_List",
+         JSON.stringify({ user_id: userId })
+       );
+       setOptionlist(res.data);
+       // setOptionlistCheck(true);
+     } catch (err) {
+       console.error(err);
+       // setOptionlistCheck(true);
+     }
+   }, [userId]);
   return (
     <React.Fragment>
       <FormControl variant={variant} fullWidth size="small"error={errorsBilling}>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { authAxios } from "../../utils/authAxios";
@@ -17,11 +17,8 @@ export default function BillingDropDown({ billing, setBilling,errors }) {
   };
   useEffect(() => {
     if (optionlist?.length == 0 && !optionlistCheck){
-      fatchList(userId);
-    }
-  }, [optionlist, optionlistCheck,userId]);
-  function fatchList(){
-    authAxios
+      // fatchList(userId);
+      authAxios
         .post(
           "BituRep/Api/Account/Company_List",
           JSON.stringify({
@@ -36,7 +33,9 @@ export default function BillingDropDown({ billing, setBilling,errors }) {
           console.error(err);
           setOptionlistCheck(true);
         });
-  }
+    }
+  }, [optionlist, optionlistCheck,userId]);
+
   useEffect(() => {
     if (billing === "Not in List") {
       setOpen(true);
@@ -49,17 +48,32 @@ export default function BillingDropDown({ billing, setBilling,errors }) {
     if (addtolist !== "") {
       if(addtolist ==="Select"){
         setBilling(() => addtolist)
-        setAddtolist("")
+        setAddtolist("");
+        fetchList()
       }else{
+        fetchList()
       setOptionlist((prev) => [...prev, { companylist: addtolist }]);
       setBilling(() => addtolist);
       // setOptionlistCheck(false); 
       // setOptionlist([])
-      fatchList(userId)
+setAddtolist("");      
       }
       setAddtolist("")
     }
-  }, [addtolist, setBilling]);
+  }, [addtolist, setBilling,fetchList]);
+  const fetchList = useCallback(async () => {
+   try {
+     const res = await authAxios.post(
+       "BituRep/Api/Account/Company_List",
+       JSON.stringify({ user_id: userId })
+     );
+     setOptionlist(res.data);
+     // setOptionlistCheck(true);
+   } catch (err) {
+     console.error(err);
+     // setOptionlistCheck(true);
+   }
+ }, [userId]);
   return (
     <React.Fragment>
       <FormControl fullWidth size="small" error={!!errors?.['Billing name']}>

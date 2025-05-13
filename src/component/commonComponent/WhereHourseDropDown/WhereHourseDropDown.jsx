@@ -1,4 +1,4 @@
-import React ,{ useEffect } from 'react'
+import React ,{ useCallback, useEffect } from 'react'
 // import React, { useEffect } from 'react'
 import PropTypes from "prop-types";
 import { authAxios } from "../../utils/authAxios";
@@ -53,7 +53,20 @@ export default function WhereHourseDropDown(
                                                     setOptionlistCheck(true);
                                                   });
                                             }, [optionlist, userId, optionlistCheck]);
-                                        useEffect(() => {
+                                        const fetchList = useCallback(async () => {
+                                          try {
+                                            const res = await authAxios.post(
+                                              wareHouseListapi,
+                                              JSON.stringify({ user_id: userId })
+                                            );
+                                            setOptionlist(res.data);
+                                            // setOptionlistCheck(true);
+                                          } catch (err) {
+                                            console.error(err);
+                                            // setOptionlistCheck(true);
+                                          }
+                                        }, [userId]);
+                                            useEffect(() => {
                                             if (selectedWhereHouse === "Not in List") {
                                               setOpen(true);
                                               setAddlabelPopup("Add Tank List");
@@ -66,13 +79,15 @@ export default function WhereHourseDropDown(
                                                 if(addtolist ==="Select"){
                                                   setSelectedWhereHouse( addtolist);
                                                   setAddtolist("");
+                                                  fetchList();
                                                 }else{
+                                                  fetchList();
                                                 setOptionlist((prev) => [...prev, { warehouse_list: addtolist }]);
                                                 setSelectedWhereHouse( addtolist);
                                                 setAddtolist("");
                                                 }
                                               }
-                                            }, [addtolist, setSelectedWhereHouse]);
+                                            }, [addtolist, fetchList,setSelectedWhereHouse]);
   return (
     <React.Fragment>
         <FormControl variant={variant} fullWidth size="small" margin="normal"error={errorsWhereHouse}>

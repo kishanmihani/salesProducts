@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import {
   FormControl,
@@ -52,13 +52,28 @@ export default function PortDropDown({ selectedPort, setSelectedPort,errors }) {
       if(addtolist ==="Select"){
         setSelectedPort(() => addtolist);
         setAddtolist("");
+        fetchList();
       }else{
+        fetchList();
       setOptionlist((prev) => [...prev, { port_list: addtolist }]);
       setSelectedPort(() => addtolist);;
       setAddtolist("");
       }
     }
-  }, [addtolist, setSelectedPort]);
+  }, [addtolist, setSelectedPort,fetchList]);
+  const fetchList = useCallback(async () => {
+       try {
+         const res = await authAxios.post(
+           "BituRep/Api/Account/Post_List",
+           JSON.stringify({ user_id: userId })
+         );
+         setOptionlist(res.data);
+         // setOptionlistCheck(true);
+       } catch (err) {
+         console.error(err);
+         // setOptionlistCheck(true);
+       }
+     }, [userId]);
   return (
     <React.Fragment>
       <FormControl fullWidth size="small" margin="normal" error={!!errors?.['Port name']}>

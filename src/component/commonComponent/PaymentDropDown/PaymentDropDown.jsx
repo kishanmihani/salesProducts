@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import {
   FormControl,
@@ -56,13 +56,28 @@ export default function PaymentDropDown({
       if(addtolist ==="Select"){
         setSelectedPayment(() => addtolist);
         setAddtolist("");
+        fetchList();
       }else{
+        fetchList();
       setOptionlist((prev) => [...prev, { payment_list: addtolist }]);
       setSelectedPayment(() => addtolist);
       setAddtolist("")
       }
     }
-  }, [addtolist, setSelectedPayment]);
+  }, [addtolist, setSelectedPayment,fetchList]);
+  const fetchList = useCallback(async () => {
+                 try {
+                   const res = await authAxios.post(
+                     "BituRep/Api/Account/Payment_List",
+                     JSON.stringify({ user_id: userId })
+                   );
+                   setOptionlist(res.data);
+                   // setOptionlistCheck(true);
+                 } catch (err) {
+                   console.error(err);
+                   // setOptionlistCheck(true);
+                 }
+               }, [userId]);
   return (
     <React.Fragment>
       <FormControl fullWidth size="small" margin="normal" error={!!errors?.['Payment name']}>
