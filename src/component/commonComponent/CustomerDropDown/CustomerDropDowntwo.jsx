@@ -50,6 +50,20 @@ export default function CustomerDropDownTwo({
       setAddPortlink("BituRep/Api/Account/Customer_List_Update");
     }
   }, [selectedCustomer]);
+
+  const fetchList = useCallback(async () => {
+                   try {
+                     const res = await authAxios.post(
+                       "BituRep/Api/Account/Customer_List",
+                       JSON.stringify({ user_id: userId })
+                     );
+                     setOptionlist(res.data);
+                     // setOptionlistCheck(true);
+                   } catch (err) {
+                     console.error(err);
+                     // setOptionlistCheck(true);
+                   }
+                 }, [userId]);
   useEffect(() => {
     if (addtolist !== "") {
       if(addtolist ==="Select"){
@@ -64,19 +78,7 @@ export default function CustomerDropDownTwo({
       }
     }
   }, [addtolist, setSelectedCustomer,fetchList]);
-  const fetchList = useCallback(async () => {
-                   try {
-                     const res = await authAxios.post(
-                       "BituRep/Api/Account/Customer_List",
-                       JSON.stringify({ user_id: userId })
-                     );
-                     setOptionlist(res.data);
-                     // setOptionlistCheck(true);
-                   } catch (err) {
-                     console.error(err);
-                     // setOptionlistCheck(true);
-                   }
-                 }, [userId]);
+  
   return (
     <React.Fragment>
       <FormControl fullWidth size="small" margin="normal"error={errorsCustomerName}>

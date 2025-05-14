@@ -51,6 +51,19 @@ export default function PaymentDropDown({
       setAddPortlink("BituRep/Api/Account/Payment_List_Update");
     }
   }, [selectedPayment]);
+  const fetchList = useCallback(async () => {
+                 try {
+                   const res = await authAxios.post(
+                     "BituRep/Api/Account/Payment_List",
+                     JSON.stringify({ user_id: userId })
+                   );
+                   setOptionlist(res.data);
+                   // setOptionlistCheck(true);
+                 } catch (err) {
+                   console.error(err);
+                   // setOptionlistCheck(true);
+                 }
+               }, [userId]);
   useEffect(() => {
     if (addtolist !== "") {
       if(addtolist ==="Select"){
@@ -65,19 +78,7 @@ export default function PaymentDropDown({
       }
     }
   }, [addtolist, setSelectedPayment,fetchList]);
-  const fetchList = useCallback(async () => {
-                 try {
-                   const res = await authAxios.post(
-                     "BituRep/Api/Account/Payment_List",
-                     JSON.stringify({ user_id: userId })
-                   );
-                   setOptionlist(res.data);
-                   // setOptionlistCheck(true);
-                 } catch (err) {
-                   console.error(err);
-                   // setOptionlistCheck(true);
-                 }
-               }, [userId]);
+  
   return (
     <React.Fragment>
       <FormControl fullWidth size="small" margin="normal" error={!!errors?.['Payment name']}>

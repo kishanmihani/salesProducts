@@ -47,6 +47,19 @@ export default function BillingDropDownTwo({ billing, setBilling,errorsBilling,s
       setAddPortlink("BituRep/Api/Account/Company_List_Update");
     }
   }, [billing]);
+    const fetchList = useCallback(async () => {
+     try {
+       const res = await authAxios.post(
+         "BituRep/Api/Account/Company_List",
+         JSON.stringify({ user_id: userId })
+       );
+       setOptionlist(res.data);
+       // setOptionlistCheck(true);
+     } catch (err) {
+       console.error(err);
+       // setOptionlistCheck(true);
+     }
+   }, [userId]);
   useEffect(() => {
     if (addtolist !== "") {
       if(addtolist ==="Select"){
@@ -61,19 +74,7 @@ export default function BillingDropDownTwo({ billing, setBilling,errorsBilling,s
       }
     }
   }, [addtolist, setBilling,fetchList]);
-  const fetchList = useCallback(async () => {
-     try {
-       const res = await authAxios.post(
-         "BituRep/Api/Account/Company_List",
-         JSON.stringify({ user_id: userId })
-       );
-       setOptionlist(res.data);
-       // setOptionlistCheck(true);
-     } catch (err) {
-       console.error(err);
-       // setOptionlistCheck(true);
-     }
-   }, [userId]);
+
   return (
     <React.Fragment>
       <FormControl variant={variant} fullWidth size="small"error={errorsBilling}>

@@ -97,8 +97,8 @@ export default function Saleslist() {
             <TableCell align="left"sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>Order Date</TableCell>
             <TableCell align="left"sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>validity Date</TableCell>
             <TableCell align="left"sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>validity Days</TableCell>
-              <TableCell align="left"sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>Approve</TableCell>
-            <TableCell align="left"sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>Disapprove</TableCell>
+              {/* <TableCell align="left"sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>Approve</TableCell> */}
+            {/* <TableCell align="left"sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>Disapprove</TableCell> */}
           </TableRow>
         </TableHead>
         <TableBody>
@@ -124,8 +124,8 @@ export default function Saleslist() {
             <TableCell align="left">{new Date(row.entry_Date).toLocaleDateString()}</TableCell>
             <TableCell align="left">{new Date(row.validity_Date).toLocaleDateString()}</TableCell>
             <TableCell align="left">{row.validity_Days}</TableCell>
-            <TableCell align="left"><button variant="outlined">Approve</button></TableCell>
-            <TableCell align="left"><button variant="outlined">Disapprove</button></TableCell>
+            {/* <TableCell align="left"><button variant="outlined">Approve</button></TableCell> */}
+            {/* <TableCell align="left"><button variant="outlined">Disapprove</button></TableCell> */}
             </TableRow>
             
           ))}

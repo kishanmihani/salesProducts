@@ -59,6 +59,19 @@ export default function TankDropDownTwo({selectedTank,
           setAddPortlink("BituRep/Api/Account/Tank_List");
         }
       }, [selectedTank]);
+      const fetchList = useCallback(async () => {
+               try {
+                 const res = await authAxios.post(
+                   "BituRep/Api/Account/Tank_List",
+                   JSON.stringify({ user_id: userId })
+                 );
+                 setOptionlist(res.data);
+                 // setOptionlistCheck(true);
+               } catch (err) {
+                 console.error(err);
+                 // setOptionlistCheck(true);
+               }
+             }, [userId]);
       useEffect(() => {
           if (addtolist !== "") {
             if(addtolist ==="Select"){
@@ -73,19 +86,7 @@ export default function TankDropDownTwo({selectedTank,
             }
           }
         }, [addtolist, setSelectedTank,fetchList]);
-        const fetchList = useCallback(async () => {
-               try {
-                 const res = await authAxios.post(
-                   "BituRep/Api/Account/Tank_List",
-                   JSON.stringify({ user_id: userId })
-                 );
-                 setOptionlist(res.data);
-                 // setOptionlistCheck(true);
-               } catch (err) {
-                 console.error(err);
-                 // setOptionlistCheck(true);
-               }
-             }, [userId]);
+        
   return (
     <React.Fragment>
       <FormControl variant={variant} fullWidth size="small" margin="normal"error={errorsTank}>

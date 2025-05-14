@@ -52,7 +52,16 @@ export default function ProductDropDownTwo({
           setOptionlistCheck(true);
         });
   }, [optionlist, userId, optionlistCheck]);
-const fetchList = useCallback(async () => {
+
+  useEffect(() => {
+    if (selectedProduct === "Not in List") {
+      setOpen(true);
+      setAddlabelPopup("Add Product List");
+
+      setAddPortlink("BituRep/Api/Account/Product_List_Update");
+    }
+  }, [selectedProduct]);
+  const fetchList = useCallback(async () => {
   try {
     const res = await authAxios.post(
       'BituRep/Api/Account/Product_List',
@@ -65,14 +74,6 @@ const fetchList = useCallback(async () => {
     // setOptionlistCheck(true);
   }
 }, [userId]);
-  useEffect(() => {
-    if (selectedProduct === "Not in List") {
-      setOpen(true);
-      setAddlabelPopup("Add Product List");
-
-      setAddPortlink("BituRep/Api/Account/Product_List_Update");
-    }
-  }, [selectedProduct]);
   useEffect(() => {
     if (addtolist !== "") {
       if(addtolist ==="Select"){

@@ -45,6 +45,19 @@ export default function DeliveryDropDown({
       setAddPortlink("BituRep/Api/Account/Delivery_List_Update");
     }
   }, [selectedDelivery]);
+  const fetchList = useCallback(async () => {
+                 try {
+                   const res = await authAxios.post(
+                     "BituRep/Api/Account/Delivery_List",
+                     JSON.stringify({ user_id: userId })
+                   );
+                   setOptionlist(res.data);
+                   // setOptionlistCheck(true);
+                 } catch (err) {
+                   console.error(err);
+                   // setOptionlistCheck(true);
+                 }
+               }, [userId]);
   useEffect(() => {
     if (addtolist !== "") {
       if(addtolist ==="Select"){
@@ -60,19 +73,7 @@ export default function DeliveryDropDown({
     }
     
   }, [addtolist, setSelectedDelivery,fetchList]);
-  const fetchList = useCallback(async () => {
-                 try {
-                   const res = await authAxios.post(
-                     "BituRep/Api/Account/Delivery_List",
-                     JSON.stringify({ user_id: userId })
-                   );
-                   setOptionlist(res.data);
-                   // setOptionlistCheck(true);
-                 } catch (err) {
-                   console.error(err);
-                   // setOptionlistCheck(true);
-                 }
-               }, [userId]);
+  
   return (
     <React.Fragment>
       <FormControl fullWidth size="small" margin="normal" error={!!errors?.['Delivery name']}>

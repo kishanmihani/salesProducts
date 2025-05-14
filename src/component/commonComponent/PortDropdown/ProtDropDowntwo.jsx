@@ -54,7 +54,19 @@ export default function PortDropDownTwo({ selectedPort, setSelectedPort,errorsPo
       setAddPortlink("BituRep/Api/Account/Port_List_Update");
     }
   }, [selectedPort]);
-  
+  const fetchList = useCallback(async () => {
+                                            try {
+                                              const res = await authAxios.post(
+                                                "BituRep/Api/Account/Post_List",
+                                                JSON.stringify({ user_id: userId })
+                                              );
+                                              setOptionlist(res.data);
+                                              // setOptionlistCheck(true);
+                                            } catch (err) {
+                                              console.error(err);
+                                              // setOptionlistCheck(true);
+                                            }
+                                          }, [userId]);
   useEffect(() => {
     if (addtolist !== "") {
       if(addtolist ==="Select"){
@@ -69,19 +81,7 @@ export default function PortDropDownTwo({ selectedPort, setSelectedPort,errorsPo
       }
     }
   }, [addtolist, setSelectedPort,fetchList]);
-  const fetchList = useCallback(async () => {
-                                            try {
-                                              const res = await authAxios.post(
-                                                "BituRep/Api/Account/Post_List",
-                                                JSON.stringify({ user_id: userId })
-                                              );
-                                              setOptionlist(res.data);
-                                              // setOptionlistCheck(true);
-                                            } catch (err) {
-                                              console.error(err);
-                                              // setOptionlistCheck(true);
-                                            }
-                                          }, [userId]);
+  
   return (
     <React.Fragment>
       <FormControl variant={variant} fullWidth size="small" error={errorsPortName}>

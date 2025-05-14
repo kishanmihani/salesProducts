@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import PropTypes from "prop-types";
 import { authAxios } from "../../utils/authAxios";
 import {
@@ -59,18 +59,34 @@ export default function SurveyorDropDown({selectedSurveyor,
                         setAddPortlink(surveyorListUpdateapi);
                       }
                     }, [selectedSurveyor]);
+                    const fetchList = useCallback(async () => {
+                                     try {
+                                       const res = await authAxios.post(
+                                         surveyorListapi,
+                                         JSON.stringify({ user_id: userId })
+                                       );
+                                       setOptionlist(res.data);
+                                       // setOptionlistCheck(true);
+                                     } catch (err) {
+                                       console.error(err);
+                                       // setOptionlistCheck(true);
+                                     }
+                                   }, [userId]);
                     useEffect(() => {
                         if (addtolist !== "") {
                           if(addtolist ==="Select"){
                             setSelectedSurveyor( addtolist);
                             setAddtolist("");
+                            fetchList();
                           }else{
+                            fetchList();
                           setOptionlist((prev) => [...prev, { surveyor_list: addtolist }]);
                           setSelectedSurveyor( addtolist);
                           setAddtolist("");
                           }
                         }
-                      }, [addtolist, setSelectedSurveyor]);
+                      }, [addtolist, setSelectedSurveyor,fetchList]);
+                      
   return (
     <React.Fragment>
         <FormControl variant={variant} fullWidth size="small" margin="normal"error={errorsSurveyor}>
