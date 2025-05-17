@@ -19,9 +19,11 @@ import LogisticListEdit from './component/Dashboard/logistic/LogisticList/Logist
 import LogicInvoiceDo from './component/sales/Pdfbilles/LogicInvoiceDo';
 import "@fontsource/inter";
 import VessalList from './component/Dashboard/logistic/vessalList/VessalList';
+import { DrawerProvider } from './component/commonComponent/DrawerProvider/DrawerContext';
 function App() {
   return (
     <React.Fragment>
+      {/* <DrawerProvider> */}
       <Box
       sx={{
         height: '100vh',
@@ -32,6 +34,7 @@ function App() {
       }}
     >
       <Routes>
+        
          <Route  path='' element={
           <LoginForm />
           } />
@@ -49,12 +52,14 @@ function App() {
             
             <Route path='Vessal_Request_Form' element={<VessalRequestForm />} />
             <Route path='Vessal_List' element={<VessalList />} />
+            <Route path='Vessal_Edit_Form/:id?' element={<VessalRequestForm />} />
             <Route path='Pdf_Bill' element={<Pdfbilles />} />
             <Route path='Logistic_InVoice_Delivery' element={<LogicInvoiceDo />} />
             </Route>
           </Route>
         </Routes>
       </Box>
+      {/* </DrawerProvider> */}
       
     </React.Fragment>
   )

@@ -21,15 +21,18 @@ import BlDataItems from "./blDataItems/BlDataItems";
 import { authAxios } from "../../../utils/authAxios";
 import dayjs from "dayjs";
 import CustomeAlerts from "../../../commonComponent/CustomeAlert/CustomeAlert";
-import { vessalDataListapi, VesselDataBLapi} from "../../../Config/Api";
-
+import { vessalDataListapi, Vessel_Edit_Data, VesselDataBLapi} from "../../../Config/Api";
+import { useLocation, useNavigate, useParams } from "react-router";
 export default function VessalRequestForm() {
   const BlId=useId()
+  const { id } = useParams();
+  const param = useLocation();
   const [vessalName, setVessalName] = useState("");
   const [vessalNameError, setVessalNameError] = useState(false);
   const [chaName, setChaName] = useState("");
   const [chaNameError, setChaNameError] = useState(false);
   const [vessalNumber, setVessalNumber] = useState("");
+  const navigate = useNavigate();
   const [vessalNumberError, setVessalNumberError] = useState({
     error: "",
     valid: true,
@@ -94,6 +97,7 @@ export default function VessalRequestForm() {
       },
     ]);
   };
+  const [editBeData,setEditBeData] = useState()
   const handleRemoveFieldBlData = (index) => {
     const updatedFields = fields.filter((_, i) => i !== index);
     setFields(updatedFields);
@@ -105,6 +109,7 @@ export default function VessalRequestForm() {
 
   
   async function handleSubmit(event) {
+    debugger;
     event.preventDefault();
     let hasError = false;
     if (vessalName === "") {
@@ -227,14 +232,8 @@ export default function VessalRequestForm() {
       });
       setFields(updatedFields);
     }
-    if (!hasError) { 
-      if (blDataCheck === true) {
-        console.log("Form bl data Submitted:", {
-          vessalName,
-          dischargeDate,
-          vessalNumber,
-          fields: updatedFields,
-        });
+    if (!hasError && !editBeData?.isEdit) { 
+      
         let count = 0;
         for (let arr of fields) {
           count++;
@@ -266,6 +265,8 @@ export default function VessalRequestForm() {
               if (count === fields.length) {
                handleReset()
                 vessalData();
+                
+                navigate("/dashboard/Logistic/Vessal_List")
               }
             })
             .catch((err) => {
@@ -278,7 +279,52 @@ export default function VessalRequestForm() {
         }
       }
       
-    }
+    
+    else if(!hasError && editBeData?.isEdit){
+      let count = 0;
+        for (let arr of fields) {
+          count++;
+          let data = {
+            User_Id: userId,
+            Vessal_Name: vessalName,
+            Vessal_No: vessalNumber,
+            Produce_Name: arr?.ProductName,
+            Port_Name:arr?.portName,
+          Shipping_Name:arr?.shippingName,
+            Bl_No: arr.BLNo,
+            BL_date: arr?.blDate,
+            BL_Qty: arr?.quantity,
+            BE_No: arr.BLNo,
+            BE_Date: arr?.beDate ,
+             BE_G_Qty:arr?.grossQuantity,
+             BE_N_Qty:arr?.grossQuantity - arr?.otrQut,
+             BE_OTR_Qty:arr?.otrQut,
+             BE_Name: arr?.billing,
+              BL_BE_ID:id
+          };
+          
+authAxios.post(Vessel_Edit_Data,JSON.stringify(data))
+.then((res) => {
+              if (res.data.massage == "Update Done") {
+                showSuccess("Records Submited");
+                
+              } else {
+                showError(res.data.message);
+              }
+              if (count === fields.length) {
+               handleReset();
+                // vessalData();
+                navigate("/dashboard/Logistic/Vessal_List")
+              }
+            })
+            .catch((err) => {
+              if (err.massage == "Network Error") {
+                showError("Network Error");
+              } else {
+                showError(err.message);
+              }
+            });
+    }}
   }
   
  async function vessalData(){
@@ -333,7 +379,7 @@ export default function VessalRequestForm() {
   setVessalNumberError({ error: "", valid: true });
 
   setDisChargeDate(null);
-
+ 
   BlReset();
   }
   function vessalNameChange(event) {
@@ -495,12 +541,37 @@ export default function VessalRequestForm() {
     });
   
     setFields(newFields);
-    console.log(isValid + "" + index);
+    // console.log(isValid + "" + index);
     return isValid;
   };
+
   React.useEffect(() => {
-  handleReset() // reset when component mounts
-}, []);
+  handleReset();
+  const queryParams = new URLSearchParams(param.search);
+const beDataParam = queryParams.get("BeData");
+const beData = beDataParam ? JSON.parse(beDataParam) : null;
+setEditBeData(beData)
+setVessalName(beData?.vessal_Name);
+setVessalNumber(beData?.vessal_No);
+setDisChargeDate(beData?.discarge_Date);
+setChaName(beData?.chA_Name);
+setFields([
+  {
+    shippingName: beData?.bl_Name,
+    quantity: Number(beData?.bE_N_Qty),
+    BLNo: Number(beData?.bl_No),
+    blDate:beData?.bL_Date,
+    billing:beData?.bE_Name,
+    portName:beData?.port_Name,
+    ProductName:beData?.produce_Name,
+    billOfEntry:"",
+    beDate:beData?.bE_Date,
+    grossQuantity:beData?.bE_G_Qty
+,
+    otrQut:beData?.bE_OTR_Qty
+,
+  }]);
+}, [param]);
   return (
     <React.Fragment>
       <CustomPageHeader pageHeaderText="Vessal Form" />
@@ -541,6 +612,7 @@ export default function VessalRequestForm() {
                 size="small"
                 margin="normal"
                 id="VessalName"
+                disabled={editBeData?.isEdit === true ? true : false}
                 name="VessalName"
                 type="text"
                 label="Vessal Name"
@@ -556,6 +628,7 @@ export default function VessalRequestForm() {
                 id="VessalNumber"
                 name="VessalNumber"
                 type="text"
+                disabled={editBeData?.isEdit === true ? true : false}
                 label="Vessal Number"
                 value={vessalNumber}
                 onChange={vessalNumberChange}
@@ -572,6 +645,7 @@ export default function VessalRequestForm() {
                     slotProps={{
                       textField: {
                         size: "small",
+                        disabled:editBeData?.isEdit === true ? true : false,
                         id: "validity-date-picker",
                         fullWidth: true,
                         error: dischargeDateError,
@@ -588,6 +662,7 @@ export default function VessalRequestForm() {
                 size="small"
                 margin="normal"
                 id="chaName"
+                disabled={editBeData?.isEdit === true ? true : false}
                 name="ChaName"
                 type="text"
                 label="Cha Name"
@@ -599,7 +674,7 @@ export default function VessalRequestForm() {
             </Stack>
           </Box>
           {/* <Stack></Stack> */}
-          <Box sx={{ p: 2 }}>
+          <Box sx={{ p: 2 ,display:editBeData?.isEdit ===true? "none":"block"}}>
             <Button
               disabled={!blDataCheck}
               variant="outlined"
@@ -650,6 +725,7 @@ export default function VessalRequestForm() {
               disabled={blDataCheck}
               index={BlId}
               fields={fields}
+              edit={editBeData?.isEdit}
               vessalInfo={[vessalName, vessalNumber]}
               setFields={setFields}
               validateFields={validateFields}

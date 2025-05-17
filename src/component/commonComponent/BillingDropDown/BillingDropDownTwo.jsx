@@ -83,6 +83,7 @@ export default function BillingDropDownTwo({ billing, setBilling,errorsBilling,s
           labelId="demo-simple-select-label"
           id="demo-simple-select"
           value={billing}
+          sx={{textTransform:"capitalize"}}
           name="Billing name"
           label={label !=="" ? label :  "Billing"}
           defaultValue="Select"
@@ -92,7 +93,7 @@ export default function BillingDropDownTwo({ billing, setBilling,errorsBilling,s
             Please Select
           </MenuItem>
           {alhabetelysort(optionlist, "companylist").map((data) => (
-            <MenuItem value={data.companylist}>{data.companylist}</MenuItem>
+            <MenuItem value={data.companylist} sx={{textTransform:"capitalize"}}>{data.companylist}</MenuItem>
           ))}
           { NotIsList !== true && <MenuItem value={"Not in List"}>Not in List</MenuItem>}
         </Select>

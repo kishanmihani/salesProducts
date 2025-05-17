@@ -164,7 +164,7 @@ export default function Logisticlist() {
   }
   return (
     <React.Fragment>
-     <CustomPageHeader pageHeaderText="Vhicle Pull"/>
+     <CustomPageHeader pageHeaderText="Vehicle Pull"/>
       <Paper sx={{ p: 2 }} elevation={0}>
       <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">

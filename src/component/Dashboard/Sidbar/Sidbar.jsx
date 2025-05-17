@@ -222,7 +222,7 @@ const Sidbar = ({ message}) => {
               </ListItemIcon>
               <ListItemText
                 primaryTypographyProps={{ fontSize: "12px" }}
-                primary="Vhicle Form"
+                primary="Vehicle Form"
               />
             </ListItemButton>
             <ListItemButton
@@ -245,7 +245,7 @@ const Sidbar = ({ message}) => {
               </ListItemIcon>
               <ListItemText
                 primaryTypographyProps={{ fontSize: "12px" }}
-                primary="Vhicle Pull"
+                primary="Vehicle Pull"
               />
             </ListItemButton>
             <ListItemButton

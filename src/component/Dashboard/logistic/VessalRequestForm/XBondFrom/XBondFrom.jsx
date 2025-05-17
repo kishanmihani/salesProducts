@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import CustomPageHeader from '../../../../commonComponent/CustomPageHeader/CustomPageHeader';
 import Dialog from "@mui/material/Dialog";
 import { Box, Button, DialogContent,FormControl, IconButton, Stack, TextField, Typography } from '@mui/material';
@@ -15,7 +15,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditSquareIcon from '@mui/icons-material/EditSquare';
 import { authAxios } from '../../../../utils/authAxios';
 import CustomeAlerts from '../../../../commonComponent/CustomeAlert/CustomeAlert';
-import { VesselDataBEapi } from '../../../../Config/Api';
+import { VesselDataBEapi, VesselEditTankapi } from '../../../../Config/Api';
 import formatDateToUS from '../../../../utils/DateFormate';
 
 const columns= [
@@ -91,7 +91,7 @@ export default function XBondForm({ open,
             setErrorsDate("bill date is required")
             hasError=true;
         }
-           if(!hasError){
+           if(!hasError && !dataInfo?.isEdit){
             let data={
               id:tanklist.length  + 1,
               col1:formatDateToUS( selectedDate),
@@ -128,7 +128,44 @@ export default function XBondForm({ open,
             setSelectedDate("")
               setQuantity(0)
            }
+           else if(!hasError &&  dataInfo?.isEdit){
+authAxios.post(VesselEditTankapi,{
+  "user_id": userId,
+  "BE_No":dataInfo?.BlNo,
+  "XBE_date": selectedDate,
+  "XBE_NO": Billentry,
+  "Net_Quantity": quantity,
+  "X_BE_ID": dataInfo?.X_BE_ID
+})
+.then((res) => {
+                                      if (res?.data?.massage == "Update Done") {
+                                        showSuccess("Records Submited");
+                                        handleClose();
+                                      } else {
+                                        showError(res?.data?.message);
+                                      }
+                                    })
+                                    .catch((err) => {
+                                      if (err.massage == "Network Error") {
+                                        showError("Network Error");
+                                      } else {
+                                        showError(err?.message);
+                                       }
+                                    });
+           }
           }
+
+          useEffect(()=>{
+                     const {Quantity,XBE_date,xbE_NO,isEdit} = dataInfo;
+                     if(isEdit === true){
+                      setQuantity(Quantity)
+                      setSelectedDate(XBE_date)
+                      setBillEntry(xbE_NO)
+                    //  setSelectedTank(tank_name);
+                    //        setSelectedWhereHouse(terminal_Name);
+                    //        setQuantity(Quantity);
+                     }
+                    },[dataInfo])
           const rows=tanklist;
   return (
     <React.Fragment>
@@ -172,6 +209,7 @@ export default function XBondForm({ open,
                           required
                           id="name"
                           name="name"
+                          disabled="true"
                           label="Be No"
                           value={dataInfo?.BlNo}
                           type="text"
@@ -184,6 +222,7 @@ export default function XBondForm({ open,
                           
                           required
                           id="name"
+                          disabled="true"
                           name="name"
                           label="Bl Qut/Gross Qut"
                           value={dataInfo?.grossQuantity}
@@ -199,6 +238,7 @@ export default function XBondForm({ open,
                           required
                           id="name"
                           name="name"
+                          disabled="true"
                           label="Net Qut"
                           value={dataInfo?.NetQuantity}
                           type="text"
@@ -322,7 +362,7 @@ export default function XBondForm({ open,
                             Submit
                           </Button>
             </Box>
-            <div style={{ width: "96%",margin:"auto", marginBottom:"3px"}}>
+            <div style={{ width: "96%",margin:"auto", marginBottom:"3px",display:dataInfo?.isEdit === true ? "none":"block"}}>
             <DataGrid rows={rows} columns={columns} 
              slots={{ footer: CustomFooter }}
   hideFooterPagination

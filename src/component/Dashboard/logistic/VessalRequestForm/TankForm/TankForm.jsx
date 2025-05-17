@@ -1,5 +1,4 @@
-import React from 'react'
-import CustomPageHeader from '../../../../commonComponent/CustomPageHeader/CustomPageHeader';
+import React, { useEffect } from 'react';
 import Dialog from "@mui/material/Dialog";
 import { Box, Button, DialogContent, IconButton, Stack, TextField, Typography } from '@mui/material';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
@@ -12,7 +11,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditSquareIcon from '@mui/icons-material/EditSquare';
 import { authAxios } from '../../../../utils/authAxios';
 import CustomeAlerts from '../../../../commonComponent/CustomeAlert/CustomeAlert';
-import { VesselDataTankapi } from '../../../../Config/Api';
+import { VesselDataTankapi, VesselEditTankapi } from '../../../../Config/Api';
 const columns= [
   { field: "id", hide: true ,headerName:"Sr No."},
   { field: "col1", headerName: "WareHouse" },
@@ -49,6 +48,7 @@ export default function TankForm({ open,
       );
         const handleClose = () => {
             setOpen(false);
+      
           };
           const showSuccess = (data) => {
             setCustAlert({ type: "success", message: data });
@@ -84,7 +84,8 @@ export default function TankForm({ open,
             setErrorsTank(true)
             hasError=true;
           }
-           if(!hasError){
+
+           if(!hasError && !dataInfo?.isEdit){
             let data={
               id:tanklist.length  + 1,
               col1:selectedWhereHouse,
@@ -114,14 +115,49 @@ export default function TankForm({ open,
                                         showError("Network Error");
                                       } else {
                                         showError(err.message);
-                                      }
+                                       }
                                     });
               setTanklist((prev)=>([...prev,data]));
               setSelectedTank("Select");
               setSelectedWhereHouse("Select")
               setQuantity(0)
            }
+           else if(!hasError  && dataInfo.isEdit){
+
+            // alert(dataInfo.isEdit)
+            authAxios.post(VesselEditTankapi,{
+  "user_id": userId,
+  "BE_No":dataInfo?.BlNo,
+  "Terminal_Name": selectedWhereHouse,
+  "Tank_name": selectedTank,
+  "Net_Quantity": quantity,
+  "Tank_ID": dataInfo?.tank_ID
+})
+.then((res) => {
+                                      if (res.data.massage == "Update Done") {
+                                        showSuccess("Records Submited");
+                                        handleClose();
+                                      } else {
+                                        showError(res.data.message);
+                                      }
+                                    })
+                                    .catch((err) => {
+                                      if (err.massage == "Network Error") {
+                                        showError("Network Error");
+                                      } else {
+                                        showError(err.message);
+                                       }
+                                    });
+           }
           }
+          useEffect(()=>{
+           const {tank_name,terminal_Name,Quantity,isEdit} = dataInfo;
+           if(isEdit === true){
+           setSelectedTank(tank_name);
+                 setSelectedWhereHouse(terminal_Name);
+                 setQuantity(Quantity);
+           }
+          },[dataInfo,setSelectedTank,setSelectedWhereHouse,setQuantity])
           const rows=tanklist;
           //  [
           //   { id: 1, col1: "qwert", col2: "qwert5" ,col3:"455"},
@@ -152,9 +188,9 @@ export default function TankForm({ open,
                     display: "flex",
                   }}
                 >
-                
+                  
                   <Typography variant="h5" align="center" width="100%">
-                    Tank Details
+                  {dataInfo?.isEdit === true? "Edit " : ""} Tank Details
                   </Typography>
                   <IconButton onClick={handleClose}>
                   <CloseRoundedIcon />
@@ -169,6 +205,7 @@ export default function TankForm({ open,
                           id="name"
                           name="name"
                           label="Be No"
+                          disabled="true"
                           value={dataInfo?.BlNo}
                           type="text"
                           fullWidth
@@ -182,6 +219,7 @@ export default function TankForm({ open,
                           id="name"
                           name="name"
                           label="Gross Qut"
+                          disabled="true"
                           value={dataInfo?.grossQuantity}
                           type="text"
                           fullWidth
@@ -195,6 +233,7 @@ export default function TankForm({ open,
                           required
                           id="name"
                           name="name"
+                          disabled="true"
                           label="Net Qut"
                           value={dataInfo?.NetQuantity}
                           type="text"
@@ -278,7 +317,7 @@ export default function TankForm({ open,
                             Submit
                           </Button>
             </Box>
-            <div style={{ width: "96%",margin:"auto", marginBottom:"3px"}}>
+            <div style={{ width: "96%",margin:"auto", marginBottom:"3px",display:dataInfo?.isEdit === true ? "none":"block"}}>
             <DataGrid rows={rows} columns={columns} 
              slots={{ footer: CustomFooter }}
   hideFooterPagination

@@ -32,7 +32,8 @@ export default function BlDataItems({
   setFields,//
   handleRemoveFieldBlData,
   validateFields,//
-  vessalInfo//
+  vessalInfo,//
+  edit
 }) {
   const [dataInfo,setDataInfo] = useState({BlNo:0,NetQuantity:0,grossQuantity:0,vessalName:0, vessalNumber:0})
   const [isValid,setIsValid] = useState(false);
@@ -478,7 +479,7 @@ const calculatePercentage = () => {
           sx={{
             mt:2,
             width: "100%",
-            display: "flex",
+            display:edit === true ? "none": "flex",
             position:"relative",
             justifyContent: "center",
           }}
