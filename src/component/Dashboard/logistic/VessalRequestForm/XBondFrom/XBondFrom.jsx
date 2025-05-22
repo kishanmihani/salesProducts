@@ -15,33 +15,38 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditSquareIcon from '@mui/icons-material/EditSquare';
 import { authAxios } from '../../../../utils/authAxios';
 import CustomeAlerts from '../../../../commonComponent/CustomeAlert/CustomeAlert';
-import { VesselDataBEapi, VesselEditTankapi } from '../../../../Config/Api';
-import formatDateToUS from '../../../../utils/DateFormate';
+import {TankDeleteapi, vessailBE_Detail_List, VesselDataBEapi, VesselEditTankapi } from '../../../../Config/Api';
+// import formatDateToUS from '../../../../utils/DateFormate';
 
-const columns= [
-  { field: "id", hide: true ,headerName:"Sr No."},
-  { field: "col1", headerName: "Date" },
-  { field: "col2", headerName: "Bill entry"},
-  { field: "col3", headerName: "Qut"},
-  {field: "col3.5", headerName: "Edit", renderCell: (params) => (
-    <IconButton color='primary' onClick={() => console.log(params.row)}>< EditSquareIcon /></IconButton>
-  )},
-  {field: "col4", headerName: "Delete", renderCell: (params) => (
-    <IconButton color='error' onClick={() => console.log(params.row)}><DeleteIcon /></IconButton>
-  )}
-];
+
 
 export default function XBondForm({ open,
     setOpen,userId,dataInfo}) {
+      const columns= [
+  { field: "x_BE_ID", hide: true ,headerName:"id"},
+  { field: "xbE_date", headerName: "Date" },
+  { field: "xbE_NO", headerName: "Bill entry"},
+  { field: "xbE_Qty", headerName: "Qut"},
+  {field: "col3.5", headerName: "Edit", renderCell: (params) => (
+    <IconButton color='primary' onClick={() => handleEdit(params?.row)}>< EditSquareIcon /></IconButton>
+  )},
+  {field: "col4", headerName: "Delete", renderCell: (params) => (
+    <IconButton color='error' onClick={() => handleDelete(params.row)}><DeleteIcon /></IconButton>
+  )}
+];
       const [selectedDate,setSelectedDate] = React.useState("Select")
       const [errorsDate,setErrorsDate] = React.useState(false);
     const [Billentry,setBillEntry] = useState("")
     const [BillentryError,setBillentryError] = useState("")
       const [quantity,setQuantity] = React.useState(0);
       const [quantityError,setQuantityError] = React.useState("")
-      const [tanklist,setTanklist] = React.useState([]);
+      const [xBondlist,setXBondlist] = React.useState([]);
+      // const [tanklist,setTanklist] = React.useState([]);
+      const [selectEdit,setSelectEdit] = React.useState(false);
+      const [xBondId,setXBondId] = React.useState()
+            const [xBondlistCheck,setXBondlistCheck] = React.useState(false);
       const [custAlert, setCustAlert] = React.useState(null);
-      let Tot=tanklist.map(data => data.col3).reduce((accumulator, currentValue) => Number(accumulator) + Number(currentValue), 0)
+      let Tot=xBondlist.map(data => Number(data?.xbE_Qty)).reduce((accumulator, currentValue) => Number(accumulator) + Number(currentValue), 0)
       const CustomFooter = () => (
         <Box sx={{ p: 1, textAlign: "right", backgroundColor: "#f9f9f9" }}>
            <Box display="flex" justifyContent="space-between" width="100%">
@@ -92,12 +97,12 @@ export default function XBondForm({ open,
             hasError=true;
         }
            if(!hasError && !dataInfo?.isEdit){
-            let data={
-              id:tanklist.length  + 1,
-              col1:formatDateToUS( selectedDate),
-              col2:Billentry,
-              col3:quantity
-            }
+            // let data={
+            //   id:tanklist.length  + 1,
+            //   col1:formatDateToUS( selectedDate),
+            //   col2:Billentry,
+            //   col3:quantity
+            // }
             let datasend={
               "User_Id": userId,
              "Vessal_Name": dataInfo?.vessalName,
@@ -112,6 +117,7 @@ export default function XBondForm({ open,
                         .then((res) => {
                           if (res.data.massage == "Entry Done") {
                             showSuccess("Records Submited");
+                            Xbondlist()
                           } else {
                             showError(res.data.message);
                           }
@@ -123,7 +129,8 @@ export default function XBondForm({ open,
                             showError(err.message);
                           }
                         });
-              setTanklist((prev)=>([...prev,data]));
+                        Xbondlist()
+              // setXBondlist((prev)=>([...prev,data]));
             setBillEntry("");
             setSelectedDate("")
               setQuantity(0)
@@ -166,7 +173,96 @@ authAxios.post(VesselEditTankapi,{
                     //        setQuantity(Quantity);
                      }
                     },[dataInfo])
-          const rows=tanklist;
+                    const  Xbondlist= async () =>{
+                                let datasend={
+                                  "User_Id": userId,
+                                  "Vessal_Name": dataInfo?.vessalName,
+                                  "Vessal_No": dataInfo?.vessalNumber,
+                                  "BE_No": dataInfo.BlNo,
+                                }
+                                authAxios.post(vessailBE_Detail_List,datasend)
+                                .then(res =>{ setXBondlist(res?.data?.xbE_BE);setXBondlistCheck(true)})
+                                .catch(err => console.log(err))
+                              }
+                useEffect(() => {
+                              // console.log("vvg gggggggggggggggggggggggggggggggg   no")
+                  if (!xBondlistCheck) {
+                    // console.log("vvg gggggggggggggggggggggggggggggggg")
+                    // setTanklistCheck(true);
+                    let datasend={
+                              "User_Id": userId,
+                              "Vessal_Name": dataInfo?.vessalName,
+                              "Vessal_No": dataInfo?.vessalNumber,
+                              "BE_No": dataInfo.BlNo,
+                            }
+                            authAxios.post(vessailBE_Detail_List,datasend)
+                            .then(res => setXBondlist(res?.data?.xbE_BE))
+                            .catch(err => console.log(err))
+                  }
+                }, [dataInfo.BlNo, dataInfo.vessalName, dataInfo.vessalNumber, xBondlistCheck, userId]);
+    // bE_No: "99", xbE_date: "5/13/2025 12:00:00 AM", xbE_NO: "yy", xbE_Qty: "2", x_BE_ID: "21"
+     function handleEdit(row){
+              console.log(row)
+              const {xbE_date,
+x_BE_ID,xbE_Qty,xbE_NO
+} = row  ;
+   setSelectedDate(xbE_date);
+   setQuantity(xbE_Qty);
+
+   setSelectEdit(true);
+   setXBondId(x_BE_ID);
+   setBillEntry(xbE_NO)
+     } 
+     function handleSaveEdit(){
+                  authAxios.post(VesselEditTankapi,{
+       user_id: userId,
+       BE_No:dataInfo?.BlNo,
+       XBE_NO: Billentry,
+       XBE_date: selectedDate,
+       XBE_Qty: quantity,
+       X_BE_ID: xBondId
+     })
+     .then((res) => {
+                                           if (res.data.massage == "Update Done") {
+                                             showSuccess("Records Submited");
+                                            Xbondlist()
+                                             setQuantity(0);
+                                             setXBondId();
+                                             setBillEntry("")
+                                             setSelectedDate(null);
+                                             setSelectEdit(false);
+                                           } else {
+                                             showError(res.data.message);
+                                           }
+                                         })
+                                         .catch((err) => {
+                                           if (err.massage == "Network Error") {
+                                             showError("Network Error");
+                                           } else {
+                                             showError(err.message);
+                                            }
+                                         });
+               }  
+               function handleDelete(row){
+                            authAxios.post(TankDeleteapi,{
+                 "user_id": userId,
+                 "X_BE_ID": row.x_BE_ID})
+                 .then(res => { if (res.data.massage == "Update Done") {
+                                                       showSuccess("Records Deleted");
+                                                       Xbondlist()            
+                                                       setSelectEdit(false);
+                                                     } else {
+                                                       showError(res.data.message);
+                                                     }
+                                                   })
+                                                   .catch((err) => {
+                                                     if (err.massage == "Network Error") {
+                                                       showError("Network Error");
+                                                     } else {
+                                                       showError(err.message);
+                                                      }
+                                                   });
+                         }
   return (
     <React.Fragment>
 <Dialog sx={{minWidth:320,width:"100%"}}
@@ -209,7 +305,7 @@ authAxios.post(VesselEditTankapi,{
                           required
                           id="name"
                           name="name"
-                          disabled="true"
+                          disabled={true}
                           label="Be No"
                           value={dataInfo?.BlNo}
                           type="text"
@@ -222,7 +318,7 @@ authAxios.post(VesselEditTankapi,{
                           
                           required
                           id="name"
-                          disabled="true"
+                          disabled={true}
                           name="name"
                           label="Bl Qut/Gross Qut"
                           value={dataInfo?.grossQuantity}
@@ -238,7 +334,7 @@ authAxios.post(VesselEditTankapi,{
                           required
                           id="name"
                           name="name"
-                          disabled="true"
+                          disabled={true}
                           label="Net Qut"
                           value={dataInfo?.NetQuantity}
                           type="text"
@@ -352,18 +448,27 @@ authAxios.post(VesselEditTankapi,{
             position:"relative",
             justifyContent: "flex-end",
           }}>
-              <Button
-                            sx={{ textTransform: "capitalize",mr:1 }}
-                            variant="contained"
-                            color="success"
-                            type="button"
-                            onClick={handleSubmit}
-                          >
-                            Submit
-                          </Button>
+              {selectEdit !==true &&    <Button
+                                          sx={{ textTransform: "capitalize",mr:1 }}
+                                          variant="contained"
+                                          color="success"
+                                          type="button"
+                                          onClick={handleSubmit}
+                                        >
+                                          Submit
+                                        </Button>}
+                          {selectEdit ==true &&    <Button
+                                          sx={{ textTransform: "capitalize",mr:1 }}
+                                          variant="contained"
+                                          color="success"
+                                          type="button"
+                                          onClick={handleSaveEdit}
+                                        >
+                                          Save
+                                        </Button>}
             </Box>
             <div style={{ width: "96%",margin:"auto", marginBottom:"3px",display:dataInfo?.isEdit === true ? "none":"block"}}>
-            <DataGrid rows={rows} columns={columns} 
+            <DataGrid getRowId={(row) => row?.x_BE_ID} rows={xBondlist} columns={columns} 
              slots={{ footer: CustomFooter }}
   hideFooterPagination
    />

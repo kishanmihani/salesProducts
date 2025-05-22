@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
+import React, {  useEffect } from 'react';
 import Dialog from "@mui/material/Dialog";
-import { Box, Button, DialogContent, IconButton, Stack, TextField, Typography } from '@mui/material';
+import { Box, Button, DialogContent, IconButton, Stack, Table, TableContainer, TableHead, TextField, Typography } from '@mui/material';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import { DataGrid } from "@mui/x-data-grid";
 import WhereHourseDropDown from '../../../../commonComponent/WhereHourseDropDown/WhereHourseDropDown';
@@ -11,22 +11,23 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditSquareIcon from '@mui/icons-material/EditSquare';
 import { authAxios } from '../../../../utils/authAxios';
 import CustomeAlerts from '../../../../commonComponent/CustomeAlert/CustomeAlert';
-import { VesselDataTankapi, VesselEditTankapi } from '../../../../Config/Api';
-const columns= [
-  { field: "id", hide: true ,headerName:"Sr No."},
-  { field: "col1", headerName: "WareHouse" },
-  { field: "col2", headerName: "Tank"},
-  { field: "col3", headerName: "Qut"},
-  {field: "col3.5", headerName: "Edit", renderCell: (params) => (
-    <IconButton color='primary' onClick={() => params.row}>< EditSquareIcon /></IconButton>
-  )},
-  {field: "col4", headerName: "Delete", renderCell: (params) => (
-    <IconButton color='error' onClick={() => params.row}><DeleteIcon /></IconButton>
-  )}
-];
+import { TankDeleteapi, VesselDataTankapi, VesselEditTankapi,vessailBE_Detail_List } from '../../../../Config/Api';
+
 
 export default function TankForm({ open,
     setOpen,userId,dataInfo}) {
+      const columns= [
+  { field: "tank_ID", hide: true ,headerName:"Id"},
+  { field: "terminal_Name", headerName: "WareHouse" },
+  { field: "tank_name", headerName: "Tank"},
+  { field: "net_Quantity", headerName: "Qut"},
+  {field: "col3.5", headerName: "Edit", renderCell: (params) => (
+    <IconButton color='primary' onClick={() => handleEdit(params.row)}>< EditSquareIcon /></IconButton>
+  )},
+  {field: "col4", headerName: "Delete", renderCell: (params) => (
+    <IconButton color='error' onClick={() => handleDelete(params.row)}><DeleteIcon /></IconButton>
+  )}
+];
       const [selectedWhereHouse,setSelectedWhereHouse] = React.useState("Select")
       const [errorsWhereHouse,setErrorsWhereHouse] = React.useState(false);
       const [selectedTank,setSelectedTank] = React.useState("Select")
@@ -34,8 +35,11 @@ export default function TankForm({ open,
       const [quantity,setQuantity] = React.useState(0);
       const [quantityError,setQuantityError] = React.useState("")
       const [custAlert, setCustAlert] = React.useState(null);
-      const [tanklist,setTanklist] = React.useState([])
-      let Tot=tanklist.map(data => data.col3).reduce((accumulator, currentValue) => Number(accumulator) + Number(currentValue), 0)
+      const [tanklist,setTanklist] = React.useState([]);
+      const [tanklistCheck,setTanklistCheck] = React.useState(false);
+      const [selectEdit,setSelectEdit] = React.useState(false);
+      const [tankId,setTankId] = React.useState();
+      let Tot=tanklist.map(data => Number(data?.net_Quantity)).reduce((accumulator, currentValue) => Number(accumulator) + Number(currentValue), 0)
       const CustomFooter = () => (
         <Box sx={{ p: 1, textAlign: "right", backgroundColor: "#f9f9f9" }}>
            <Box display="flex" justifyContent="space-between" width="100%">
@@ -86,19 +90,19 @@ export default function TankForm({ open,
           }
 
            if(!hasError && !dataInfo?.isEdit){
-            let data={
-              id:tanklist.length  + 1,
-              col1:selectedWhereHouse,
-              col2:selectedTank,
-              col3:quantity
-            }
+            // let data={
+            //   id:tanklist.length  + 1,
+            //   col1:selectedWhereHouse,
+            //   col2:selectedTank,
+            //   col3:quantity
+            // }
             let datasend={
               "User_Id": userId,
               "Vessal_Name": dataInfo?.vessalName,
               "Vessal_No": dataInfo?.vessalNumber,
               "BE_No": dataInfo.BlNo,
-              "Tank": selectedWhereHouse,
-              "Terminal_Name":selectedTank ,
+              "Tank": selectedTank,
+              "Terminal_Name":selectedWhereHouse ,
               "Quantity": quantity
             }
             await authAxios
@@ -106,6 +110,7 @@ export default function TankForm({ open,
                                     .then((res) => {
                                       if (res.data.massage == "Entry Done") {
                                         showSuccess("Records Submited");
+                                        Tanklist();
                                       } else {
                                         showError(res.data.message);
                                       }
@@ -117,7 +122,7 @@ export default function TankForm({ open,
                                         showError(err.message);
                                        }
                                     });
-              setTanklist((prev)=>([...prev,data]));
+              // setTanklist((prev)=>([...prev,data]));
               setSelectedTank("Select");
               setSelectedWhereHouse("Select")
               setQuantity(0)
@@ -136,7 +141,8 @@ export default function TankForm({ open,
 .then((res) => {
                                       if (res.data.massage == "Update Done") {
                                         showSuccess("Records Submited");
-                                        handleClose();
+                                        
+                                        // handleClose();
                                       } else {
                                         showError(res.data.message);
                                       }
@@ -158,10 +164,104 @@ export default function TankForm({ open,
                  setQuantity(Quantity);
            }
           },[dataInfo,setSelectedTank,setSelectedWhereHouse,setQuantity])
-          const rows=tanklist;
-          //  [
-          //   { id: 1, col1: "qwert", col2: "qwert5" ,col3:"455"},
-          // ];
+          
+          
+          // useEffect(()=>{
+
+            // if(!tanklistCheck){
+            //   setTanklistCheck(true)
+            // Tanklist()
+            
+            // }
+            useEffect(() => {
+              // console.log("vvg gggggggggggggggggggggggggggggggg   no")
+  if (!tanklistCheck) {
+    // console.log("vvg gggggggggggggggggggggggggggggggg")
+    // setTanklistCheck(true);
+    let datasend={
+              "User_Id": userId,
+              "Vessal_Name": dataInfo?.vessalName,
+              "Vessal_No": dataInfo?.vessalNumber,
+              "BE_No": dataInfo.BlNo,
+            }
+            authAxios.post(vessailBE_Detail_List,datasend)
+            .then(res =>{ setTanklist(res?.data?.tanK_BE);setTanklistCheck(true);})
+            .catch(err => console.log(err))
+  }
+}, [dataInfo.BlNo, dataInfo.vessalName, dataInfo.vessalNumber, tanklistCheck, userId]);
+          // },[ tanklistCheck])
+       const  Tanklist= async () =>{
+            let datasend={
+              "User_Id": userId,
+              "Vessal_Name": dataInfo?.vessalName,
+              "Vessal_No": dataInfo?.vessalNumber,
+              "BE_No": dataInfo.BlNo,
+            }
+            authAxios.post(vessailBE_Detail_List,datasend)
+            .then(res => setTanklist(res?.data?.tanK_BE))
+            .catch(err => console.log(err))
+          }
+          function handleEdit(row){
+              console.log(row)
+              const {terminal_Name,
+tank_ID,net_Quantity,tank_name
+} = row
+              setSelectedWhereHouse(terminal_Name);
+              setSelectedTank(tank_name);
+              setQuantity(net_Quantity);
+              setSelectEdit(true);
+              setTankId(tank_ID);
+          }
+         function handleSaveEdit(){
+             authAxios.post(VesselEditTankapi,{
+  "user_id": userId,
+  "BE_No":dataInfo?.BlNo,
+  "Terminal_Name": selectedWhereHouse,
+  "Tank_name": selectedTank,
+  "Net_Quantity": quantity,
+  "Tank_ID": tankId
+})
+.then((res) => {
+                                      if (res.data.massage == "Update Done") {
+                                        showSuccess("Records Submited");
+                                        Tanklist();
+                                        setQuantity(0);
+                                        setSelectedWhereHouse();
+                                        setTankId();
+                                        setSelectedTank();
+                                        setSelectEdit(false);
+                                      } else {
+                                        showError(res.data.message);
+                                      }
+                                    })
+                                    .catch((err) => {
+                                      if (err.massage == "Network Error") {
+                                        showError("Network Error");
+                                      } else {
+                                        showError(err.message);
+                                       }
+                                    });
+          }
+          function handleDelete(row){
+             authAxios.post(TankDeleteapi,{
+  "user_id": userId,
+  "Tank_ID": row.tank_ID})
+  .then(res => { if (res.data.massage == "Update Done") {
+                                        showSuccess("Records Deleted");
+                                        Tanklist()            
+                                        setSelectEdit(false);
+                                      } else {
+                                        showError(res.data.message);
+                                      }
+                                    })
+                                    .catch((err) => {
+                                      if (err.massage == "Network Error") {
+                                        showError("Network Error");
+                                      } else {
+                                        showError(err.message);
+                                       }
+                                    });
+          }
   return (
     <React.Fragment>
 <Dialog sx={{minWidth:320,width:"100%"}}
@@ -205,7 +305,7 @@ export default function TankForm({ open,
                           id="name"
                           name="name"
                           label="Be No"
-                          disabled="true"
+                          disabled={true}
                           value={dataInfo?.BlNo}
                           type="text"
                           fullWidth
@@ -219,7 +319,7 @@ export default function TankForm({ open,
                           id="name"
                           name="name"
                           label="Gross Qut"
-                          disabled="true"
+                          disabled={true}
                           value={dataInfo?.grossQuantity}
                           type="text"
                           fullWidth
@@ -233,7 +333,7 @@ export default function TankForm({ open,
                           required
                           id="name"
                           name="name"
-                          disabled="true"
+                          disabled={true}
                           label="Net Qut"
                           value={dataInfo?.NetQuantity}
                           type="text"
@@ -268,7 +368,6 @@ export default function TankForm({ open,
                         
             </DialogContent>
             <DialogContent sx={{width:"100%",py:0}}>
-            {/* <Box width={"100%"}> */}
               <TextField
                           
                           required
@@ -307,7 +406,7 @@ export default function TankForm({ open,
             position:"relative",
             justifyContent: "flex-end",
           }}>
-              <Button
+          {selectEdit !==true &&    <Button
                             sx={{ textTransform: "capitalize",mr:1 }}
                             variant="contained"
                             color="success"
@@ -315,10 +414,19 @@ export default function TankForm({ open,
                             onClick={handleSubmit}
                           >
                             Submit
-                          </Button>
+                          </Button>}
+            {selectEdit ==true &&    <Button
+                            sx={{ textTransform: "capitalize",mr:1 }}
+                            variant="contained"
+                            color="success"
+                            type="button"
+                            onClick={handleSaveEdit}
+                          >
+                            Save
+                          </Button>}
             </Box>
             <div style={{ width: "96%",margin:"auto", marginBottom:"3px",display:dataInfo?.isEdit === true ? "none":"block"}}>
-            <DataGrid rows={rows} columns={columns} 
+            <DataGrid getRowId={(row) => row.tank_ID} rows={tanklist} columns={columns} 
              slots={{ footer: CustomFooter }}
   hideFooterPagination
    />

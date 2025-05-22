@@ -33,7 +33,8 @@ export default function BlDataItems({
   handleRemoveFieldBlData,
   validateFields,//
   vessalInfo,//
-  edit
+  edit,//
+  editlabel
 }) {
   const [dataInfo,setDataInfo] = useState({BlNo:0,NetQuantity:0,grossQuantity:0,vessalName:0, vessalNumber:0})
   const [isValid,setIsValid] = useState(false);
@@ -57,7 +58,7 @@ export default function BlDataItems({
 // const [Valid,setValid] = useState(false)
 const calculatePercentage = () => {
   const otr = parseFloat(field.otrQut);
-  const gross = parseFloat(field.grossQuantity);
+  const gross = parseFloat(field?.grossQuantity);
   if (!isNaN(otr) && !isNaN(gross) && gross !== 0) {
     return ((otr / gross) * 100).toFixed(2) +" "+ "%";
   }
@@ -106,7 +107,8 @@ const calculatePercentage = () => {
             color: "#555",
           }}
         >
-          Bl data {index + 1}
+         { editlabel === true? `Bl data Edit`: ` Bl data ${index + 1}`}
+          {/* Bl data {index + 1} */}
         </Typography>
         <Stack
           // key={index}
@@ -123,11 +125,11 @@ const calculatePercentage = () => {
           wrap="wrap"
         >
           <Box sx={{ width: "100%" }}>
-            <FormControl  fullWidth size="small" error={!!field.blDateError}>
+            <FormControl  fullWidth size="small" error={!!field?.blDateError}>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
                   label="Bl Date"
-                  value={dayjs(field.blDate)}
+                  value={dayjs(field?.blDate)}
                   onChange={(newValue) => {
                     const newFields = [...fields];
                     const isError = !newValue || newValue === "";
@@ -141,8 +143,8 @@ const calculatePercentage = () => {
                       id: `Bl_Date_${index}`,
                       variant: "standard",
                       fullWidth: true,
-                      error: !!field.blDateError,
-                      helperText: field.blDateError
+                      error: !!field?.blDateError,
+                      helperText: field?.blDateError
                         ? "Bl Date is required"
                         : ``,
                     },
@@ -157,7 +159,7 @@ const calculatePercentage = () => {
               size="small"
               label="Purchase Name"
               id={`shipping_Name_${index}`}
-              value={field.shippingName}
+              value={field?.shippingName}
               onChange={(e) => {
                 const newFields = [...fields];
                 const value = e.target.value;
@@ -175,8 +177,8 @@ const calculatePercentage = () => {
                 newFields[index].shippingName = value;
                 setFields(newFields);
               }}
-              error={!!field.shippingNameError}
-              helperText={field.shippingNameError || ""}
+              error={!!field?.shippingNameError}
+              helperText={field?.shippingNameError || ""}
               variant="standard"
             />
           </Box>
@@ -185,18 +187,18 @@ const calculatePercentage = () => {
             <TextField
               fullWidth
               size="small"
-              label="BL No/Be No"
-              type="number"
+              label="BL No"
+              type="text"
               id={`BLNo_${index}`}
-              value={field.BLNo}
+              value={field?.BLNo}
               onChange={(e) => {
                 const newFields = [...fields];
                 const value = e.target.value;
 
                 if (value === "" || Number(value) === 0) {
-                  newFields[index].BLNoError = "BL No/Be No is required";
+                  newFields[index].BLNoError = "BL No is required";
                 } else if (Number(value) < 0) {
-                  newFields[index].BLNoError = "BL No/Be No cannot be negative";
+                  newFields[index].BLNoError = "BL No cannot be negative";
                 } else {
                   newFields[index].BLNoError = "";
                 }
@@ -204,8 +206,8 @@ const calculatePercentage = () => {
                 newFields[index].BLNo = value;
                 setFields(newFields);
               }}
-              error={!!field.BLNoError}
-              helperText={field.BLNoError || ""}
+              error={!!field?.BLNoError}
+              helperText={field?.BLNoError || ""}
               variant="standard"
             />
           </Box>
@@ -232,7 +234,7 @@ const calculatePercentage = () => {
               label="Net Quantity"
               type="number"
               id={`Quantity_${index}`}
-              value={field.quantity}
+              value={field?.quantity}
               onChange={(e) => {
                 const newFields = [...fields];
                 const value = e.target.value;
@@ -249,8 +251,8 @@ const calculatePercentage = () => {
                 newFields[index].quantity = value;
                 setFields(newFields);
               }}
-              error={!!field.quantityError}
-              helperText={field.quantityError || ""}
+              error={!!field?.quantityError}
+              helperText={field?.quantityError || ""}
               variant="standard" // or "outlined" / "filled" based on your design
             />
           </Box>
@@ -261,7 +263,7 @@ const calculatePercentage = () => {
                             htmlFor={`Be_${index}`}
                             label="Be Date"
                             name="BeDate"
-                            value={dayjs(field.beDate)}
+                            value={dayjs(field?.beDate)}
                             onChange={(newvalue) => {
                               const newFields = [...fields];
                               if (newvalue === null) {
@@ -280,8 +282,8 @@ const calculatePercentage = () => {
                                 id: "beDate",
                                 variant: "standard",
                                 fullWidth: true,
-                                error: !!field.beDateError,
-                                helperText: !!field.beDateError && "Be Date is required",
+                                error: !!field?.beDateError,
+                                helperText: !!field?.beDateError && "Be Date is required",
                               },
                             }}
                             
@@ -293,17 +295,17 @@ const calculatePercentage = () => {
                       <TextField
                         fullWidth
                         size="small"
-                        label="Bill Of Entry"
+                        label="Be No"
                         id={`Bill_Of_Entry_${index}`}
                         type="text"
-                        value={field.billOfEntry}
+                        value={field?.billOfEntry}
                         onChange={(e) => {
                           const newFields = [...fields];
                           const value = e.target.value;
           
                           if (value === "") {
                             newFields[index].billOfEntryError =
-                              "Bill of Entry is required";
+                              "Be No is required";
                           } else {
                             newFields[index].billOfEntryError = "";
                           }
@@ -311,8 +313,8 @@ const calculatePercentage = () => {
                           newFields[index].billOfEntry = value;
                           setFields(newFields);
                         }}
-                        error={!!field.billOfEntryError}
-                        helperText={field.billOfEntryError || ""}
+                        error={!!field?.billOfEntryError}
+                        helperText={field?.billOfEntryError || ""}
                         variant="standard"
                       />
                     </Box>
@@ -333,7 +335,7 @@ const calculatePercentage = () => {
                 >
                   <BillingDropDownTwo
                   label="saler name"
-                    billing={field.billing}
+                    billing={field?.billing}
                     variant="standard"
                     setBilling={(value) => {
                       if (value === "Select") {
@@ -345,7 +347,7 @@ const calculatePercentage = () => {
                       updatedFields[index].billing = value;
                       setFields(updatedFields);
                     }}
-                    errorsBilling={field.billingError}
+                    errorsBilling={field?.billingError}
                     setErrorsBilling={(value) => {
                       const updatedFields = [...fields];
                       updatedFields[index].billingError = value;
@@ -355,7 +357,7 @@ const calculatePercentage = () => {
                   />
                   <ProductDropDownTwo
                     variant="standard"
-                    selectedProduct={field.ProductName}
+                    selectedProduct={field?.ProductName}
                     setSelectedProduct={(value) => {
                       if (value === "Select") {
                         field.ProductNameError = true;
@@ -366,7 +368,7 @@ const calculatePercentage = () => {
                       updatedFields[index].ProductName = value;
                       setFields(updatedFields);
                     }}
-                    errorsProduct={field.ProductNameError}
+                    errorsProduct={field?.ProductNameError}
                     setErrorsProduct={(value) => {
                       const updatedFields = [...fields];
                       updatedFields[index].ProductNameError = value;
@@ -376,7 +378,7 @@ const calculatePercentage = () => {
                   />
                   <PortDropDownTwo
                     variant="standard"
-                    selectedPort={field.portName}
+                    selectedPort={field?.portName}
                     setSelectedPort={(value) => {
                       if (value === "Select") {
                         field.portNameError = "Port name is required";
@@ -387,7 +389,7 @@ const calculatePercentage = () => {
                       updatedFields[index].portName = value;
                       setFields(updatedFields);
                     }}
-                    errorsPortName={field.portNameError}
+                    errorsPortName={field?.portNameError}
                     setErrorsPortName={(value) => {
                       const updatedFields = [...fields];
                       updatedFields[index].portNameError = value;
@@ -412,7 +414,7 @@ const calculatePercentage = () => {
                   id="GrossQut"
                     name="GrossQut"
                     label="Gross Qut"
-                    value={field.grossQuantity}
+                    value={field?.grossQuantity}
                     type="number"
                     onChange={(e)=>{
                       const newFields = [...fields];
@@ -431,8 +433,8 @@ const calculatePercentage = () => {
                 setFields(newFields);
               
                     }}
-                    error={field.grossQuantityError}
-                    helperText={field.grossQuantityError || ""}
+                    error={field?.grossQuantityError}
+                    helperText={field?.grossQuantityError || ""}
                     fullWidth
                     variant="standard"
                   />
@@ -440,9 +442,9 @@ const calculatePercentage = () => {
                   id="QtrQut"
                     name="QtrQut"
                     label="Qtr  Qut"
-                    value={field.otrQut}
-                    error={field.otrQutError}
-                    helperText={field.otrQutError}
+                    value={field?.otrQut}
+                    error={field?.otrQutError}
+                    helperText={field?.otrQutError}
                     onChange={(e)=>{
                       const newFields = [...fields];
                 const value = e.target.value;
@@ -479,7 +481,8 @@ const calculatePercentage = () => {
           sx={{
             mt:2,
             width: "100%",
-            display:edit === true ? "none": "flex",
+            display:"flex",
+            gap:1,
             position:"relative",
             justifyContent: "center",
           }}
@@ -500,7 +503,7 @@ const calculatePercentage = () => {
             color="error"
             onClick={() => handleRemoveFieldBlData(index)}
             disabled={fields.length === 1}
-            sx={{mx:2, textTransform:"capitalize"}}
+            sx={{mx:2,display:edit === true ? "none": "flex", textTransform:"capitalize"}}
             variant="contained"
             >Delete</Button>
           <Button value="X-Bond" onClick={verify}  variant="contained"  color="primary" sx={{p:1,textTransform:"capitalize",width:120}}  >

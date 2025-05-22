@@ -1,7 +1,7 @@
 
 import React, { useEffect,useState } from 'react'
 import CustomPageHeader from '../../../commonComponent/CustomPageHeader/CustomPageHeader'
-import { Box, Button, Collapse, IconButton, Paper, Stack, Tab, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tabs, Typography } from '@mui/material'
+import { Box, Button, Collapse, IconButton, List, Paper, Stack, Tab, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tabs, Typography } from '@mui/material'
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 // import TabCon
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -19,8 +19,8 @@ import TankForm from '../VessalRequestForm/TankForm/TankForm';
 import XBondForm from '../VessalRequestForm/XBondFrom/XBondFrom';
 import { useNavigate } from 'react-router';
 import DeleteIcon from "@mui/icons-material/Delete";
-const Table_headVessal=["Vessal Details","vessal_Name","vessal No","discarge Date","chA Name",]
-const TblHead_vessalDetails = ["Be Details","produce Name","port Name","BL Name","Bl No","BL Date","BL Qty","BE Name","BE No","bE Date","BE Gross Qty","BE Net Qty","Be OTR Qty","Edit"]
+const Table_headVessal=["vessal_Name","vessal No","discarge Date","chA Name","Vessal Details"]
+const TblHead_vessalDetails = ["produce Name","port Name","BL Name","Bl No","BL Date","BL Qty","BE Name","BE No","bE Date","BE Gross Qty","BE Net Qty","Be OTR Qty","Edit","Be Details"]
 const TblHead_Tank = ["bE_NO","terminal_Name","tank_name","net_Quantity","Edit","Delete"]
 const BeXbontTbl_head=["bE_No", "xbE_date", "xbE_NO", "xbE_Qty","Edit"]
 const userId = JSON.parse(localStorage.getItem("userInfo"))?.id;
@@ -76,8 +76,8 @@ export default function VessalList() {
       </Box>
             </Stack>
               {vessalLoading && <p>Loading . . .</p>}
-          { vessaldata.length !==0 &&  <TableContainer component={Paper}>
-                   <Table aria-label="collapsible table" style={{overflow:"auto"}}>
+          { vessaldata.length !==0 &&  <TableContainer component={Paper} style={{overflow:"auto"}}>
+                   <Table aria-label="collapsible table" >
                       <TableHead>
                         <TableRow>
                         {Table_headVessal.map((head,index)=>(
@@ -122,31 +122,36 @@ const TblvessalDetails=[vessal_Name,vessal_No,formatDateToUS(discarge_Date),chA_
 })
  }
   return <React.Fragment><TableRow key={key} sx={{ '& > *': { borderBottom: 'unset' } }}>
-                    <TableCell>
-          <IconButton
+                    
+        {TblvessalDetails.map((bodytext,index)=><TableCell key={bodytext+index} style={{width:"120px"}}>
+                            {bodytext}
+                          </TableCell>)}
+                          <TableCell key={"vessalDetails"+key}>
+          <Button
             aria-label="expand row"
             size="small"
+            variant="outlined"
+            color={!open ? "primary" : "error"}
             onClick={() => handleOpen(vessal_Name,vessal_No,userId)}
           >
-            {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-          </IconButton>
-        </TableCell>
-        {TblvessalDetails.map((bodytext,index)=><TableCell key={bodytext+index}>
-                            {bodytext}
-                          </TableCell>)} 
+            {!open ? "Open" : "Close"}
+          </Button>
+        </TableCell> 
                         </TableRow>
                         <TableRow>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={5}>
+        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
           <Collapse in={open} timeout="auto" unmountOnExit>
-            <Box sx={{ margin: 1 ,overflow: 'auto'}}>
+            <List component="div" disablePadding>
+
               
                  {vessalLoading && <p>Loading . . .</p>}
           { vessaldata.length !==0 && 
           // <TableContainer component={Paper} sx={{overflow:"auto"}}>
-              <Table size="small" sx={{overflow:"auto", minWidth: 800 }} aria-label="purchases">
+          <TableContainer elevation={0} component={Paper} style={{overflow:"auto",minWidth:800}}>
+              <Table size="small"  aria-label="purchases">
                 <TableHead>
                   <TableRow>
-                    {TblHead_vessalDetails.map((head,index)=>(
+                    {TblHead_vessalDetails.map((head,index)=>( 
                     <TableCell component="th" scope="row" key={index} align="left" sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}} >{head}</TableCell>
                     ))}
                   </TableRow>
@@ -162,9 +167,10 @@ const TblvessalDetails=[vessal_Name,vessal_No,formatDateToUS(discarge_Date),chA_
                  
                 </TableBody>
               </Table>
+                </TableContainer>  
               }
-                          
-              </Box>
+                      
+              </List>
               </Collapse>
                </TableCell>
               </TableRow> 
@@ -255,7 +261,7 @@ authAxios.post(vessailBE_Detail_List,JSON.stringify({
   "Vessal_Name": vessal_Name,
   "bE_No": bE_No
 }))
-.then((res)=>{setBedata(res.data);setVessalLoading(false) })
+.then((res)=>{setBedata(res.data);setVessalLoading(false);setEditTank(true);setEditXbond(true) })
 .catch((err)=>
 {
   console.log(err)
@@ -266,29 +272,33 @@ authAxios.post(vessailBE_Detail_List,JSON.stringify({
   return (
     <React.Fragment>
      <TableRow key={key} sx={{ '& > *': { borderBottom: 'unset' } }}>
-                        <TableCell>
-          <IconButton
-            aria-label="expand row"
-            size="small"
-            onClick={() => handleOpen(vessal_Name,vessal_No,userId)}
-          >
-            {openTank ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-          </IconButton>
-        </TableCell>
+                    
         
                         {tblbody.map((bodytext,index)=>
                          <TableCell key={bodytext+index}>{bodytext}</TableCell>
                         )}
-                        <TableCell>
+                        <TableCell key={"Be-Details"+key}>
                       <IconButton color='primary' value="Be-Details" onClick={(e)=>beDetailsEdit(tblbody,e)}>
                       <EditSquareIcon  />
                       </IconButton>
                     </TableCell>
+                        <TableCell key={"expand"+key}>
+          <Button
+            aria-label="expand row"
+            size="small"
+            variant="outlined"
+            color={!open ? "primary" : "error"}
+            onClick={() => handleOpen(vessal_Name,vessal_No,userId)}
+          >
+            {!open ? "Open" : "Close"}
+          </Button>
+        </TableCell>
                      </TableRow>
                   <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 ,display:"flex"}} colSpan={6}>
           <Collapse in={openTank} timeout="auto" unmountOnExit  >
-          <Box >
+          <List component="div" disablePadding>
+
                   {/* <TabContext value={tabs}> */}
         <Box sx={{ borderBottom: 1, borderColor: 'divider',width:"100%" }}>
           <Tabs value={tabs} onChange={handleTabs} aria-label="basic tabs example">
@@ -319,9 +329,9 @@ authAxios.post(vessailBE_Detail_List,JSON.stringify({
                     <TableCell key={head+index} align="left">{head}</TableCell>
                     ))}
                     <TableCell>
-                      <IconButton color='primary' value="Open-tank" onClick={(e)=>beDetailsEdit({tank_ID,bE_NO, terminal_Name, tank_name, net_Quantity},e)}>
+                      {/* <IconButton color='primary' value="Open-tank" onClick={(e)=>beDetailsEdit({tank_ID,bE_NO, terminal_Name, tank_name, net_Quantity},e)}>
                       <EditSquareIcon  />
-                      </IconButton>
+                      </IconButton> */}
                       </TableCell>
                       <TableCell >
                       <IconButton color='error' onClick={(e)=>TankDelete({tank_ID,userId},e)}>
@@ -357,9 +367,9 @@ authAxios.post(vessailBE_Detail_List,JSON.stringify({
                     <TableCell key={head+X_BE_ID} align="left" >{head}</TableCell>
                     ))}
                      <TableCell>
-                      <IconButton color='primary' value="X-Bond" onClick={(e)=>beDetailsEdit({X_BE_ID,bE_No, xbE_date, xbE_NO, xbE_Qty},e)}>
+                      {/* <IconButton color='primary' value="X-Bond" onClick={(e)=>beDetailsEdit({X_BE_ID,bE_No, xbE_date, xbE_NO, xbE_Qty},e)}>
                       <EditSquareIcon  />
-                      </IconButton>
+                      </IconButton> */}
                     </TableCell>
                          </TableRow>
                          
@@ -376,15 +386,15 @@ authAxios.post(vessailBE_Detail_List,JSON.stringify({
             
                 
                 
-              </Box>
+              </List>
               </Collapse>
               </TableCell>
               </TableRow>
-              <TankForm open={editTank} dataInfo={dataTankInfo}
+              {/* <TankForm open={editTank} dataInfo={dataTankInfo}
                       setOpen={setEditTank} userId={userId}
                       setDataInfo={setDataTankInfo}/>
                <XBondForm open={editXbond} dataInfo={dataXbondInfo}
-                      setOpen={setEditXbond} userId={userId}/>
+                      setOpen={setEditXbond} userId={userId}/> */}
   </React.Fragment>
   )
 }

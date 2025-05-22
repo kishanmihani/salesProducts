@@ -39,6 +39,34 @@ export default function VessalRequestForm() {
   });
   const [dischargeDate, setDisChargeDate] = useState(null);
   const [dischargeDateError, setDischargeDateError] = useState(false);
+  const [editfields, setEditFields] = useState([
+  {
+    shippingName: "",
+    shippingNameError: "",
+    quantity: 0,
+    quantityError: "",
+    BLNo: 0,
+    BLNoError: "",
+    blDate: null,
+    blDateError: false,
+    billing:"Select",
+    billingError:false,
+    portName:"Select",
+    portNameError:false,
+    ProductName:"Select",
+    ProductNameError:false,
+    billOfEntryError:"",
+    billOfEntry:"",
+    beDate:null,
+    beDateError:false,
+    grossQuantity:0,
+    grossQuantityError:"",
+    otrQut:0,
+    otrQutError:"",
+    otrpersent:0,
+    otrpersentError:""
+  }  
+  ])
   const [fields, setFields] = useState([
   {
     shippingName: "",
@@ -67,13 +95,12 @@ export default function VessalRequestForm() {
     otrpersentError:""
   }
 ]);
-  // const [beDetailsfields, setBeDetailsfields] = useState(instialValueBedetails);
-  
   const [blDataCheck, setBlDataCheck] = useState(true);
   
   const [custAlert, setCustAlert] = React.useState(null);
   const [userId] = useState(JSON.parse(localStorage.getItem("userInfo"))?.id);
   const handleAddFieldsBlData = () => {
+    if(editBeData?.isEdit == false){
     setFields([
       ...fields,
       {
@@ -96,6 +123,53 @@ export default function VessalRequestForm() {
         // blAmt: 0,
       },
     ]);
+  }
+  else if(editBeData?.isEdit == true){
+    setFields([
+      ...fields,
+      {
+        // Custom: 0,
+        shippingName: "",
+        BLNo: 0,
+        quantity: 0,
+        blDate: null,
+        beDate:null,
+        ProductName:"Select",
+        billing:"Select",
+        portName:"Select",
+        billOfEntry:"",
+        grossQuantity:0,
+        otrQut:0,
+        otrpersent:0
+        // cargoPrice: 0,
+        // iGst: 0,
+        // roe: 0,
+        // blAmt: 0,
+      },
+    ]);
+    setEditFields([
+      ...fields,
+      {
+        // Custom: 0,
+        shippingName: "",
+        BLNo: 0,
+        quantity: 0,
+        blDate: null,
+        beDate:null,
+        ProductName:"Select",
+        billing:"Select",
+        portName:"Select",
+        billOfEntry:"",
+        grossQuantity:0,
+        otrQut:0,
+        otrpersent:0
+        // cargoPrice: 0,
+        // iGst: 0,
+        // roe: 0,
+        // blAmt: 0,
+      },
+    ]);
+  }
   };
   const [editBeData,setEditBeData] = useState()
   const handleRemoveFieldBlData = (index) => {
@@ -103,16 +177,21 @@ export default function VessalRequestForm() {
     setFields(updatedFields);
   };
   ;
-  
+  const handleRemoveEditFieldBlData = (index) => {
+    const updatedFields = editfields.filter((_, i) => i !== index);
+    setEditFields(updatedFields);
+  };
   
   
 
   
   async function handleSubmit(event) {
-    debugger;
     event.preventDefault();
+    
     let hasError = false;
-    if (vessalName === "") {
+    
+    if (vessalName === "" || vessalName === undefined) {
+      debugger
       setVessalNameError(true);
       hasError = true;
     } else if (vessalName !== "") {
@@ -125,7 +204,7 @@ export default function VessalRequestForm() {
       setDischargeDateError(false);
       // hasError =false;
     }
-    if (chaName === "") {
+    if (chaName === "" || chaName === undefined) {
       setChaNameError(true);
       hasError = true;
     } else if (chaName !== "") {
@@ -139,7 +218,7 @@ export default function VessalRequestForm() {
     }
 
     let updatedFields;
-    if (blDataCheck == true) {
+    if (blDataCheck !== true) {
       updatedFields = fields.map((field) => {
         const updatedField = { ...field };
 
@@ -171,6 +250,7 @@ export default function VessalRequestForm() {
         } else {
           updatedField.grossQuantityError = "";
         }
+        debugger;
         if (field.otrQut === "" || Number(field.otrQut) === 0) {
           updatedField.otrQutError = "Otr Qut is required";
           hasError = true;
@@ -215,7 +295,8 @@ export default function VessalRequestForm() {
         } else {
           updatedField.portNameError = false;
         }
-        if (field.billOfEntry === "" || field.billOfEntry === null) {
+        debugger;
+        if (field.billOfEntry === "" || field.billOfEntry === null ) {
           updatedField.billOfEntryError = true;
           hasError = true;
         } else {
@@ -232,6 +313,105 @@ export default function VessalRequestForm() {
       });
       setFields(updatedFields);
     }
+    let updatedEditFields;
+    if (editBeData?.isEdit ===true ) {//290
+      updatedEditFields = editfields.map((field) => {
+        const updatedEditField = { ...field };
+         console.log(updatedEditField)
+         debugger;
+        if (field?.shippingName?.trim() === "") {
+          updatedEditField.shippingNameError = "shipping Name is required";
+          hasError = true;
+        } else if (!/^[A-Za-z\s]+$/.test(field.shippingName)) {
+          updatedEditField.shippingNameError = "Only letters and spaces allowed";
+          hasError = true;
+        } else {
+          updatedEditField.shippingNameError = "";
+        }
+
+        if (field.BLNo === "" || Number(field.BLNo) === 0) {
+          updatedEditField.BLNoError = "BL .No is required";
+          hasError = true;
+        } else if (Number(field.BLNo) < 0) {
+          updatedEditField.BLNoError = "BL .No cannot be negative";
+          hasError = true;
+        } else {
+          updatedEditField.BLNoError = "";
+        }
+        if (field.grossQuantity === "" || Number(field.grossQuantity) === 0) {
+          updatedEditField.grossQuantityError = "Gross Qut is required";
+          hasError = true;
+        } else if (Number(field.grossQuantity) < 0) {
+          updatedEditField.grossQuantityError = "Gross Qut cannot be negative";
+          hasError = true;
+        } else {
+          updatedEditField.grossQuantityError = "";
+        }
+        debugger;
+        if (field.otrQut === "" || Number(field.otrQut) === 0) {
+        
+          updatedEditField.otrQutError = "Otr Qut is required";
+          hasError = true;
+        } else if (Number(field.otrQut) < 0) {
+          updatedEditField.otrQutError = "Otr Qut cannot be negative";
+          hasError = true;
+        } else {
+          updatedEditField.otrQutError = "";
+        }
+        
+        if (field.quantity === "" || Number(field.quantity) === 0) {
+          updatedEditField.quantityError = "Net Quantity is required";
+          hasError = true;
+        } else if (Number(field.quantity) < 0) {
+          updatedEditField.quantityError = "Net Quantity cannot be negative";
+          hasError = true;
+        } else {
+          updatedEditField.quantityError = "";
+        }
+        
+        if (field.blDate === "" || field.blDate === null) {
+          debugger;
+          updatedEditField.blDateError = true;
+          hasError = true;
+        } else {
+          updatedEditField.blDateError = false;
+        }
+        if (field.beDate === "" || field.beDate === null) {
+          updatedEditField.beDateError = true;
+          hasError = true;
+        } else {
+          updatedEditField.beDateError = false;
+        }
+        if (field.ProductName === "Select" || field.ProductName === null) {
+          updatedEditField.ProductNameError = true;
+          hasError = true;
+        } else {
+          updatedEditField.ProductNameError = false;
+        }
+        if (field.portName === "Select" || field.portName === null) {
+          updatedEditField.portNameError = true;
+          hasError = true;
+        } else {
+          updatedEditField.portNameError = false;
+        }
+        debugger;
+        if (field.billOfEntry === "" || field.billOfEntry === null ) {
+          updatedEditField.billOfEntryError = true;
+          hasError = true;
+        } else {
+          updatedEditField.billOfEntryError = false;
+        }
+        if (field.billing === "Select" || field.billing === null) {
+          updatedEditField.billingError = true;
+          hasError = true;
+        } else {
+          updatedEditField.billingError = false;
+        }
+        
+        return updatedEditField;
+      });
+      setEditFields(updatedEditFields);
+    }
     if (!hasError && !editBeData?.isEdit) { 
       
         let count = 0;
@@ -247,7 +427,7 @@ export default function VessalRequestForm() {
             Bl_No: arr.BLNo,
             BL_date: arr?.blDate,
             BL_Qty: arr?.quantity,
-            BE_No: arr.BLNo,
+            BE_No: arr?.billOfEntry,
             BE_Date: arr?.beDate ,
              BE_G_Qty:arr?.grossQuantity,
              BE_N_Qty:arr?.grossQuantity - arr?.otrQut,
@@ -281,8 +461,9 @@ export default function VessalRequestForm() {
       
     
     else if(!hasError && editBeData?.isEdit){
+      debugger;
       let count = 0;
-        for (let arr of fields) {
+        for (let arr of editfields) {
           count++;
           let data = {
             User_Id: userId,
@@ -294,7 +475,7 @@ export default function VessalRequestForm() {
             Bl_No: arr.BLNo,
             BL_date: arr?.blDate,
             BL_Qty: arr?.quantity,
-            BE_No: arr.BLNo,
+            BE_No: arr.billOfEntry,
             BE_Date: arr?.beDate ,
              BE_G_Qty:arr?.grossQuantity,
              BE_N_Qty:arr?.grossQuantity - arr?.otrQut,
@@ -429,7 +610,7 @@ authAxios.post(Vessel_Edit_Data,JSON.stringify(data))
     setBlDataCheck(!blDataCheck);
   }
   const validateFields = (field, index) => {
-    const newFields = [...fields];
+    const newFields =editBeData?.isEdit == true ? [...editfields] : [...fields];
     let isValid = true;
     if (vessalName === "") {
       setVessalNameError(true);
@@ -476,8 +657,8 @@ authAxios.post(Vessel_Edit_Data,JSON.stringify(data))
         if (!fieldItem.BLNo || Number(fieldItem.BLNo) <= 0) {
           newFields[index].BLNoError =
             Number(fieldItem.BLNo) < 0
-              ? "BL No/Be No cannot be negative"
-              : "BL No/Be No is required";
+              ? "BL No cannot be negative"
+              : "BL No No is required";
           isValid = false;
         }
         if (field.grossQuantity === "" || Number(field.grossQuantity) === 0) {
@@ -515,7 +696,7 @@ authAxios.post(Vessel_Edit_Data,JSON.stringify(data))
         }
   
         // Bill of Entry
-        if (!fieldItem.billOfEntry || fieldItem.billOfEntry.trim() === "") {
+        if (!fieldItem.billOfEntry || fieldItem.billOfEntry.trim() === "" ) {
           newFields[index].billOfEntryError = "Bill of Entry is required";
           isValid = false;
         }
@@ -540,7 +721,7 @@ authAxios.post(Vessel_Edit_Data,JSON.stringify(data))
       }
     });
   
-    setFields(newFields);
+  editBeData?.isEdit == true ? setEditFields(newFields) :  setFields(newFields);
     // console.log(isValid + "" + index);
     return isValid;
   };
@@ -555,7 +736,7 @@ setVessalName(beData?.vessal_Name);
 setVessalNumber(beData?.vessal_No);
 setDisChargeDate(beData?.discarge_Date);
 setChaName(beData?.chA_Name);
-setFields([
+setEditFields([
   {
     shippingName: beData?.bl_Name,
     quantity: Number(beData?.bE_N_Qty),
@@ -564,12 +745,10 @@ setFields([
     billing:beData?.bE_Name,
     portName:beData?.port_Name,
     ProductName:beData?.produce_Name,
-    billOfEntry:"",
+    billOfEntry:beData?.bE_No,
     beDate:beData?.bE_Date,
-    grossQuantity:beData?.bE_G_Qty
-,
-    otrQut:beData?.bE_OTR_Qty
-,
+    grossQuantity:beData?.bE_G_Qty,
+    otrQut:beData?.bE_OTR_Qty,
   }]);
 }, [param]);
   return (
@@ -691,7 +870,7 @@ setFields([
               <AddCircleOutlineOutlinedIcon sx={{ mr: 1 }} />
               Add BL data
             </Button>
-
+{/* 
             <Button
               variant="outlined"
               color="success"
@@ -717,9 +896,9 @@ setFields([
                 }
                 label="bl Data"
               />
-            </Button>
+            </Button> */}
           </Box>
-          {fields.map((field,BlId) => (
+          { editBeData?.isEdit !== true && fields.map((field,BlId) => (
             <BlDataItems
               field={field}
               disabled={blDataCheck}
@@ -732,8 +911,81 @@ setFields([
               handleRemoveFieldBlData={handleRemoveFieldBlData}
             />
           ))}
+          { editBeData?.isEdit ===true && editfields.map((field,BlId) => (
+            <BlDataItems
+              field={field}
+              disabled={true}
+              index={BlId}
+              editlabel={true}
+              fields={editfields}
+              edit={editBeData?.isEdit}
+              vessalInfo={[vessalName, vessalNumber]}
+              setFields={setFields}
+              validateFields={validateFields}
+              handleRemoveFieldBlData={handleRemoveEditFieldBlData}
+            />
+          ))}
           
           
+          
+          
+         { editBeData?.isEdit ===true && <Box sx={{ p: 2 }}>
+            <Button
+              disabled={blDataCheck}
+              variant="outlined"
+              sx={{
+                p: 1,
+                pr: 3,
+                fontSize: "12px",
+                borderRadius: 6,
+                textTransform: "capitalize",
+              }}
+              color="success"
+              onClick={handleAddFieldsBlData}
+            >
+              <AddCircleOutlineOutlinedIcon sx={{ mr: 1 }} />
+              Add BL data Insert
+            </Button>
+            <Button
+              variant="outlined"
+              color="success"
+              sx={{ m: 0, ml: 3, p: 0, borderRadius: 6 }}
+            >
+              <FormControlLabel
+                sx={{
+                  p: 1,
+                  pt: 0,
+                  pb: 0,
+                  textTransform: "capitalize",
+                  "& .MuiFormControlLabel-label": {
+                    fontSize: "0.68rem",
+                  },
+                }}
+                control={
+                  <Checkbox
+                    // defaultChecked
+                    value={blDataCheck}
+                    onChange={blDataCheckChange}
+                    color="success"
+                  />
+                }
+                label="bl Data Insert"
+              />
+            </Button>
+            </Box>}
+            { editBeData?.isEdit ===true && fields.map((field,BlId) => (
+            <BlDataItems
+              field={field}
+              disabled={!blDataCheck}
+              index={BlId}
+              fields={fields}
+              // edit={editBeData?.isEdit}
+              vessalInfo={[vessalName, vessalNumber]}
+              setFields={setFields}
+              validateFields={validateFields}
+              handleRemoveFieldBlData={handleRemoveFieldBlData}
+            />
+          ))}
           <Stack
             spacing={2}
             direction={{ xs: "row" }}
