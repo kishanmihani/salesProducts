@@ -5,19 +5,21 @@ import {
     FormHelperText
   } from "@mui/material";
   import React, { useEffect, useState } from "react";
-  import { useLocation } from "react-router";
+  import { useLocation, useNavigate, useParams } from "react-router";
 import CustomerDropDownTwo from "../../../commonComponent/CustomerDropDown/CustomerDropDowntwo";
 import PortDropDownTwo from "../../../commonComponent/PortDropdown/ProtDropDowntwo";
 import { authAxios } from "../../../utils/authAxios";
 import CustomeAlerts from "../../../commonComponent/CustomeAlert/CustomeAlert";
 import CustomPageHeader from "../../../commonComponent/CustomPageHeader/CustomPageHeader";
 import ProductDropDownTwo from "../../../commonComponent/ProductDropDown/ProductDropDownTwo";
+import { vehiclelistapi } from "../../../Config/Api";
   export default function LogicticListEdit() {
-    const table_id=useLocation();
-    const [tableData,setTableData]=React.useState([])
-      const [checkTableData,setCheckTableData]=React.useState(false)
-      // const [userId] = React.useState(JSON.parse(localStorage.getItem("userInfo"))?.id);
-    const [vessalName,setVessalNmae] = React.useState("Select");
+    const tableId=useParams().id;
+    // const {id} = useLocation;
+    const navigate = useNavigate();
+    const [tableData,setTableData]=React.useState()
+      const [checkTableData,setCheckTableData]=React.useState(false);
+      const [vessalName,setVessalNmae] = React.useState("Select");
     const [vessalNameError,setVessalNameError] = React.useState(false)
      const [productError,setProductError] = useState(false);
               const [selectedProduct,setSelectedProduct] = useState("Select")
@@ -31,6 +33,7 @@ import ProductDropDownTwo from "../../../commonComponent/ProductDropDown/Product
       bl_No:"Select",
       bl_NoError:false
      })
+     const [editVslCheck,setEditVslCheck] = useState(true)
       const [vessalList,setVessalList] = React.useState([]);
     const [customerName, setCustomerName] = React.useState('Select');
     const [portName, setPortName] = React.useState('Select');
@@ -42,6 +45,10 @@ import ProductDropDownTwo from "../../../commonComponent/ProductDropDown/Product
     const [errorsCustomerName, setErrorsCustomerName] = React.useState(false);
     const [errorsPortName, setErrorsPortName] = React.useState(false);
     const [remark, setRemark] = React.useState("");
+    const [soNo,setSoNo] = React.useState(0);
+    const [errorSoNo,seterrorSoNo] = React.useState("")
+    const [actualQuantity,setActQuantity] = React.useState(0);
+    const [errorActQut,seterrorActQut] = React.useState(""); 
     const [custAlert, setCustAlert] = React.useState(null);
     const [userId] = React.useState(JSON.parse(localStorage.getItem("userInfo"))?.id);
     const showSuccess = (data) => {
@@ -50,39 +57,75 @@ import ProductDropDownTwo from "../../../commonComponent/ProductDropDown/Product
     const showError = (data) => {
       setCustAlert({ type: "error", message: data });
     };
-  useEffect(() => {
-      const fetchTableData = async () => {
-        try {
-          const response = await authAxios.post(
-            "BituRep/Api/Account/logistic_data_list",
-            JSON.stringify({
-              user_id: userId,
-              Role: "entry",
-            })
-          );
+    useEffect(() => {
+  const fetchTableData = async () => {
+    try {
+      const response = await authAxios.post(
+        vehiclelistapi,
+        JSON.stringify({
+          user_id: userId,
+          Role: "entry",
+        })
+      );
 
-          console.log(table_id)
-          setTableData(response.data.filter(data =>data.table_id == 53));
-          // setVessalNmae(tableData.)
-          
-        } catch (error) {
-          console.error(error);
-        } finally {
-          setCheckTableData(false);
-        }
-      };
-    
-      if (!checkTableData && tableData.length === 0) {
-        fetchTableData();
-      }
-      if(tableData.length !== 0){
-        console.log(tableData?.[0].customer_Name);
+      setCheckTableData(true);
+
+      const tabledata = response.data.filter(data => data.table_id == tableId);
+     
+
+      if (tabledata.length > 0) {
+        const item = tabledata[0];
+        setTableData(item) // get the first match
+        VessalChange(item?.vessel_Name +"|"+item?.vessel_No)
+        setCustomerName(item?.customer_Name || '');
+        setPortName(item?.port_Name || '');
+        setRemark(item?.remark || '');
+        setActQuantity(item?.a_Qty );
+        setSoNo(item?.so_No);
+
+        setSelectedProduct(item?.produce_Name || '');
+        setFields([{
+          vehicleName: item?.vehicle_Name || '',
+          vehicleNameError: '',
+          quantity: item?.quantity || '',
+          quantityError: '',
+          transporter: item?.transporter_Name || '',
+          transporterError: ''
+        }]);
+        //  VessalChange(item?.vessel_Name +"|"+item?.vessel_No)
+        setTimeout(()=>{
+        setVessalInfo(
+        {
+      be_No:item?.bE_No,
+      be_NoError:false,
+      wH_NAME:item?.terminal_NAME,
+      wH_NAMEError:false,
+      tank:item?.tank_name,
+      tankError:false,
+      bl_No:item?.bL_No,
+      bl_NoError:false
+     })
+     },600)
+     
         
       }
-    }, [checkTableData, setTableData,tableData, userId]);
+     
+    } catch (error) {
+      
+      console.error("Error fetching table data:", error);
+    } finally {
+      setCheckTableData(true);
+    }
+  };
+
+  if (!checkTableData) {
+    fetchTableData();
+  }
+
+  
+}, [VessalChange, checkTableData, tableData, tableId, userId]);
     const handleSubmit = async (e) => {
       e.preventDefault();
-    
       let hasError = false;
       if(selectedProduct == "Select"){
         setProductError(false)
@@ -101,6 +144,25 @@ import ProductDropDownTwo from "../../../commonComponent/ProductDropDown/Product
         setVessalNameError(true)
         hasError = true;
       }
+      if(soNo == 0){
+        seterrorSoNo("So No value is required");
+          hasError = true;
+      }else if(soNo < 0){
+        seterrorSoNo("So No value can not be negative");
+          hasError = true;
+      }else{
+        seterrorSoNo("");
+      }
+      if(actualQuantity == 0){
+        hasError = true;
+                    seterrorActQut("Actual Quantity value is required")
+                  }else if(actualQuantity < 0){
+                    hasError = true;
+                    seterrorActQut("Actual Quantity value can not be negative")
+                  }
+                  else {
+                     seterrorActQut("");
+                  }
       if(vessalName !== "Select"){
         if(vessalInfo.be_No == "Select"){
           setVessalInfo((prev)=>({...prev,be_NoError:true }));
@@ -156,30 +218,47 @@ import ProductDropDownTwo from "../../../commonComponent/ProductDropDown/Product
       setFields(updatedFields);
     
       if (!hasError) {
-        console.log("Form Data Submitted:", {
-          customerName,
-          portName,
-          fields: updatedFields,
-          remark,
-        });
+        
         let count=0;
         for(let arr of fields){
           
           count++;
          var data={
-          "user_id": userId,
-          "Customer_Name": customerName,
-          "vehicle_Name": arr.vehicleName,
-          "Transporter_Name":arr.transporter,
-          "Port_Name": portName,
-          "Quantity": arr.quantity,
-          "Remark": remark,
-           "Vessal_Name":vessalName
-        }
-          await authAxios.post('BituRep/Api/Account/logistic_data',JSON.stringify(data))
+          
+    "User_id": userId,
+    "Customer_Name": customerName,
+    "Port_Name": portName,
+    "vehicle_Name": fields?.vehicleName,
+    "P_Qut": fields?.quantity,
+    "Remark": remark,
+    "Table_Id": tableData?.table,
+    "Transporter_Name": "u",
+    "Produce_Name": selectedProduct,
+    "Vessel_Name": vessalName.replaceAll("|", ",").split(",")?.[0],
+    "Vessel_No": vessalName.replaceAll("|", ",").split(",")?.[1],
+    "Tank_name": vessalInfo.tank,
+    "Terminal_NAME": vessalInfo?.wH_NAME,
+    "BE_No": vessalInfo.be_No,
+    "BL_No": "8",
+    "Do_No":  arr.quantity +
+            "/" +
+            arr.vehicleName +
+            "/" +
+            vessalInfo.bl_No +
+            "/" +
+            portName,
+    "status_name": tableData.status_name,
+    "active_id":  tableData?.active_id
+,
+    "A_Qty": actualQuantity,
+    "So_No": soNo
+}
+          
+          await authAxios.post('BituRep/Api/Account/logistic_data_Edit',JSON.stringify(data))
           .then((res)=>{
           if (res.data.massage == "Entry Done") {
-                      showSuccess("Records Submited")
+                      showSuccess("Records Submited");
+                       navigate("/dashboard/Logistic/Logistic_Pending_form")    
                       }else {
                         showError(res.data.message)
                       }
@@ -237,14 +316,20 @@ import ProductDropDownTwo from "../../../commonComponent/ProductDropDown/Product
         "Vessal_No": value.replaceAll("|", ",").split(",")[1]
       }
       authAxios.post("BituRep/Api/Account/Vessel_Detail_List",data)
-      .then(res=>{setVessalData(res.data)
-        setVessalInfo({be_No:"Select",
+      .then(res=>{setVessalData(res.data);
+       if(editVslCheck === true){
+        
+          setEditVslCheck(false);
+        }  
+        else{
+          setVessalInfo({be_No:"Select",
           be_NoError:false,
           wH_NAME:"Select",wH_NAMEError:false,
           tank:"Select",
           tankError:false,
           bl_No:"Select",
-          bl_NoError:false});  
+          bl_NoError:false});
+        }
       })
       .catch((err)=>err.message)
 
@@ -263,22 +348,12 @@ import ProductDropDownTwo from "../../../commonComponent/ProductDropDown/Product
                 <CustomerDropDownTwo errorsCustomerName={errorsCustomerName} setErrorsCustomerName={setErrorsCustomerName} selectedCustomer={customerName} setSelectedCustomer={setCustomerName} />
                 <PortDropDownTwo errorsPortName={errorsPortName} setErrorsPortName={setErrorsPortName} selectedPort={portName} setSelectedPort={setPortName} />
 
-               <TextField
-                fullWidth
-                size="small"
-                margin="normal"
-                id="Remark"
-                name="Remark"
-                label="Remark"
-                multiline
-                rows={1}
-                value={remark}
-                onChange={(e) => setRemark(e.target.value)}
-              />
+               
+              <ProductDropDownTwo variant="outlined" errorsProduct={productError} setErrorsProduct={setProductError} selectedProduct={selectedProduct} setSelectedProduct={setSelectedProduct} />
             </Stack>
   
-            <Box sx={{ p: 0 }}>
-            </Box>
+            {/* <Box sx={{ p: 0 }}>
+            </Box> */}
   
             
             <Stack
@@ -292,13 +367,37 @@ import ProductDropDownTwo from "../../../commonComponent/ProductDropDown/Product
               borderColor: "black",
             }}
             >
-              <ProductDropDownTwo variant="standard" errorsProduct={productError} setErrorsProduct={setProductError} selectedProduct={selectedProduct} setSelectedProduct={setSelectedProduct} /> 
+               {/* <Box sx={{ width: "50%" }}> */}
+<TextField
+                fullWidth
+                size="small"
+                id="SoNo"
+                type="number"
+                variant="standard"
+                name="SoNo"
+                label="So No."
+                error={errorSoNo}
+                helperText={errorSoNo}
+                value={soNo}
+                onChange={(e) =>{
+                  let value=e.target.value;
+                  if(value == 0){
+                    seterrorSoNo("So No value is required")
+                  }else if(value < 0){
+                    seterrorSoNo("So No value can not be negative")
+                  }
+                  else {
+                     seterrorSoNo("");
+                  }
+                  setSoNo(e.target.value)}}
+              />
+              {/* </Box> */}
               <FormControl variant="standard" fullWidth size='small' error={vessalNameError}>
                  <InputLabel id="demo-simple-select-label">Vessal name</InputLabel>
                 <Select 
                 label="Vessal name"
                 value={vessalName }
-                onChange={(e)=>VessalChange(e.target.value,table_id)}  >
+                onChange={(e)=>VessalChange(e.target.value)}  >
                  <MenuItem disabled value={"Select"}>Please Select</MenuItem>
                 {vessalList.map(data=>(
                   <MenuItem key={data.vesselName_List}  value={data.vesselName_List}>{data.vesselName_List.replaceAll("|", ",").split(",")[0]}</MenuItem>
@@ -306,7 +405,7 @@ import ProductDropDownTwo from "../../../commonComponent/ProductDropDown/Product
                 </Select>
                 {vessalNameError && <FormHelperText>Vessal name is required</FormHelperText>}
                 </FormControl>
-               {vessalData.length !== 0 && <FormControl variant="standard" fullWidth size='small' error={vessalInfo.be_NoError}>
+                 <FormControl variant="standard" fullWidth size='small' error={vessalInfo.be_NoError}>
                  <InputLabel id="demo-simple-select-label">Be No</InputLabel>
                 <Select 
                 label="Be No"
@@ -321,13 +420,15 @@ import ProductDropDownTwo from "../../../commonComponent/ProductDropDown/Product
                 setVessalInfo((prev)=>({...prev,be_No:value}))
                 } } >
                  <MenuItem disabled value={"Select"}>Please Select</MenuItem>
-                {vessalData?.bE_No.map((data,index)=>(
-                  <MenuItem key={`${data?.view_List}${index}`}  value={data?.view_List}>{data?.view_List}</MenuItem>
-                ))}
+                {vessalData.map((item, index) => (
+                                    <MenuItem key={`${item.bE_No}${index}`} value={item?.bE_No}>
+                                      {item?.bE_No}
+                                    </MenuItem>
+                                  ))}
                 </Select>
                 {vessalInfo.be_NoError && <FormHelperText>Be No is required</FormHelperText>}
-                </FormControl>}
-                {vessalData.length !== 0 && <FormControl variant="standard" fullWidth size='small' error={vessalInfo.bl_NoError}>
+                </FormControl>
+                 {/* <FormControl variant="standard" fullWidth size='small' error={vessalInfo.bl_NoError}>
                  <InputLabel id="demo-simple-select-label">Bl No</InputLabel>
                 <Select 
                 label="Bl No"
@@ -346,7 +447,7 @@ import ProductDropDownTwo from "../../../commonComponent/ProductDropDown/Product
                 ))}
                 </Select>
                 {vessalInfo.bl_NoError && <FormHelperText>Bl No is required</FormHelperText> }
-                </FormControl>}
+                </FormControl> */}
             </Stack>
             <Stack
             spacing={2}
@@ -359,7 +460,20 @@ import ProductDropDownTwo from "../../../commonComponent/ProductDropDown/Product
               borderColor: "black",
             }}
             >
-              {vessalData.length !== 0 && <FormControl variant="standard" fullWidth size='small' error={vessalInfo.tankError}>
+              <TextField
+                fullWidth
+                size="small"
+                variant="standard"
+                margin="normal"
+                id="Remark"
+                name="Remark"
+                label="Remark"
+                multiline
+                rows={1}
+                value={remark}
+                onChange={(e) => setRemark(e.target.value)}
+              />
+               <FormControl variant="standard" fullWidth size='small' error={vessalInfo.tankError}>
                  <InputLabel id="demo-simple-select-label">tank Name</InputLabel>
                 <Select 
                 label="tank Name"
@@ -373,12 +487,13 @@ import ProductDropDownTwo from "../../../commonComponent/ProductDropDown/Product
                   }
                   setVessalInfo((prev)=>({...prev,tank:e.target.value}))}}  >
                  <MenuItem disabled value={"Select"}>Please Select</MenuItem>
-                {vessalData?.tank.map((data,index)=>(
+                 <MenuItem value={"tank"}>tank</MenuItem>
+                {/* {vessalData?.tank.map((data,index)=>(
                   <MenuItem key={`${data?.view_List}${index}`}  value={data?.view_List}>{data?.view_List}</MenuItem>
-                ))}
+                ))} */}
                 </Select>
                 {vessalInfo.tankError && <FormHelperText>tank is required</FormHelperText>}
-                </FormControl>}
+                </FormControl>
                 {vessalData.length !== 0 && <FormControl variant="standard" fullWidth size='small' error={vessalInfo.wH_NAMEError}>
                  <InputLabel id="demo-simple-select-label">WareHouse Name</InputLabel>
                 <Select 
@@ -394,9 +509,10 @@ import ProductDropDownTwo from "../../../commonComponent/ProductDropDown/Product
                   }
                   setVessalInfo((prev)=>({...prev,wH_NAME:value}))}}  >
                  <MenuItem disabled value={"Select"}>Please Select</MenuItem>
-                {vessalData?.wH_NAME.map((data,index)=>(
+                 <MenuItem value={"whare"}>whare</MenuItem>
+                {/* {vessalData?.wH_NAME.map((data,index)=>(
                   <MenuItem key={`${data?.view_List}${index}`}  value={data?.view_List}>{data?.view_List}</MenuItem>
-                ))}
+                ))} */}
                 </Select>
                 {vessalInfo.wH_NAMEError && <FormHelperText>WareHouse is required</FormHelperText>}
                 </FormControl>}
@@ -471,7 +587,31 @@ import ProductDropDownTwo from "../../../commonComponent/ProductDropDown/Product
     }}
   />
 </Box>
-
+<Box sx={{ width: "50%" }}>
+<TextField
+                fullWidth
+                size="small"
+                id="ActualQuantity"
+                type="number"
+                variant="standard"
+                name="ActualQuantity"
+                label="Actual Quantity"
+                error={errorActQut}
+                helperText={errorActQut}
+                value={actualQuantity}
+                onChange={(e) => {
+                  let value=e.target.value;
+                  if(value == 0){
+                    seterrorActQut("Actual Quantity value is required")
+                  }else if(value < 0){
+                    seterrorActQut("Actual Quantity value can not be negative")
+                  }
+                  else {
+                     seterrorActQut("");
+                  }
+                  setActQuantity(e.target.value)}}
+              />
+              </Box>
 <Box sx={{ width: "50%" }}>
   <TextField
     fullWidth

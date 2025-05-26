@@ -5,7 +5,7 @@ import { authAxios } from "../../utils/authAxios";
 import AddlistDialogBox from "../AddlistDialogBox/AddlistDialogBox";
 import { alhabetelysort } from "../../utils/Sorted";
 export default function CustomerDropDownTwo({
-  errorsCustomerName, selectedCustomer, setSelectedCustomer,setErrorsCustomerName
+  errorsCustomerName, selectedCustomer, setSelectedCustomer,setErrorsCustomerName,disabled
 }) {
   const [optionlist, setOptionlist] = useState([]);
   const [optionlistCheck, setOptionlistCheck] = useState(false);
@@ -87,6 +87,7 @@ export default function CustomerDropDownTwo({
           labelId="demo-simple-select-label"
           id="demo-simple-select"
           value={selectedCustomer}
+          disabled={disabled === true ? "true" : ""}
           name="Customer name"
           label="Customer name"
           defaultValue="Select"
@@ -118,8 +119,10 @@ export default function CustomerDropDownTwo({
 CustomerDropDownTwo.propType = {
   selectedCustomer: PropTypes.func,
   setSelectedCustomer: PropTypes.string,
+  disabled:PropTypes.bool
 };
 CustomerDropDownTwo.defaultProps = {
   selectedCustomer: "Select",
   setSelectedCustomer: () => {},
+  disabled:false
 };

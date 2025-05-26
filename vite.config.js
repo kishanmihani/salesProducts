@@ -10,6 +10,8 @@ export default defineConfig({
   plugins: [react()],
  
   server: {
+     port: 3900, // 👈 custom port
+  
     proxy: {
       '/api': {
         target: 'http://globalwayout.in',
@@ -18,6 +20,10 @@ export default defineConfig({
         rewrite: (path) => path.replace(/^\/api/, ''),
       },
     },
+  },
+  
+  preview: {
+    port: 3900 // 👈 also for `vite preview`
   },
 });
 

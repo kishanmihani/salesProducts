@@ -69,7 +69,12 @@ function Dashboard() {
       <Sidbar message={[userInfo]} />
     </Box>
   );
-
+window.addEventListener("load", function () {
+  if (performance.navigation.type === performance.navigation.TYPE_RELOAD) {
+    // Page was reloaded
+   navigate( "/dashboard"); // Redirect to /dashboard
+  }
+});
   return (
     <ErrorBoundary>
       <Box sx={{ display: "flex", width: "100%" }}>

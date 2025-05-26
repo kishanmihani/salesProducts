@@ -12,6 +12,9 @@
 .custom-scrollbar-css {
   overflow-y: scroll;
 }
+.logicproduct div section.toastify{
+margin: unset;
+}
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
   -webkit-appearance: none;

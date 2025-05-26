@@ -23,16 +23,19 @@ import dayjs from "dayjs";
 import CustomeAlerts from "../../../commonComponent/CustomeAlert/CustomeAlert";
 import { vessalDataListapi, Vessel_Edit_Data, VesselDataBLapi} from "../../../Config/Api";
 import { useLocation, useNavigate, useParams } from "react-router";
+import { useSelector } from 'react-redux';
 export default function VessalRequestForm() {
   const BlId=useId()
   const { id } = useParams();
   const param = useLocation();
+  const editVessal = useSelector(state => state?.editVessal?.data);
   const [vessalName, setVessalName] = useState("");
   const [vessalNameError, setVessalNameError] = useState(false);
   const [chaName, setChaName] = useState("");
   const [chaNameError, setChaNameError] = useState(false);
   const [vessalNumber, setVessalNumber] = useState("");
   const navigate = useNavigate();
+  // const [beData] = JSON.parse(localStorage.getItem("editBeDetalis"))
   const [vessalNumberError, setVessalNumberError] = useState({
     error: "",
     valid: true,
@@ -191,7 +194,6 @@ export default function VessalRequestForm() {
     let hasError = false;
     
     if (vessalName === "" || vessalName === undefined) {
-      debugger
       setVessalNameError(true);
       hasError = true;
     } else if (vessalName !== "") {
@@ -216,9 +218,9 @@ export default function VessalRequestForm() {
     if (!isValid) {
       hasError = true;
     }
-
+    
     let updatedFields;
-    if (blDataCheck !== true) {
+    if (editBeData?.isEdit !==true) {
       updatedFields = fields.map((field) => {
         const updatedField = { ...field };
 
@@ -250,7 +252,6 @@ export default function VessalRequestForm() {
         } else {
           updatedField.grossQuantityError = "";
         }
-        debugger;
         if (field.otrQut === "" || Number(field.otrQut) === 0) {
           updatedField.otrQutError = "Otr Qut is required";
           hasError = true;
@@ -295,7 +296,6 @@ export default function VessalRequestForm() {
         } else {
           updatedField.portNameError = false;
         }
-        debugger;
         if (field.billOfEntry === "" || field.billOfEntry === null ) {
           updatedField.billOfEntryError = true;
           hasError = true;
@@ -308,17 +308,14 @@ export default function VessalRequestForm() {
         } else {
           updatedField.billingError = false;
         }
-        
         return updatedField;
       });
       setFields(updatedFields);
     }
     let updatedEditFields;
-    if (editBeData?.isEdit ===true ) {//290
+    if (editBeData?.isEdit ===true ) {
       updatedEditFields = editfields.map((field) => {
         const updatedEditField = { ...field };
-         console.log(updatedEditField)
-         debugger;
         if (field?.shippingName?.trim() === "") {
           updatedEditField.shippingNameError = "shipping Name is required";
           hasError = true;
@@ -347,7 +344,6 @@ export default function VessalRequestForm() {
         } else {
           updatedEditField.grossQuantityError = "";
         }
-        debugger;
         if (field.otrQut === "" || Number(field.otrQut) === 0) {
         
           updatedEditField.otrQutError = "Otr Qut is required";
@@ -370,7 +366,6 @@ export default function VessalRequestForm() {
         }
         
         if (field.blDate === "" || field.blDate === null) {
-          debugger;
           updatedEditField.blDateError = true;
           hasError = true;
         } else {
@@ -394,7 +389,6 @@ export default function VessalRequestForm() {
         } else {
           updatedEditField.portNameError = false;
         }
-        debugger;
         if (field.billOfEntry === "" || field.billOfEntry === null ) {
           updatedEditField.billOfEntryError = true;
           hasError = true;
@@ -411,6 +405,100 @@ export default function VessalRequestForm() {
         return updatedEditField;
       });
       setEditFields(updatedEditFields);
+
+      //-- feild data 
+      if(blDataCheck !==true){
+      updatedFields = fields.map((field) => {
+        const updatedField = { ...field };
+
+        if (field.shippingName.trim() === "") {
+          updatedField.shippingNameError = "shipping Name is required";
+          hasError = true;
+        } else if (!/^[A-Za-z\s]+$/.test(field.shippingName)) {
+          updatedField.shippingNameError = "Only letters and spaces allowed";
+          hasError = true;
+        } else {
+          updatedField.shippingNameError = "";
+        }
+
+        if (field.BLNo === "" || Number(field.BLNo) === 0) {
+          updatedField.BLNoError = "BL .No is required";
+          hasError = true;
+        } else if (Number(field.BLNo) < 0) {
+          updatedField.BLNoError = "BL .No cannot be negative";
+          hasError = true;
+        } else {
+          updatedField.BLNoError = "";
+        }
+        if (field.grossQuantity === "" || Number(field.grossQuantity) === 0) {
+          updatedField.grossQuantityError = "Gross Qut is required";
+          hasError = true;
+        } else if (Number(field.grossQuantity) < 0) {
+          updatedField.grossQuantityError = "Gross Qut cannot be negative";
+          hasError = true;
+        } else {
+          updatedField.grossQuantityError = "";
+        }
+        if (field.otrQut === "" || Number(field.otrQut) === 0) {
+          updatedField.otrQutError = "Otr Qut is required";
+          hasError = true;
+        } else if (Number(field.otrQut) < 0) {
+          updatedField.otrQutError = "Otr Qut cannot be negative";
+          hasError = true;
+        } else {
+          updatedField.otrQutError = "";
+        }
+        
+        if (field.quantity === "" || Number(field.quantity) === 0) {
+          updatedField.quantityError = "Net Quantity is required";
+          hasError = true;
+        } else if (Number(field.quantity) < 0) {
+          updatedField.quantityError = "Net Quantity cannot be negative";
+          hasError = true;
+        } else {
+          updatedField.quantityError = "";
+        }
+        
+        if (field.blDate === "" || field.blDate === null) {
+          updatedField.blDateError = true;
+          hasError = true;
+        } else {
+          updatedField.blDateError = false;
+        }
+        if (field.beDate === "" || field.beDate === null) {
+          updatedField.beDateError = true;
+          hasError = true;
+        } else {
+          updatedField.beDateError = false;
+        }
+        if (field.ProductName === "Select" || field.ProductName === null) {
+          updatedField.ProductNameError = true;
+          hasError = true;
+        } else {
+          updatedField.ProductNameError = false;
+        }
+        if (field.portName === "Select" || field.portName === null) {
+          updatedField.portNameError = true;
+          hasError = true;
+        } else {
+          updatedField.portNameError = false;
+        }
+        if (field.billOfEntry === "" || field.billOfEntry === null ) {
+          updatedField.billOfEntryError = true;
+          hasError = true;
+        } else {
+          updatedField.billOfEntryError = false;
+        }
+        if (field.billing === "Select" || field.billing === null) {
+          updatedField.billingError = true;
+          hasError = true;
+        } else {
+          updatedField.billingError = false;
+        }
+        return updatedField;
+      });
+      setFields(updatedFields);
+    }
     }
     if (!hasError && !editBeData?.isEdit) { 
       
@@ -461,10 +549,8 @@ export default function VessalRequestForm() {
       
     
     else if(!hasError && editBeData?.isEdit){
-      debugger;
-      let count = 0;
         for (let arr of editfields) {
-          count++;
+          // count++;
           let data = {
             User_Id: userId,
             Vessal_Name: vessalName,
@@ -481,9 +567,10 @@ export default function VessalRequestForm() {
              BE_N_Qty:arr?.grossQuantity - arr?.otrQut,
              BE_OTR_Qty:arr?.otrQut,
              BE_Name: arr?.billing,
-              BL_BE_ID:id
+              BL_BE_ID:arr?.BL_BE_ID !==""?arr?.BL_BE_ID
+ :id
           };
-          
+          console.log(data,editfields);
 authAxios.post(Vessel_Edit_Data,JSON.stringify(data))
 .then((res) => {
               if (res.data.massage == "Update Done") {
@@ -492,11 +579,11 @@ authAxios.post(Vessel_Edit_Data,JSON.stringify(data))
               } else {
                 showError(res.data.message);
               }
-              if (count === fields.length) {
-               handleReset();
-                // vessalData();
-                navigate("/dashboard/Logistic/Vessal_List")
-              }
+              // if (count === fields.length) {
+              //  handleReset();
+              //   // vessalData();
+              //   // navigate("/dashboard/Logistic/Vessal_List")
+              // }
             })
             .catch((err) => {
               if (err.massage == "Network Error") {
@@ -505,7 +592,57 @@ authAxios.post(Vessel_Edit_Data,JSON.stringify(data))
                 showError(err.message);
               }
             });
-    }}
+    }
+    if(blDataCheck !==true){
+    for (let arr of fields) {
+          // count++;
+          let data = {
+            User_Id: userId,
+            Vessal_Name: vessalName,
+            Vessal_No: vessalNumber,
+            Produce_Name: arr?.ProductName,
+            Port_Name:arr?.portName,
+            Bl_Name:arr?.shippingName,
+            Bl_No: arr.BLNo,
+            BL_date: arr?.blDate,
+            BL_Qty: arr?.quantity,
+            BE_No: arr?.billOfEntry,
+            BE_Date: arr?.beDate ,
+             BE_G_Qty:arr?.grossQuantity,
+             BE_N_Qty:arr?.grossQuantity - arr?.otrQut,
+             BE_OTR_Qty:arr?.otrQut,
+             BE_Name: arr?.billing
+          };
+          await authAxios
+            .post(VesselDataBLapi, JSON.stringify(data))
+            .then((res) => {
+              if (res.data.massage == "Entry Done") {
+                showSuccess("Records Submited");
+              } else {
+                showError(res.data.message);
+              }
+              // if (count === fields.length) {
+              //  handleReset()
+              //   vessalData();
+                
+              //   navigate("/dashboard/Logistic/Vessal_List")
+              // }
+            })
+            .catch((err) => {
+              if (err.massage == "Network Error") {
+                showError("Network Error");
+              } else {
+                showError(err.message);
+              }
+            });
+        }
+  }
+  if(!hasError && editBeData?.isEdit){
+    navigate("/dashboard/Logistic/Vessal_List")
+  }
+}
+
+    
   }
   
  async function vessalData(){
@@ -722,7 +859,6 @@ authAxios.post(Vessel_Edit_Data,JSON.stringify(data))
     });
   
   editBeData?.isEdit == true ? setEditFields(newFields) :  setFields(newFields);
-    // console.log(isValid + "" + index);
     return isValid;
   };
 
@@ -736,6 +872,8 @@ setVessalName(beData?.vessal_Name);
 setVessalNumber(beData?.vessal_No);
 setDisChargeDate(beData?.discarge_Date);
 setChaName(beData?.chA_Name);
+console.log(beData,editVessal)
+if(editVessal ==""){
 setEditFields([
   {
     shippingName: beData?.bl_Name,
@@ -750,7 +888,26 @@ setEditFields([
     grossQuantity:beData?.bE_G_Qty,
     otrQut:beData?.bE_OTR_Qty,
   }]);
-}, [param]);
+}else {
+  debugger;
+setEditFields(() => 
+  editVessal?.map(beData => ({
+    shippingName: beData?.bl_Name,
+    quantity: Number(beData?.bE_N_Qty),
+    BLNo: Number(beData?.bl_No),
+    blDate: beData?.bL_Date,
+    billing: beData?.bE_Name,
+    portName: beData?.port_Name,
+    ProductName: beData?.produce_Name,
+    billOfEntry: beData?.bE_No,
+    beDate: beData?.bE_Date,
+    grossQuantity: beData?.bE_G_Qty,
+    otrQut: beData?.bE_OTR_Qty,
+    BL_BE_ID:beData?.bL_BE_ID !==""? beData?.bL_BE_ID:
+id
+  })))
+}
+}, []);
   return (
     <React.Fragment>
       <CustomPageHeader pageHeaderText="Vessal Form" />
@@ -902,7 +1059,7 @@ setEditFields([
             <BlDataItems
               field={field}
               disabled={blDataCheck}
-              index={BlId}
+              index={ field?.bL_BE_ID !==""?field?.bL_BE_ID:BlId}
               fields={fields}
               edit={editBeData?.isEdit}
               vessalInfo={[vessalName, vessalNumber]}

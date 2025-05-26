@@ -11,7 +11,7 @@ import {
 import { authAxios } from "../../utils/authAxios";
 import AddlistDialogBox from "../AddlistDialogBox/AddlistDialogBox";
 import { alhabetelysort } from "../../utils/Sorted";
-export default function PortDropDownTwo({ selectedPort, setSelectedPort,errorsPortName ,setErrorsPortName,variant,NotIsList}) {
+export default function PortDropDownTwo({ selectedPort, setSelectedPort,errorsPortName ,setErrorsPortName,variant,NotIsList,disabled}) {
   const [optionlist, setOptionlist] = useState([]);
   const [optionlistCheck, setOptionlistCheck] = useState(false);
   const [open, setOpen] = useState(false);
@@ -84,7 +84,7 @@ export default function PortDropDownTwo({ selectedPort, setSelectedPort,errorsPo
   
   return (
     <React.Fragment>
-      <FormControl variant={variant} fullWidth size="small" error={errorsPortName}>
+      <FormControl variant={variant} fullWidth size="small"  error={errorsPortName}>
         <InputLabel id="demo-simple-select-label">Port</InputLabel>
         <Select
           labelId="demo-simple-select-label"
@@ -92,6 +92,9 @@ export default function PortDropDownTwo({ selectedPort, setSelectedPort,errorsPo
           value={selectedPort}
           label="Port"
           name="Port name"
+          
+          disabled={disabled === true ? "true" : ""}
+          // disabled="true"
           defaultValue="Select"
           onChange={handleChange}
           MenuProps={{ disableAutoFocusItem: true }}
@@ -124,12 +127,14 @@ PortDropDownTwo.propType = {
   setSelectedPort: PropTypes.func,
   errorsPortName:PropTypes.bool,
   setErrorsPortName:PropTypes.func,
-  variant:PropTypes.string
+  variant:PropTypes.string,
+  disabled:PropTypes.bool,
 };
 PortDropDownTwo.defaultProps = {
   selectedPort: "Select",
   setSelectedPort: () => {},
   errorsPortName:false,
   setErrorsPortName: () => {},
-  variant:"outlined"
+  variant:"outlined",
+  disabled:false,
 };

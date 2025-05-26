@@ -1,4 +1,4 @@
-import { Box, Button, Select, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TextField, Typography, FormControl, MenuItem } from '@mui/material';
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography, Select, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TextField,  FormControl, MenuItem } from '@mui/material';
 import React, { useEffect } from 'react'
 import { pdf } from '@react-pdf/renderer'
 import { saveAs } from 'file-saver';
@@ -6,18 +6,44 @@ import EditSquareIcon from '@mui/icons-material/EditSquare';
 import { useNavigate } from "react-router";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { authAxios } from '../../../utils/authAxios';
-import PrintIcon from '@mui/icons-material/Print';
+import DeleteIcon from "@mui/icons-material/Delete";
 import CustomPageHeader from '../../../commonComponent/CustomPageHeader/CustomPageHeader';
 import InVoicedelivery from '../../../commonComponent/PdfIntegrations/InVoicedelivery';
+// import { vehicleDelete } from '../../../Config/Api';
+import DeleteConfirmationDialog from '../../../commonComponent/DeleteConfirmationDialog({/DeleteConfirmationDialog';
+import { vehicleDelete } from '../../../Config/Api';
+import CustomeAlerts from '../../../commonComponent/CustomeAlert/CustomeAlert';
+const tableHeaders = [
+  "So No",
+  "Customer Name",
+  "Vehicle Name",
+  "Estimated Quantity",
+  "Actual Qty",
+  "Vessal Name",
+  "Be No.",
+  "Port Name",
+  "Transporter Name",
+  "Product Name",
+  "Tank Name",
+  
+  
+  
+  "Remark",
+  "Status",
+  "Edit",
+  "Delete"
+];
 
 export default function Logisticlist() {
-  
+  const [deleteDialog, setDeleteDialog] = React.useState({ isOpen: false, itemToDelete: null });
+  const [statusDialog,setStatusDialog] =  React.useState({ isOpen: false, itemToStatus: null });
   const navigate = useNavigate();
   const [tableData,setTableData]=React.useState([])
   const [checkTableData,setCheckTableData]=React.useState(false)
   const [userId] = React.useState(JSON.parse(localStorage.getItem("userInfo"))?.id);
   const [page, setPage] = React.useState(0); // current page
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [custAlert, setCustAlert] = React.useState(null);
   // const [selectStatus,setSelectStatus]= React.useState("Select")
   // const [selectVessalName,setSelectVessalName]= React.useState("Select")
   const [statuslist,setStatuslist] = React.useState([]);
@@ -29,7 +55,7 @@ export default function Logisticlist() {
     authAxios.post("/BituRep/Api/Account/Status_List",JSON.stringify({
       "User_Id":userId
     }))
-    .then(res=> console.log(setStatuslist(res.data)))
+    .then(res=> setStatuslist(res.data))
     .catch(err=> console.log(err.message))
   }
   
@@ -46,7 +72,13 @@ export default function Logisticlist() {
   );
 
   useEffect(() => {
-    const fetchTableData = async () => {
+    
+  
+    if (!checkTableData && tableData.length === 0) {
+      fetchTableData();
+    }
+  }, [checkTableData, tableData, userId]);
+  const fetchTableData = async () => {
       try {
         const response = await authAxios.post(
           "BituRep/Api/Account/logistic_data_list",
@@ -56,33 +88,18 @@ export default function Logisticlist() {
           })
         );
         setTableData(response.data);
+        setCheckTableData(true)
       } catch (error) {
-        console.error(error);
+        setCheckTableData(true)
+        showError(error);
       } finally {
-        setCheckTableData(false);
+       setCheckTableData(true);
       }
     };
-  
-    if (!checkTableData && tableData.length === 0) {
-      fetchTableData();
-    }
-  }, [checkTableData, tableData, userId]);
-  function VessalChange(value, id) {
+  function StatusChange(row,value){
     setTableData((prevState) => 
       prevState.map((tableData) => {
-        if (tableData.table_id === id) {
-          console.log("Updated Object:", { ...tableData, vessal: value });
-          return { ...tableData, vessal: value };
-        }
-        return tableData;
-      })
-    );
-  }
-  function StatusChange(value,id){
-    setTableData((prevState) => 
-      prevState.map((tableData) => {
-        if (tableData.table_id === id) {
-          console.log("Updated Object:", { ...tableData, status_name: value });
+        if (tableData.table_id ===row.table_id) {
           return { ...tableData, status_name: value };
         }
         return tableData;
@@ -91,77 +108,47 @@ export default function Logisticlist() {
     );
     const data={
       "User_Id": userId,
-      "Table_Id": id,
+      "Table_Id": row?.table_id,
       "Status_name": value
     }
     authAxios.post("BituRep/Api/Account/Status_update",data)
     .then((res)=>{
-      res.data 
-    }).catch((err)=>console.log(err))
+     showSuccess( res.data.message); 
+    }).catch((err)=>showError(err))
   }
-  
-  async function printDocument(e, row) {
-    let hasError=false;
-    if(row?.vessel_Name == ""){
-      hasError=true;
-      alert("Vessal Name is required")
-    }
-    const content = {
-      companyName: row?.bill_Company_Name,
-      addressLine1: 'Unit No. 1608, 16th Floor, Plot No. C-66, Building Name - ONE BKC, G-Block, Bandra Kurla Complex, Bandra (East),',
-      addressLine2: 'Mumbai-400051, Maharashtra, India',
-      email: 'Email: logistic@combustenergy.com',
-      contact: 'Contact: 9136964775 / 8796856716',
-      deliveryOrderTitle: 'DELIVERY ORDER',
-      date: `Date: ${(row?.entry_Date)}`,
-      recipient: 'To,',
-      consignee: 'AGIES TERMINAL',
-      location: row?.port_Name,
-      doNoLabel: 'DO No. :',
-      doNoValue:row.table_id+"/"+row?.port_Name+"/"+row?.quantity,
-      chaLabel: 'CHA NAME :',
-      chaValue: row?.chA_NAME,
-      blLabel: 'BL Number:',
-      blValue: row?.bL_No,
-      beLabel: 'Inbond BE Number:',
-      beValue: row?.bE_No,
-      beDateLabel: 'BE Date:',
-      beDateValue: row?.bE_Date,
-      transporterLabel: 'Transporter Name:',
-      transporterValue: row?.transporter_Name,
-      customerLabel: 'Customer Name:',
-      customerValue: row?.customer_Name,
-      salutation: 'Dear Sir,',
-      deliveryNote: 'We hereby request you to kindly give delivery as per details below:',
-      refText: 'REF: - ',
-      product: row.produce_Name,
-      arrivalText: 'arrived as per vessel',
-      vesselName: row.vessel_Name,
-      tankNo: row?.tank_name,
-      qtyText: 'Quantity to be issued',
-      qtyValue: row?.quantity,
-      authSignatureLine1: 'For',
-      authSignatureLine2: row?.bill_Company_Name,
-      authSignatureLine3: 'Authorized Signatory',
-      noteHeader: 'Please Note: -',
-      notes: [
-        "1. Cargo handed over to buyer/buyer's transporter at Terminal for transportation at buyer's risk and responsibility.",
-        "2. Transporters are requested to check availability of material with installation and place tankers for deliveries.",
-        "3. Dispatch Details (Tanker no., L/R No. Qty. & Terminal Gate Pass) to be faxed immediately on email logistics2@blueflameenergy.co. Dispatch details if not received within an hour our liability ceases to issue Tax Invoice and Buyer shall be solely responsible for not getting GST benefit. (in case of depot sale)",
-        "4. Kindly arrange for all risks transit insurance for the material from EX-above mentioned Terminal to your destination in order to safeguard your interest if any, in case the tanker is detained on its way for want of any documents by the government authorities.",
-        "5. Any complaints in respect of the quality of the material supplied must be notified to us in writing before unloading of Tanker.",
-        "6. Any dispute arising out of this will be referred only to Mumbai jurisdiction.",
-      ],
-    };
-  
-    // Generate the PDF
-    if(!hasError){
-    const blob = await pdf(<InVoicedelivery content={content} />).toBlob();
-  
-    // Use file-saver to download
-    saveAs(blob, 'DeliveryOrder.pdf');
-    }
+  const handleDeleteClick = (item) => {
+    setDeleteDialog({ isOpen: true, itemToDelete: item });
+  };
+  const StatusOpen = (item) => {
+    setStatusDialog({ isOpen: true, itemToStatus: item.row,value:item.value });
+  };
+ 
+  const handleCloseStatusDialog = () => {
+    setStatusDialog({ isOpen: false, itemToDelete: null,value:null });
   }
+   const handleCloseDeleteDialog = () => {
+    setDeleteDialog({ isOpen: false, itemToDelete: null });
+  }
+  const handleDeleteConfirm = async (item) => {
+     let data={
+      
+  "user_id": userId,
+  "Table_Id": item.table_id
+}
+    
+    authAxios.post(vehicleDelete,JSON.stringify(data))
+    .then(res =>{showSuccess("record delete");fetchTableData();})
+    .catch(err =>{showError(err.message);})
+  }
+  const showSuccess = (data) => {
+            setCustAlert({ type: "success", message: data });
+          };
+          const showError = (data) => {
+            setCustAlert({ type: "error", message: data });
+          };
+          const handleCloseAlert = () => {
+            setCustAlert(null);
+          };
   return (
     <React.Fragment>
      <CustomPageHeader pageHeaderText="Vehicle Pull"/>
@@ -169,27 +156,18 @@ export default function Logisticlist() {
       <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
         <TableHead sx={{fontSize:14,fontWeight:600,bgcolor:"rgba(25, 118, 210, 0.08)"}}>
+          {/* <TableRow> */}
           <TableRow>
-          <TableCell align="left" sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>Order Id</TableCell>
-            <TableCell align="left" sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>Customer Name</TableCell>
-            <TableCell align="left" sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>billing name</TableCell>
-            <TableCell align="left"sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>Port Name</TableCell>
-            <TableCell align="left"sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>Estimated Quantity</TableCell>
-            <TableCell align="left"sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>Vehicle Name</TableCell>
-            <TableCell align="left"sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>transporter Name</TableCell>
-            <TableCell align="left"sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>Remark</TableCell>
-            {/* <TableCell align="left"sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>Do No</TableCell> */}
-            <TableCell align="left"sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>Product Name</TableCell>
-            <TableCell align="left"sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>tank Name</TableCell>
-            <TableCell align="left"sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>Vessal Name</TableCell>
-            <TableCell align="left"sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>Cha Name</TableCell>
-            <TableCell align="left"sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>Be No.</TableCell>
-            <TableCell align="left"sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>Be Date</TableCell>
-            <TableCell align="left"sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>Bl No.</TableCell>
-            <TableCell align="left"sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>Actual Qty</TableCell>
-            <TableCell align="left"sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>Status</TableCell>
-            <TableCell align="left" sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>Edit</TableCell>
-            <TableCell align="left" sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>Bill Print</TableCell>
+  {tableHeaders.map((header, index) => (
+    <TableCell
+      key={index}
+      align="left"
+      sx={{ fontSize: 14, fontWeight: 600, whiteSpace: "nowrap" }}
+    >
+      {header}
+    </TableCell>
+  ))}
+{/* </TableRow> */}
           </TableRow>
         </TableHead>
         <TableBody>
@@ -202,32 +180,29 @@ export default function Logisticlist() {
              backgroundColor: 'grey.200',
            },'&:last-child td, &:last-child th': { border: 0 } }}
             >
-              <TableCell align="left">{row?.table_id}</TableCell>
+              <TableCell align="left">{row?.so_No}</TableCell>
               <TableCell align="left">{row?.customer_Name}</TableCell>
-              <TableCell align="left">{row?.bill_Company_Name === ""? "No billing name":row?.bill_Company_Name}</TableCell>
-              <TableCell align="left">{row?.port_Name}</TableCell>
-              <TableCell align="left">{row?.quantity}</TableCell>
               <TableCell align="left">{row?.vehicle_Name}</TableCell>
-              <TableCell align="left">{row?.transporter_Name === ""? "No transporter":row?.transporter_Name}</TableCell>
-              <TableCell align="left">{row?.remark}</TableCell>
-              
-              <TableCell align="left">{row?.produce_Name === ""? "No Product":row?.produce_Name}</TableCell>
-              <TableCell align="left">{row?.tank_name === ""? "No tank name":row?.tank_name}</TableCell>
-              <TableCell>
-                {row?.vessel_Name == ""? "No Vessel Name" : row?.vessel_Name}
-              </TableCell>
-              <TableCell align="left">{row?.chA_NAME === ""? "No Cha name":row?.chA_NAME}</TableCell>
-              <TableCell align="left">{row?.bE_No === ""? "No Be No.":row?.bE_No}</TableCell>
-              <TableCell align="left">{row?.bE_Date === ""? "No Be Date":row?.bE_Date}</TableCell>
-              <TableCell align="left">{row?.bL_No === ""? "No Bl No.":row?.bL_No}</TableCell>
+              <TableCell align="left">{row?.quantity}</TableCell>
               <TableCell>
               {row?.a_Qty === ""? "No Actual quantity":row?.a_Qty}
               </TableCell>
+                      <TableCell>
+                {row?.vessel_Name == ""? "No Vessel Name" : row?.vessel_Name}
+              </TableCell><TableCell align="left">{row?.bE_No === ""? "No Be No.":row?.bE_No}</TableCell>
+              <TableCell align="left">{row?.port_Name}</TableCell>
+              <TableCell align="left">{row?.transporter_Name === ""? "No transporter":row?.transporter_Name}</TableCell>
+              
+              <TableCell align="left">{row?.produce_Name === ""? "No Product":row?.produce_Name}</TableCell>
+              <TableCell align="left">{row?.tank_name === ""? "No tank name":row?.tank_name}</TableCell>
+      
+              
+              <TableCell align="left">{row?.remark}</TableCell>
               <TableCell>
                <FormControl fullWidth size='small'>
                 <Select
                 value={row?.status_name || "Select"}
-                onChange={(e)=>StatusChange(e.target.value,row?.table_id)} >
+                onChange={(e)=>{let rowthis={"value":e.target.value,"row":row};StatusOpen(rowthis)}} >
                   <MenuItem disabled value={"Select"}>Please Select</MenuItem>
                 {statuslist.map(data=>(
                   <MenuItem key={data.status_id}  value={data.status_Name}>{data.status_Name}</MenuItem>
@@ -247,8 +222,9 @@ export default function Logisticlist() {
                 </IconButton>
               </TableCell>
               <TableCell>
-                <IconButton aria-label='Print' onClick={(e)=>printDocument(e,row)} >
-                  <PrintIcon color='error' />
+                <IconButton aria-label='Delete' onClick={(e)=>handleDeleteClick(row)} >
+                  {/* <PrintIcon color='error' /> */}
+                  <DeleteIcon  color='error'/>
                 </IconButton>
                 {/* <Button color='error' variant="outlined"></Button> */}
               </TableCell>
@@ -268,6 +244,66 @@ export default function Logisticlist() {
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
       </Paper>
+       <DeleteConfirmationDialog
+        isOpen={deleteDialog.isOpen}
+        onClose={handleCloseDeleteDialog}
+        onConfirm={handleDeleteConfirm}
+        itemToDelete={deleteDialog.itemToDelete}
+      />
+      <StatusComfirm
+        isOpen={statusDialog.isOpen}
+        onClose={handleCloseStatusDialog}
+        onConfirm={StatusChange}
+        itemToStatus={statusDialog?.itemToStatus}
+        value={statusDialog?.value}
+      />
+      {custAlert && (
+        <CustomeAlerts
+          type={custAlert.type}
+          message={custAlert.message}
+          onClose={handleCloseAlert}
+        />
+      )}
     </React.Fragment>
   )
+}
+
+
+function StatusComfirm({ isOpen, onClose, onConfirm, itemToStatus,value }){
+  const handleClose = () => {
+    onClose();
+  };
+
+  const handleConfirm = () => {
+    onConfirm(itemToStatus,value);
+    onClose();
+  };
+
+  return (
+    <Dialog open={isOpen} onClose={handleClose}>
+      <DialogTitle>Confirm Status Change</DialogTitle>
+      <DialogContent>
+        {itemToStatus ? (
+          <>
+            <Typography>Are you sure you want to status change the following order?</Typography>
+            <Typography variant="body2" sx={{display:"flex"}} ><Typography  sx={{width:"100px",fontWeight:800}}>Order ID:</Typography> {itemToStatus?.table_id}</Typography>
+            <Typography variant="body2" sx={{display:"flex"}}><Typography sx={{width:"100px",fontWeight:800}}>Customer:</Typography> {itemToStatus?.customer_Name}</Typography>
+            <Typography variant="body2"sx={{display:"flex"}}><Typography sx={{width:"100px",fontWeight:800}} >Product:</Typography> {itemToStatus?.quantity}</Typography>
+            <Typography variant="body2"sx={{display:"flex"}}><Typography sx={{width:"100px",fontWeight:800}}>Quantity:</Typography> {itemToStatus?.quantity}</Typography>
+          </>
+        ) : (
+          'No item selected.'
+        )}
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleClose} color="primary">
+          Cancel
+        </Button>
+        <Button onClick={handleConfirm} color="primary" autoFocus>
+          Confirm
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+
 }

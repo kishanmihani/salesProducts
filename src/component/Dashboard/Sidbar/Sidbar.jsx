@@ -170,7 +170,29 @@ const Sidbar = ({ message}) => {
                 primary="Approval Request form"
               />
             </ListItemButton>
-
+            <ListItemButton
+              component={NavLink}
+              to="/dashboard/sales/So_Approval"
+              selected={location.pathname === "/dashboard/sales/So_Approval"}
+              sx={{ pl: 4 }} 
+            >
+              <ListItemIcon color="#756f6f">
+                {location.pathname === "/dashboard/sales/So_Approval" ? (
+                  <RadioButtonCheckedIcon
+                    style={{ height: 17, width: 17, mr: 2 }}
+                  ></RadioButtonCheckedIcon>
+                ) : (
+                  <RadioButtonUncheckedIcon
+                  
+                    style={{ height: 17, width: 17, mr: 2,color:"#756f6f" }}
+                  />
+                )}
+              </ListItemIcon>
+              <ListItemText
+                primaryTypographyProps={{ fontSize: "12px" }}
+                primary="So Approval"
+              />
+            </ListItemButton>
           
           </List>
         </Collapse>

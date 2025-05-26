@@ -2,7 +2,7 @@ import './App.css';
 import React  from 'react'
 import LoginForm from './component/loginFrom/loginForm';
 import { Box } from '@mui/material';
-import { Route, Routes } from 'react-router';
+import { Route, Routes, useNavigate } from 'react-router';
 import SalesRestitration from './component/sales/salesRestitration';
 import SalesForm from './component/sales/salesForm';
 import Dashboard from './component/Dashboard/Dashboard';
@@ -20,7 +20,15 @@ import LogicInvoiceDo from './component/sales/Pdfbilles/LogicInvoiceDo';
 import "@fontsource/inter";
 import VessalList from './component/Dashboard/logistic/vessalList/VessalList';
 import { DrawerProvider } from './component/commonComponent/DrawerProvider/DrawerContext';
+import SoApproval from './component/soForms/SoApproval';
+
 function App() {
+  const navigate=useNavigate()
+ window.addEventListener("beforeunload", function (e) {
+  e.preventDefault();
+  alert("Are you sure you want to leave?"); // ❌ This won't show
+});
+
   return (
     <React.Fragment>
       {/* <DrawerProvider> */}
@@ -43,6 +51,7 @@ function App() {
             <Route index  element={<SalesRestitration />} />
             <Route path='PendingApprovalForm' element={<Saleslist  />} />
             <Route path='Approval_Request_form' element={<ApprovalRequestForm  />} />
+            <Route path='So_Approval' element={<SoApproval  />} />
             </Route>
 
             <Route path="logistic" element={<LogicForm />} >
@@ -60,7 +69,7 @@ function App() {
         </Routes>
       </Box>
       {/* </DrawerProvider> */}
-      
+       
     </React.Fragment>
   )
 }

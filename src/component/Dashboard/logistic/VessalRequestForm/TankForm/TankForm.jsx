@@ -426,7 +426,7 @@ tank_ID,net_Quantity,tank_name
                           </Button>}
             </Box>
             <div style={{ width: "96%",margin:"auto", marginBottom:"3px",display:dataInfo?.isEdit === true ? "none":"block"}}>
-            <DataGrid getRowId={(row) => row.tank_ID} rows={tanklist} columns={columns} 
+            <DataGrid disableColumnMenu={true} getRowId={(row) => row.tank_ID} rows={tanklist} columns={columns} 
              slots={{ footer: CustomFooter }}
   hideFooterPagination
    />

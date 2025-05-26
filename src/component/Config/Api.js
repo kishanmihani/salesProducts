@@ -18,3 +18,7 @@ export const Vessel_Detail_list="BituRep/Api/Account/Vessel_Detail_list";
 export const vessailBE_Detail_List="BituRep/Api/Account/BE_Detail_List";
 export const Vessel_Edit_Data="BituRep/Api/Account/Vessel_Edit_Data";
 export const TankDeleteapi="BituRep/Api/Account/Tank_Delete_Data";
+export const SoApprovalapi="BituRep/Api/Account/So_Approvel_Data";
+export const soVhicledetails="BituRep/Api/Account/VW_Vehical_Detail";
+export const vehicleDelete = "BituRep/Api/Account/log_Vehical_Delete";
+export const vehiclelistapi="BituRep/Api/Account/logistic_data_list";

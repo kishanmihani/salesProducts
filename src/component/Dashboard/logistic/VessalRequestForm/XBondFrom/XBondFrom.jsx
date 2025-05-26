@@ -16,6 +16,7 @@ import EditSquareIcon from '@mui/icons-material/EditSquare';
 import { authAxios } from '../../../../utils/authAxios';
 import CustomeAlerts from '../../../../commonComponent/CustomeAlert/CustomeAlert';
 import {TankDeleteapi, vessailBE_Detail_List, VesselDataBEapi, VesselEditTankapi } from '../../../../Config/Api';
+import formatDateToUS from '../../../../utils/DateFormate';
 // import formatDateToUS from '../../../../utils/DateFormate';
 
 
@@ -24,7 +25,7 @@ export default function XBondForm({ open,
     setOpen,userId,dataInfo}) {
       const columns= [
   { field: "x_BE_ID", hide: true ,headerName:"id"},
-  { field: "xbE_date", headerName: "Date" },
+  { field: "xbE_date", headerName: "Date",valueFormatter: (value) =>formatDateToUS(value), },
   { field: "xbE_NO", headerName: "Bill entry"},
   { field: "xbE_Qty", headerName: "Qut"},
   {field: "col3.5", headerName: "Edit", renderCell: (params) => (
@@ -468,7 +469,7 @@ x_BE_ID,xbE_Qty,xbE_NO
                                         </Button>}
             </Box>
             <div style={{ width: "96%",margin:"auto", marginBottom:"3px",display:dataInfo?.isEdit === true ? "none":"block"}}>
-            <DataGrid getRowId={(row) => row?.x_BE_ID} rows={xBondlist} columns={columns} 
+            <DataGrid disableColumnMenu={true} getRowId={(row) => row?.x_BE_ID} rows={xBondlist} columns={columns} 
              slots={{ footer: CustomFooter }}
   hideFooterPagination
    />

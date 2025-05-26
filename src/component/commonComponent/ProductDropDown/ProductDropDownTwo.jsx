@@ -16,7 +16,8 @@ export default function ProductDropDownTwo({
   errorsProduct,
   setErrorsProduct,
   variant,
-  NotIsList
+  NotIsList,
+  disabled
 }) {
   const [optionlist, setOptionlist] = useState([]);
   const [optionlistCheck, setOptionlistCheck] = useState(false);
@@ -91,12 +92,13 @@ export default function ProductDropDownTwo({
   }, [addtolist, setSelectedProduct,fetchList]);
   return (
     <React.Fragment>
-      <FormControl variant={variant} fullWidth size="small" error={errorsProduct}>
+      <FormControl variant={variant} fullWidth  size="small" error={errorsProduct}>
         <InputLabel id="demo-simple-select-label">Product name</InputLabel>
         <Select
           labelId="demo-simple-select-label"
           id="demo-simple-select"
           name="Product name"
+          disabled={disabled === true ? "true" : ""} 
           value={selectedProduct}
           label="Product name"
           defaultValue="Select"
@@ -132,7 +134,8 @@ ProductDropDownTwo.propType = {
   errorsProduct:PropTypes.bool,
   setErrorsProduct:PropTypes.func,
   variant:PropTypes.string,
-  NotIsList:PropTypes.bool
+  NotIsList:PropTypes.bool,
+  disabled:PropTypes.bool,
 };
 ProductDropDownTwo.defaultProps = {
   selectedProduct: "Select",
@@ -140,5 +143,6 @@ ProductDropDownTwo.defaultProps = {
   errorsProduct:false,
   setErrorsProduct: () => {},
   variant:"outlined",
-  NotIsList:false
+  NotIsList:false,
+  disabled:false
 };
