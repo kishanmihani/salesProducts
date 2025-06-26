@@ -22,3 +22,4 @@ export const SoApprovalapi="BituRep/Api/Account/So_Approvel_Data";
 export const soVhicledetails="BituRep/Api/Account/VW_Vehical_Detail";
 export const vehicleDelete = "BituRep/Api/Account/log_Vehical_Delete";
 export const vehiclelistapi="BituRep/Api/Account/logistic_data_list";
+export const salesListApi="BituRep/Api/Account/send_sodata_userwise";

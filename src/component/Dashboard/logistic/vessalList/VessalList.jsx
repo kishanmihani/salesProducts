@@ -3,24 +3,18 @@ import React, { useEffect,useState } from 'react'
 import CustomPageHeader from '../../../commonComponent/CustomPageHeader/CustomPageHeader'
 import { Box, Button, Collapse, IconButton, List, Paper, Stack, Tab, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tabs, TextField, Typography } from '@mui/material'
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
-// import TabCon
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { authAxios } from '../../../utils/authAxios';
-import { TankDeleteapi, vessailBE_Detail_List, Vessel_Detail, Vessel_Detail_list } from '../../../Config/Api';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import {  vessailBE_Detail_List, Vessel_Detail, Vessel_Detail_list } from '../../../Config/Api';
 import formatDateToUS from '../../../utils/DateFormate';
 import dayjs from 'dayjs';
 import EditSquareIcon from '@mui/icons-material/EditSquare';
 import { a11yProps, CustomTabPanel } from '../../../commonComponent/CustomTabPanel/CustomTabPanel';
-import TankForm from '../VessalRequestForm/TankForm/TankForm';
-import XBondForm from '../VessalRequestForm/XBondFrom/XBondFrom';
 import { useNavigate } from 'react-router';
 import { setEditVessalArray } from '../../../features/vessalDetails';
 import { useDispatch } from 'react-redux';
-import DeleteIcon from "@mui/icons-material/Delete";
 const Table_headVessal=["vessal_Name","vessal No","discarge Date","chA Name","Edit","Vessal Details"]
 const TblHead_vessalDetails = ["produce Name","port Name","BL Name","Bl No","BL Date","BL Qty","BE Name","BE No","bE Date","BE Gross Qty","BE Net Qty","Be OTR Qty","Be Details"]
 const TblHead_Tank = ["bE_NO","terminal_Name","tank_name","net_Quantity"]
@@ -29,8 +23,6 @@ const userId = JSON.parse(localStorage.getItem("userInfo"))?.id;
 export default function VessalList() {
    const [vessalLoading, setVessalLoading] = useState(true);
     const [vessaldata,setVessaldata] = useState([]);
-    // const [vessalOpen,setVessalOpen] = useState(false)
-    //  const [selectedYear, setSelectedYear] = useState(null);
     const [selectedDate, setSelectedDate] = useState(null);
     const [selectedName, setSelectedName] = useState(null);
     const [selectedChaName, setSelectedChaName] = useState(null);
@@ -47,11 +39,9 @@ export default function VessalList() {
     },[setVessalLoading,setVessaldata,userId,Vessel_Detail])
    
   const filteredPatients = vessaldata?.filter((patient) => {
-    // if (!selectedDate) return true;
        const matchDate = !selectedDate || dayjs(patient?.discarge_Date)?.isSame(selectedDate, 'day');
        const matchVessalname = !selectedName || patient?.vessal_Name === selectedName;
        const matchchA_Name = !selectedChaName || patient?.chA_Name === selectedChaName;
-      //  const matchNumber = !selectedVeNo || patient?.vessal_No === selectedVeNo;
     return matchDate && matchVessalname && matchchA_Name ;
   });
   const handleClear = () => {
@@ -67,8 +57,8 @@ export default function VessalList() {
          <Stack spacing={2} sx={{p:2}}>
             <Stack spacing={2} sx={{py:2,display:"flex",}}>
            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 ,flexDirection: {
-    xs: 'column',  // mobile / small screens
-    md: 'row',     // medium and up screens
+    xs: 'column',  
+    md: 'row',  
   },}} >
             <LocalizationProvider dateAdapter={AdapterDayjs}>
         <DemoContainer  components={['DatePicker']}>
@@ -117,7 +107,6 @@ export default function VessalList() {
                       </TableHead>
                       <TableBody >
                      {filteredPatients.map((data,index)=>{
-                      // const {vessal_Name,vessal_No,discarge_Date,chA_Name} = data;
                       return (
                         <VessalRow key={index} row={data}  />
                      )})}
@@ -177,10 +166,9 @@ await authAxios.post(Vessel_Detail_list, JSON.stringify({
         {TblvessalDetails.map((bodytext,index)=><TableCell key={bodytext+index} style={{width:"120px"}}>
                             {bodytext}
                           </TableCell>)}
-                          {/* <TableCell> */}
                             <TableCell key={"Be-Details"+key}>
                       <IconButton color='primary' value="Be-Details" 
-                      onClick={(e)=>beDetailsEdit(vessal_Name,vessal_No,userId,chA_Name,discarge_Date)}
+                      onClick={()=>beDetailsEdit(vessal_Name,vessal_No,userId,chA_Name,discarge_Date)}
                       
                       >
                       <EditSquareIcon  />
@@ -206,7 +194,6 @@ await authAxios.post(Vessel_Detail_list, JSON.stringify({
               
                  {vessalLoading && <p>Loading . . .</p>}
           { vessaldata.length !==0 && 
-          // <TableContainer component={Paper} sx={{overflow:"auto"}}>
           <TableContainer elevation={0} component={Paper} style={{overflow:"auto",minWidth:800}}>
               <Table size="small"  aria-label="purchases">
                 <TableHead>
@@ -219,13 +206,11 @@ await authAxios.post(Vessel_Detail_list, JSON.stringify({
                 <TableBody>
                   {vessaldata.map((data)=>{
                     const {bL_BE_ID,produce_Name,port_Name,bl_Name,bl_No,bL_Date,bL_Qty,bE_Name,bE_No,bE_Date,bE_G_Qty,bE_N_Qty,bE_OTR_Qty} =data;
-                    // console.log(data)
                     const tblbody=[produce_Name,port_Name,bl_Name,bl_No,formatDateToUS(bL_Date),bL_Qty,bE_Name,bE_No,formatDateToUS(bE_Date),bE_G_Qty,bE_N_Qty,bE_OTR_Qty]
                    return (
-                    <VessalDetailsRow key={bL_BE_ID} bL_BE_ID={bL_BE_ID}  tblbody={tblbody} vessal_Name={vessal_Name}vessal_No={vessal_No} discarge_Date={discarge_Date} chA_Name={chA_Name} bE_No={bE_No} />
+                    <VessalDetailsRow key={bL_BE_ID}   tblbody={tblbody} vessal_Name={vessal_Name}vessal_No={vessal_No}   bE_No={bE_No} />
                   )})}
-                 
-                </TableBody>
+                            </TableBody>
               </Table>
                 </TableContainer>  
               }
@@ -237,16 +222,13 @@ await authAxios.post(Vessel_Detail_list, JSON.stringify({
     </React.Fragment>
 }
 
-function VessalDetailsRow({tblbody, vessal_Name,vessal_No,bE_No,key,bL_BE_ID,discarge_Date ,chA_Name}){
+function VessalDetailsRow({tblbody, vessal_Name,vessal_No,bE_No,key}){
   
   const [openTank, setOpenTank] = React.useState(false);
     const [vessalLoading, setVessalLoading] = useState(true);
     const [bedata,setBedata] = useState([]);
     const [editTank, setEditTank] = useState(false);
-    // const [dataTankInfo,setDataTankInfo] = useState({})
     const [editXbond,setEditXbond] = useState(false);
-    // const [dataXbondInfo,setDataXbondInfo] =  useState({});
-    // const navigate = useNavigate();
   const [tabs, setTabs] = React.useState(0);
     const handleTabs = (event, newValue) => {
     setTabs(newValue);
@@ -358,14 +340,12 @@ authAxios.post(vessailBE_Detail_List,JSON.stringify({
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 ,display:"flex"}} colSpan={6}>
           <Collapse in={openTank} timeout="auto" unmountOnExit  >
           <List component="div" disablePadding>
-
-                  {/* <TabContext value={tabs}> */}
+         
         <Box sx={{ borderBottom: 1, borderColor: 'divider',width:"100%" }}>
           <Tabs value={tabs} onChange={handleTabs} aria-label="basic tabs example">
            
             <Tab label="Tank Details" {...a11yProps(0)} />
           <Tab label="x-Bond" {...a11yProps(1)} />
-          {/* </TabList> */}
           </Tabs>
         </Box>
         <CustomTabPanel value={tabs} index={0}  >

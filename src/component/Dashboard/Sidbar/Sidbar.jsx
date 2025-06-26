@@ -22,6 +22,7 @@ import logo from "../../../assets/sale.jpeg";
 import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
 import RadioButtonCheckedIcon from "@mui/icons-material/RadioButtonChecked";
 import { GrMoney } from "react-icons/gr";
+import ContactsIcon from '@mui/icons-material/Contacts';
 import { RiMoneyDollarBoxFill } from "react-icons/ri";
 const Sidbar = ({ message}) => {
   let pagelist = [];
@@ -36,7 +37,8 @@ const Sidbar = ({ message}) => {
   const location = useLocation();
   const user = message?.[0];
   const [open, setOpen] = useState(false);
-  const [openLogistic,setOpenLogistic] = useState(false)
+  const [openLogistic,setOpenLogistic] = useState(false);
+  const [openAccount,setOpenAccount] = useState(false);
   const handleProfileClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -196,19 +198,7 @@ const Sidbar = ({ message}) => {
           
           </List>
         </Collapse>
-        {/* <ListItemButton
-          sx={{ display: pagelist.includes("Sale_Form") ? "flex" : "none" }}
-          component={NavLink}
-          onClick={handleToggle}
-          to="/dashboard/Log"
-          selected={location.pathname === "/dashboard/sales"}
-        >
-          <ListItemIcon sx={{ color: "black" }}>
-            <TbSettings2 />
-          </ListItemIcon>
-          <ListItemText primary="Sales" />
-          {open ? <FaChevronDown /> : <FaChevronRight />}
-        </ListItemButton>  */}
+    
          <ListItemButton
           component={NavLink}
           onClick={()=>setOpenLogistic(!openLogistic)}
@@ -217,7 +207,6 @@ const Sidbar = ({ message}) => {
         >
           <ListItemIcon sx={{ color: '#756f6f' ,fontSize:22}}>
           <GrMoney />
-            {/* <img src={Logisticicon} width={20} alt="Logistic"></img> */}
             </ListItemIcon>
           <ListItemText primary="Logistic" />
           <FaChevronRight />
@@ -226,12 +215,12 @@ const Sidbar = ({ message}) => {
           <List component="div" Padding>
             <ListItemButton
               component={NavLink}
-              to="/dashboard/Logistic"
-              selected={location.pathname === "/dashboard/Logistic"}
-              sx={{ pl: 4 }} 
+              to="/dashboard/Logistic/logistic_Request_form"
+              selected={location.pathname === "/dashboard/Logistic/logistic_Request_form"}
+              sx={{ pl: 4 ,display:"none"}} 
             >
               <ListItemIcon color="#756f6f">
-                {location.pathname === "/dashboard/Logistic" ? (
+                {location.pathname === "/dashboard/Logistic/logistic_Request_form" ? (
                   <RadioButtonCheckedIcon
                     style={{ height: 17, width: 17, mr: 2 }}
                   ></RadioButtonCheckedIcon>
@@ -364,9 +353,71 @@ const Sidbar = ({ message}) => {
             </ListItemButton> */}
           </List>
           </Collapse>
+           <ListItemButton
+          component={NavLink}
+          onClick={()=>setOpenAccount(!openAccount)}
+          to="/dashboard/Account"
+          selected={location.pathname.includes("/dashboard/Account")}
+        >
+          <ListItemIcon sx={{ color: '#756f6f' ,fontSize:22}}>
+          <ContactsIcon />
+            </ListItemIcon>
+          <ListItemText primary="Account" />
+          <FaChevronRight />
+        </ListItemButton>
+        <Collapse in={openAccount} timeout="auto" unmountOnExit>
+          <List component="div" Padding>
+            <ListItemButton
+              component={NavLink}
+              to="/dashboard/Account/Account_list"
+              selected={location.pathname === "/dashboard/Account/Account_list"}
+              sx={{ pl: 4 }} 
+            >
+              <ListItemIcon color="#756f6f">
+                {location.pathname === "/dashboard/Account/Account_list" ? (
+                  <RadioButtonCheckedIcon
+                    style={{ height: 17, width: 17, mr: 2 }}
+                  ></RadioButtonCheckedIcon>
+                ) : (
+                  <RadioButtonUncheckedIcon
+                  
+                    style={{ height: 17, width: 17, mr: 2,color:"#756f6f" }}
+                  />
+                )}
+              </ListItemIcon>
+              <ListItemText
+                primaryTypographyProps={{ fontSize: "12px" }}
+                primary="Account List"
+              />
+            </ListItemButton>
+            <ListItemButton
+              component={NavLink}
+              to="/dashboard/Account/Approval_list"
+              selected={location.pathname === "/dashboard/Account/Approval_list"}
+              sx={{ pl: 4 }} 
+            >
+              <ListItemIcon color="#756f6f">
+                {location.pathname === "/dashboard/Account/Approval_list" ? (
+                  <RadioButtonCheckedIcon
+                    style={{ height: 17, width: 17, mr: 2 }}
+                  ></RadioButtonCheckedIcon>
+                ) : (
+                  <RadioButtonUncheckedIcon
+                  
+                    style={{ height: 17, width: 17, mr: 2,color:"#756f6f" }}
+                  />
+                )}
+              </ListItemIcon>
+              <ListItemText
+                primaryTypographyProps={{ fontSize: "12px" }}
+                primary="Approval List"
+              />
+            </ListItemButton>
       </List>
-
-      {/* Spacer to push profile section to the bottom */}
+      </Collapse>
+      </List>
+      
+     
       <Box sx={{ flexGrow: 1 }} />
 
       {/* Profile Section */}

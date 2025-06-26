@@ -3,7 +3,7 @@ import React, { useEffect } from 'react'
 import { useNavigate } from "react-router";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { authAxios } from '../../utils/authAxios';
-import PropTypes from 'prop-types';
+import { salesListApi } from '../../Config/Api';
 export default function Saleslist() {
   const navigate = useNavigate();
   const [tableData,setTableData]=React.useState([])
@@ -11,7 +11,7 @@ export default function Saleslist() {
   const [userId] = React.useState(JSON.parse(localStorage.getItem("userInfo"))?.id);
   const [userName] = React.useState(JSON.parse(localStorage.getItem("userInfo"))?.login);
   const [page, setPage] = React.useState(0); // current page
-  const [rowsPerPage, setRowsPerPage] = React.useState();
+  const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -31,7 +31,7 @@ export default function Saleslist() {
     const fetchTableData = async () => {
       try {
         const response = await authAxios.post(
-          "BituRep/Api/Account/send_sodata_userwise",
+          salesListApi,
           JSON.stringify({
             user_id: userId,
             Role: "entry",
@@ -49,7 +49,7 @@ export default function Saleslist() {
     if (!checkTableData && tableData.length === 0) {
       fetchTableData();
     }
-  }, [checkTableData, tableData, userId]);
+  }, [checkTableData, tableData, userId, userName]);
   return (
     <React.Fragment>
       <Box
@@ -84,21 +84,21 @@ export default function Saleslist() {
       <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
         <TableHead sx={{fontSize:14,fontWeight:600,bgcolor:"rgba(25, 118, 210, 0.08)"}}>
           <TableRow>
-            <TableCell  sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>Billing Name</TableCell>
-            <TableCell align="left" sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>Customer Name</TableCell>
-            <TableCell align="left"sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>Transporter Name</TableCell>
-            <TableCell align="left"sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>Transporter</TableCell>
-            <TableCell align="left"sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>Port Name</TableCell>
-            <TableCell align="left"sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>Gst</TableCell>
-            <TableCell align="left"sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>Payment Type</TableCell>
-            <TableCell align="left"sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>Product Name</TableCell>
-            <TableCell align="left"sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>Bitumens price</TableCell>
-            <TableCell align="left"sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>Quantity</TableCell>
-            <TableCell align="left"sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>Order Date</TableCell>
-            <TableCell align="left"sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>validity Date</TableCell>
-            <TableCell align="left"sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>validity Days</TableCell>
-              {/* <TableCell align="left"sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>Approve</TableCell> */}
-            {/* <TableCell align="left"sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>Disapprove</TableCell> */}
+            <TableCell  className="table-th">Billing Name</TableCell>
+            <TableCell align="left" className="table-th">Customer Name</TableCell>
+            <TableCell align="left"className="table-th">Transporter Name</TableCell>
+            <TableCell align="left"className="table-th">Transporter</TableCell>
+            <TableCell align="left"className="table-th">Port Name</TableCell>
+            <TableCell align="left"className="table-th">Gst</TableCell>
+            <TableCell align="left"className="table-th">Payment Type</TableCell>
+            <TableCell align="left"className="table-th">Product Name</TableCell>
+            <TableCell align="left"className="table-th">Bitumens price</TableCell>
+            <TableCell align="left"className="table-th">Quantity</TableCell>
+            <TableCell align="left"className="table-th">Order Date</TableCell>
+            <TableCell align="left"className="table-th">validity Date</TableCell>
+            <TableCell align="left"className="table-th">validity Days</TableCell>
+              {/* <TableCell align="left"className="table-th">Approve</TableCell> */}
+            {/* <TableCell align="left"className="table-th">Disapprove</TableCell> */}
           </TableRow>
         </TableHead>
         <TableBody>

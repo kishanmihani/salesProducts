@@ -2,36 +2,36 @@ import './App.css';
 import React  from 'react'
 import LoginForm from './component/loginFrom/loginForm';
 import { Box } from '@mui/material';
-import { Route, Routes, useNavigate } from 'react-router';
+import { Navigate, Route, Routes } from 'react-router';
 import SalesRestitration from './component/sales/salesRestitration';
 import SalesForm from './component/sales/salesForm';
 import Dashboard from './component/Dashboard/Dashboard';
-import Saleslist from './component/sales/Sales list/SalesList';
+import Saleslist from './component/sales/Sales list/Saleslist';
 import ApprovalRequestForm from './component/sales/ApprovalRequestForm';
 import LogicRequestForm from './component/Dashboard/logistic/LogicRequestForm/LogicRequestForm';
 import LogicForm from './component/Dashboard/logistic/LogicForm';
 import LogisticList from './component/Dashboard/logistic/LogisticList/LogisticList';
 import VessalRequestForm from './component/Dashboard/logistic/VessalRequestForm/VessalRequestForm';
-import { PDFViewer } from '@react-pdf/renderer';
-import { MyDocument } from './component/commonComponent/PdfIntegrations/MyDocument';
 import Pdfbilles from './component/sales/Pdfbilles/Pdfbilles';
 import LogisticListEdit from './component/Dashboard/logistic/LogisticList/LogisticListEdit';
 import LogicInvoiceDo from './component/sales/Pdfbilles/LogicInvoiceDo';
 import "@fontsource/inter";
 import VessalList from './component/Dashboard/logistic/vessalList/VessalList';
-import { DrawerProvider } from './component/commonComponent/DrawerProvider/DrawerContext';
 import SoApproval from './component/soForms/SoApproval';
+import AccountList from './pages/accounts/accountList';
+import ApprovalList from './pages/accounts/ApprovalList/ApprovalList';
 
 function App() {
-  const navigate=useNavigate()
- window.addEventListener("beforeunload", function (e) {
-  e.preventDefault();
-  alert("Are you sure you want to leave?"); // ❌ This won't show
-});
-
+  // const navigate=useNavigate();
+//  window.addEventListener("beforeunload", function (e) {
+//   e.preventDefault();
+//   alert("Are you sure you want to leave?");
+// });
+// const RedirectComponent = () => {
+//   return <Navigate to="/Account/Account_list" replace />;
+// };
   return (
     <React.Fragment>
-      {/* <DrawerProvider> */}
       <Box
       sx={{
         height: '100vh',
@@ -55,7 +55,8 @@ function App() {
             </Route>
 
             <Route path="logistic" element={<LogicForm />} >
-            <Route index  element={<LogicRequestForm />} />
+            <Route path="logistic_Request_form"  element={<LogicRequestForm />} />
+            <Route index element={<Navigate to="logistic_Pending_form" replace />} />
             <Route path='logistic_Pending_form' element={<LogisticList />} />
             <Route path='logistic_list_Edit_Form/:id?' element={<LogisticListEdit />} />
             
@@ -64,6 +65,12 @@ function App() {
             <Route path='Vessal_Edit_Form/:id?' element={<VessalRequestForm />} />
             <Route path='Pdf_Bill' element={<Pdfbilles />} />
             <Route path='Logistic_InVoice_Delivery' element={<LogicInvoiceDo />} />
+            </Route>
+
+            <Route path="Account" element={<LogicForm />}>
+            <Route index element={<Navigate to="Account_list" replace />} />
+    <Route path="Account_list" element={<AccountList />} />
+    <Route path="Approval_list" element={<ApprovalList />} />
             </Route>
           </Route>
         </Routes>

@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import "./CustomeAlert.css";
 
-const CustomeAlerts = ({ type = "success", message, onClose }) => {
+const CustomeAlerts = ({ type = "success", message = "", onClose }) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       onClose(); // auto-close after 4s

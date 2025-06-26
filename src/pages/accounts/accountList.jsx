@@ -1,14 +1,14 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography, Select, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TextField,  FormControl, MenuItem } from '@mui/material';
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography, Select, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TextField,  FormControl, MenuItem } from '@mui/material';
 import React, { useEffect } from 'react';
 import EditSquareIcon from '@mui/icons-material/EditSquare';
 import { useNavigate } from "react-router";
-import { authAxios } from '../../../utils/authAxios';
+import { authAxios } from '../../component/utils/authAxios';
 import DeleteIcon from "@mui/icons-material/Delete";
-import CustomPageHeader from '../../../commonComponent/CustomPageHeader/CustomPageHeader';
+import CustomPageHeader from '../../component/commonComponent/CustomPageHeader/CustomPageHeader';
 
-import DeleteConfirmationDialog from '../../../commonComponent/DeleteConfirmationDialog/DeleteConfirmationDialog';
-import { vehicleDelete } from '../../../Config/Api';
-import CustomeAlerts from '../../../commonComponent/CustomeAlert/CustomeAlert';
+import DeleteConfirmationDialog from '../../component/commonComponent/DeleteConfirmationDialog/DeleteConfirmationDialog';
+import { vehicleDelete } from '../../component/Config/Api'; 
+import CustomeAlerts from '../../component/commonComponent/CustomeAlert/CustomeAlert';
 const tableHeaders = [
   "So No",
   "Customer Name",
@@ -30,7 +30,7 @@ const tableHeaders = [
   "Delete"
 ];
 
-export default function Logisticlist() {
+export default function AccountList() {
   const [deleteDialog, setDeleteDialog] = React.useState({ isOpen: false, itemToDelete: null });
   const [statusDialog,setStatusDialog] =  React.useState({ isOpen: false, itemToStatus: null });
   const navigate = useNavigate();
@@ -50,7 +50,7 @@ export default function Logisticlist() {
       "User_Id":userId
     }))
     .then(res=> setStatuslist(res.data))
-    .catch(err=> console.log(err.message))
+    .catch(err=> showError("Some thing went wrong:",err))
   }
   
   },[userId,statuslist])
@@ -131,7 +131,7 @@ export default function Logisticlist() {
 }
     
     authAxios.post(vehicleDelete,JSON.stringify(data))
-    .then(res =>{showSuccess("record delete");console.log(res.message);fetchTableData();})
+    .then(res =>{showSuccess("record delete");console.log(res);fetchTableData();})
     .catch(err =>{showError(err.message);})
   }
   const showSuccess = (data) => {
@@ -145,7 +145,7 @@ export default function Logisticlist() {
           };
   return (
     <React.Fragment>
-     <CustomPageHeader pageHeaderText="Vehicle Pull"/>
+     <CustomPageHeader pageHeaderText="Account List"/>
       <Paper sx={{ p: 2 }} elevation={0}>
       <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">

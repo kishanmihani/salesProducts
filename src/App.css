@@ -43,3 +43,8 @@ input[type=date]::-webkit-outer-spin-button {
   background-color:#2a20c2;
   /* background-image: linear-gradient(to top, #0c0c0c 0%, #0c0d0e 100%); */
 }
+.table-th {
+  font-size: 14px; /* or 14rem or 14em, depending on your context */
+  font-weight: 600;
+  white-space: nowrap;
+}
