@@ -27,6 +27,7 @@ export default function VessalList() {
     const [selectedName, setSelectedName] = useState(null);
     const [selectedChaName, setSelectedChaName] = useState(null);
     useEffect(()=>{
+      if(vessalLoading == true){
      authAxios.post(Vessel_Detail,JSON.stringify({
       "User_Id":userId
     }))
@@ -36,7 +37,8 @@ export default function VessalList() {
      .catch(err=> {console.log(err)
       setVessalLoading(false)
      })
-    },[setVessalLoading,setVessaldata,userId,Vessel_Detail])
+    }
+    },[setVessalLoading, setVessaldata, vessalLoading])
    
   const filteredPatients = vessaldata?.filter((patient) => {
        const matchDate = !selectedDate || dayjs(patient?.discarge_Date)?.isSame(selectedDate, 'day');
@@ -96,7 +98,7 @@ export default function VessalList() {
       </Box>
             </Stack>
               {vessalLoading && <p>Loading . . .</p>}
-          { vessaldata.length !==0 &&  <TableContainer component={Paper} style={{overflow:"auto"}}>
+            <TableContainer component={Paper} style={{overflow:"auto"}}>
                    <Table aria-label="collapsible table" >
                       <TableHead>
                         <TableRow>
@@ -112,7 +114,7 @@ export default function VessalList() {
                      )})}
                       </TableBody>
                    </Table>
-             </TableContainer>}
+             </TableContainer>
         </Stack>
 
     </React.Fragment>
@@ -193,7 +195,7 @@ await authAxios.post(Vessel_Detail_list, JSON.stringify({
 
               
                  {vessalLoading && <p>Loading . . .</p>}
-          { vessaldata.length !==0 && 
+           
           <TableContainer elevation={0} component={Paper} style={{overflow:"auto",minWidth:800}}>
               <Table size="small"  aria-label="purchases">
                 <TableHead>
@@ -203,17 +205,17 @@ await authAxios.post(Vessel_Detail_list, JSON.stringify({
                     ))}
                   </TableRow>
                 </TableHead>
-                <TableBody>
+            { vessaldata &&    <TableBody>
                   {vessaldata.map((data)=>{
                     const {bL_BE_ID,produce_Name,port_Name,bl_Name,bl_No,bL_Date,bL_Qty,bE_Name,bE_No,bE_Date,bE_G_Qty,bE_N_Qty,bE_OTR_Qty} =data;
                     const tblbody=[produce_Name,port_Name,bl_Name,bl_No,formatDateToUS(bL_Date),bL_Qty,bE_Name,bE_No,formatDateToUS(bE_Date),bE_G_Qty,bE_N_Qty,bE_OTR_Qty]
                    return (
                     <VessalDetailsRow key={bL_BE_ID}   tblbody={tblbody} vessal_Name={vessal_Name}vessal_No={vessal_No}   bE_No={bE_No} />
                   )})}
-                            </TableBody>
+                            </TableBody>}
               </Table>
                 </TableContainer>  
-              }
+              
                       
               </List>
               </Collapse>

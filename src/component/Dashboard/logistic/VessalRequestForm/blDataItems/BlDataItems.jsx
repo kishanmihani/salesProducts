@@ -107,7 +107,7 @@ const calculatePercentage = () => {
             color: "#555",
           }}
         >
-         { editlabel === true? `Bl data Edit`: ` Bl data ${index + 1}`}
+         { editlabel === true? `Bl data Edit`: ` Bl data ${Number(index) + 1}`}
           {/* Bl data {index + 1} */}
         </Typography>
         <Stack
@@ -238,7 +238,6 @@ const calculatePercentage = () => {
               onChange={(e) => {
                 const newFields = [...fields];
                 const value = e.target.value;
-
                 if (value === "" || Number(value) === 0) {
                   newFields[index].quantityError = "Net Quantity is required";
                 } else if (Number(value) < 0) {

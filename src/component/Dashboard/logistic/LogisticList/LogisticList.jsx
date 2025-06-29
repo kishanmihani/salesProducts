@@ -36,6 +36,7 @@ export default function Logisticlist() {
   const navigate = useNavigate();
   const [tableData,setTableData]=React.useState([])
   const [checkTableData,setCheckTableData]=React.useState(false)
+  const [statusListCheck,setStatusListCheck] = React.useState(true);
   const [userId] = React.useState(JSON.parse(localStorage.getItem("userInfo"))?.id);
   const [page, setPage] = React.useState(0); 
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
@@ -45,15 +46,15 @@ export default function Logisticlist() {
     setPage(newPage);
   };
   useEffect(()=>{
-    if(statuslist?.length === 0){
+    if(statusListCheck == true ){
     authAxios.post("/BituRep/Api/Account/Status_List",JSON.stringify({
       "User_Id":userId
     }))
-    .then(res=> setStatuslist(res.data))
-    .catch(err=> console.log(err.message))
-  }
+    .then(res=> {setStatuslist(res.data);setStatusListCheck(false)})
+    .catch(err=>{ console.log(err.message);setStatusListCheck(false)})
+  } 
   
-  },[userId,statuslist])
+  },[userId, statuslist, statusListCheck])
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);

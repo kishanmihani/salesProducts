@@ -1,4 +1,5 @@
-import { StrictMode } from 'react'
+import { Fragment } from 'react';
+import { React } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import { StyledEngineProvider, ThemeProvider } from '@mui/material/styles';
@@ -9,7 +10,8 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { Provider } from 'react-redux';
 import store from "./store.js"
 createRoot(document.getElementById('root')).render(
-  <StrictMode>
+  // <StrictMode>
+  <Fragment>
     {/* <Provider store={store}> */}
     <ThemeProvider theme={theme}>
     <BrowserRouter>
@@ -20,5 +22,6 @@ createRoot(document.getElementById('root')).render(
     </BrowserRouter>
     </ThemeProvider>
     {/* </Provider>  */}
-  </StrictMode>,
+  
+  </Fragment>,
 )

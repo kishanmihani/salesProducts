@@ -19,8 +19,9 @@ import "@fontsource/inter";
 import VessalList from './component/Dashboard/logistic/vessalList/VessalList';
 import SoApproval from './component/soForms/SoApproval';
 import AccountList from './pages/accounts/accountList';
-import ApprovalList from './pages/accounts/ApprovalList/ApprovalList';
-
+import ApprovalList from './pages/ApprovalList/ApprovalList';
+import ReciptFrom from './pages/reciptFrom/reciptFrom';
+import CloserForm from './pages/closerForm/closerForm';
 function App() {
   // const navigate=useNavigate();
 //  window.addEventListener("beforeunload", function (e) {
@@ -51,17 +52,20 @@ function App() {
             <Route index  element={<SalesRestitration />} />
             <Route path='PendingApprovalForm' element={<Saleslist  />} />
             <Route path='Approval_Request_form' element={<ApprovalRequestForm  />} />
-            <Route path='So_Approval' element={<SoApproval  />} />
+            
             </Route>
 
             <Route path="logistic" element={<LogicForm />} >
             <Route path="logistic_Request_form"  element={<LogicRequestForm />} />
+            <Route  index element={<Navigate to="So_Approval" replace />} />
+          <Route  path='So_Approval' element={<SoApproval  />} />
             <Route index element={<Navigate to="logistic_Pending_form" replace />} />
             <Route path='logistic_Pending_form' element={<LogisticList />} />
             <Route path='logistic_list_Edit_Form/:id?' element={<LogisticListEdit />} />
             
             <Route path='Vessal_Request_Form' element={<VessalRequestForm />} />
             <Route path='Vessal_List' element={<VessalList />} />
+            
             <Route path='Vessal_Edit_Form/:id?' element={<VessalRequestForm />} />
             <Route path='Pdf_Bill' element={<Pdfbilles />} />
             <Route path='Logistic_InVoice_Delivery' element={<LogicInvoiceDo />} />
@@ -71,6 +75,8 @@ function App() {
             <Route index element={<Navigate to="Account_list" replace />} />
     <Route path="Account_list" element={<AccountList />} />
     <Route path="Approval_list" element={<ApprovalList />} />
+    <Route path="CloserForm" element={<CloserForm />} />
+    <Route path="ReciptFrom?" element={<ReciptFrom />} />
             </Route>
           </Route>
         </Routes>

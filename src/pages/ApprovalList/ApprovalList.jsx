@@ -2,15 +2,15 @@ import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Typogra
 import React, { useEffect } from 'react';
 import EditSquareIcon from '@mui/icons-material/EditSquare';
 import { useNavigate } from "react-router";
-import { authAxios } from '../../../component/utils/authAxios';
+import { authAxios } from '../../component/utils/authAxios';
 import DeleteIcon from "@mui/icons-material/Delete";
-import CustomPageHeader from '../../../component/commonComponent/CustomPageHeader/CustomPageHeader';
+import CustomPageHeader from '../../component/commonComponent/CustomPageHeader/CustomPageHeader';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 // import DeleteConfirmationDialog from '../../component/commonComponent/DeleteConfirmationDialog/DeleteConfirmationDialog';
 // import { vehicleDelete } from '../../component/Config/Api'; 
 import CancelIcon from '@mui/icons-material/Cancel';
 // import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-import CustomeAlerts from '../../../component/commonComponent/CustomeAlert/CustomeAlert';
+import CustomeAlerts from '../../component/commonComponent/CustomeAlert/CustomeAlert';
 const tableHeaders = [
   "So No",
   "Customer Name",

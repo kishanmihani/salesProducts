@@ -889,7 +889,6 @@ setEditFields([
     otrQut:beData?.bE_OTR_Qty,
   }]);
 }else {
-  debugger;
 setEditFields(() => 
   editVessal?.map(beData => ({
     shippingName: beData?.bl_Name,
@@ -1059,7 +1058,7 @@ id
             <BlDataItems
               field={field}
               disabled={blDataCheck}
-              index={ field?.bL_BE_ID !==""?field?.bL_BE_ID:BlId}
+              index={ BlId}
               fields={fields}
               edit={editBeData?.isEdit}
               vessalInfo={[vessalName, vessalNumber]}

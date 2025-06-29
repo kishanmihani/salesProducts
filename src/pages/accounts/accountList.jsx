@@ -1,11 +1,11 @@
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography, Select, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TextField,  FormControl, MenuItem } from '@mui/material';
 import React, { useEffect } from 'react';
 import EditSquareIcon from '@mui/icons-material/EditSquare';
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { authAxios } from '../../component/utils/authAxios';
 import DeleteIcon from "@mui/icons-material/Delete";
 import CustomPageHeader from '../../component/commonComponent/CustomPageHeader/CustomPageHeader';
-
+import ReciptFrom  from '../reciptFrom/reciptFrom';
 import DeleteConfirmationDialog from '../../component/commonComponent/DeleteConfirmationDialog/DeleteConfirmationDialog';
 import { vehicleDelete } from '../../component/Config/Api'; 
 import CustomeAlerts from '../../component/commonComponent/CustomeAlert/CustomeAlert';
@@ -13,20 +13,14 @@ const tableHeaders = [
   "So No",
   "Customer Name",
   "Vehicle Name",
-  "Estimated Quantity",
   "Actual Qty",
-  "Vessal Name",
   "Be No.",
   "Port Name",
-  "Transporter Name",
-  "Product Name",
-  "Tank Name",
-  
   
   
   "Remark",
   "Status",
-  "Edit",
+ "Reacipt",
   "Delete"
 ];
 
@@ -41,12 +35,13 @@ export default function AccountList() {
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [custAlert, setCustAlert] = React.useState(null);
   const [statuslist,setStatuslist] = React.useState([]);
+  const [open, setOpen] = React.useState(false);
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
   useEffect(()=>{
     if(statuslist?.length === 0){
-    authAxios.post("/BituRep/Api/Account/Status_List",JSON.stringify({
+    authAxios.post("/BituRep/Api/Account/Status_Acc_List",JSON.stringify({
       "User_Id":userId
     }))
     .then(res=> setStatuslist(res.data))
@@ -58,7 +53,12 @@ export default function AccountList() {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
-
+  //  function popupOpen(){
+  //   setOpen(true)
+  //  }
+  //  function popupClose(){
+  //   setOpen(false)
+  //  }
   // pagination slice
   const paginatedData = tableData.slice(
     page * rowsPerPage,
@@ -68,7 +68,7 @@ export default function AccountList() {
   useEffect(() => {
     
   
-    if (!checkTableData && tableData.length === 0) {
+    if (!checkTableData) {
       fetchTableData();
     }
   }, [checkTableData, tableData, userId]);
@@ -86,9 +86,7 @@ export default function AccountList() {
       } catch (error) {
         setCheckTableData(true)
         showError(error);
-      } finally {
-       setCheckTableData(true);
-      }
+      } 
     };
   function StatusChange(row,value){
     setTableData((prevState) => 
@@ -106,8 +104,8 @@ export default function AccountList() {
       "Status_name": value
     }
     authAxios.post("BituRep/Api/Account/Status_update",data)
-    .then((res)=>{
-     showSuccess( res.data.message); 
+    .then(()=>{
+    //  showSuccess( res.data.message); 
     }).catch((err)=>showError(err))
   }
   const handleDeleteClick = (item) => {
@@ -150,7 +148,6 @@ export default function AccountList() {
       <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
         <TableHead sx={{fontSize:14,fontWeight:600,bgcolor:"rgba(25, 118, 210, 0.08)"}}>
-          {/* <TableRow> */}
           <TableRow>
   {tableHeaders.map((header, index) => (
     <TableCell
@@ -161,7 +158,6 @@ export default function AccountList() {
       {header}
     </TableCell>
   ))}
-{/* </TableRow> */}
           </TableRow>
         </TableHead>
         <TableBody>
@@ -177,18 +173,19 @@ export default function AccountList() {
               <TableCell align="left">{row?.so_No}</TableCell>
               <TableCell align="left">{row?.customer_Name}</TableCell>
               <TableCell align="left">{row?.vehicle_Name}</TableCell>
-              <TableCell align="left">{row?.quantity}</TableCell>
+              {/* <TableCell align="left">{row?.quantity}</TableCell> */}
               <TableCell>
               {row?.a_Qty === ""? "No Actual quantity":row?.a_Qty}
               </TableCell>
-                      <TableCell>
-                {row?.vessel_Name == ""? "No Vessel Name" : row?.vessel_Name}
-              </TableCell><TableCell align="left">{row?.bE_No === ""? "No Be No.":row?.bE_No}</TableCell>
+              <TableCell>
+                {row?.bE_No}
+              </TableCell>
+                      {/* <TableCell>{row?.vessel_Name == ""? "No Vessel Name" : row?.vessel_Name} </TableCell><TableCell align="left">{row?.bE_No === ""? "No Be No.":row?.bE_No}</TableCell> */}
               <TableCell align="left">{row?.port_Name}</TableCell>
-              <TableCell align="left">{row?.transporter_Name === ""? "No transporter":row?.transporter_Name}</TableCell>
+              {/* <TableCell align="left">{row?.transporter_Name === ""? "No transporter":row?.transporter_Name}</TableCell> */}
               
-              <TableCell align="left">{row?.produce_Name === ""? "No Product":row?.produce_Name}</TableCell>
-              <TableCell align="left">{row?.tank_name === ""? "No tank name":row?.tank_name}</TableCell>
+              {/* <TableCell align="left">{row?.produce_Name === ""? "No Product":row?.produce_Name}</TableCell> */}
+              {/* <TableCell align="left">{row?.tank_name === ""? "No tank name":row?.tank_name}</TableCell> */}
       
               
               <TableCell align="left">{row?.remark}</TableCell>
@@ -204,15 +201,18 @@ export default function AccountList() {
                 </Select>
                </FormControl>
               </TableCell>
+              
               <TableCell>
-                <IconButton
+                <Button
                                   aria-label="Edit"
                                   color="primary"
-                                  onClick={() => navigate("/dashboard/Logistic/logistic_list_Edit_Form/"+row?.table_id)}
+                                  onClick={() =>{let data={so_no:row?.so_No,customer:row.customer_Name};
+                                  localStorage.setItem("ReciptFrom",JSON.stringify(data)); navigate("/dashboard/Account/ReciptFrom");
+                                }}
                                  
                                 >
-                <EditSquareIcon color='primary' />
-                </IconButton>
+            Recipt
+                </Button>
               </TableCell>
               <TableCell>
                 <IconButton aria-label='Delete' onClick={()=>handleDeleteClick(row)} >
@@ -255,6 +255,7 @@ export default function AccountList() {
           onClose={handleCloseAlert}
         />
       )}
+      {/* <ReciptFrom open={open} setOpen={setOpen} handleClose={popupClose} handleOpen={popupOpen} /> */}
     </React.Fragment>
   )
 }

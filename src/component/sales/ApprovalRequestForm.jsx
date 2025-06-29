@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Box, Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Typography } from '@mui/material';
 import React, { useEffect } from 'react'
 import { useNavigate } from "react-router";
@@ -37,7 +38,13 @@ export default function ApprovalRequestForm() {
     );
   
     useEffect(() => {
-      const fetchTableData = async () => {
+      
+    
+      if (!checkTableData && tableData.length === 0) {
+        fetchTableData();
+      }
+    }, [checkTableData, tableData, userId]);
+    const fetchTableData = async () => {
         try {
           const response = await authAxios.post(
             "BituRep/Api/Account/send_sodata_userwise",
@@ -54,17 +61,12 @@ export default function ApprovalRequestForm() {
           setCheckTableData(false);
         }
       };
-    
-      if (!checkTableData && tableData.length === 0) {
-        fetchTableData();
-      }
-    }, [checkTableData, tableData, userId]);
    async function ApproveAction(table_Id){
     await authAxios.post('BituRep/Api/Account/send_sodata_Approved',JSON.stringify({
         "user_id": userId,
         "table_Id": table_Id
       }))
-      .then((res)=>{if(res.data.massage =="Entry Done"){showSuccess("Bill Approve");} })
+      .then((res)=>{if(res.data.massage1 =="Entry Done"){showSuccess("Bill Approve");fetchTableData();} })
       .catch(err=>{console.log(err.data)} )
     }
     async function DispproveAction(table_Id){
@@ -72,7 +74,7 @@ export default function ApprovalRequestForm() {
             "user_id": userId,
             "table_Id": table_Id
           }))
-          .then((res)=>{if(res.data.massage =="Entry Done"){showSuccess("Bill Dispprove")};})
+          .then((res)=>{if(res.data.massage =="Entry Done"){showSuccess("Bill Dispprove");fetchTableData();};})
       .catch(err=>{ console.log(err.data)} )
         }
     return (
