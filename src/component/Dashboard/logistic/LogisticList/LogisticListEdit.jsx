@@ -187,9 +187,6 @@ import { vehiclelistapi } from "../../../Config/Api";
         if (field.vehicleName.trim() === "") {
           updatedField.vehicleNameError = "Vehicle Name is required";
           hasError = true;
-        } else if (!/^[A-Za-z\s]+$/.test(field.vehicleName)) {
-          updatedField.vehicleNameError = "Only letters and spaces allowed";
-          hasError = true;
         } else {
           updatedField.vehicleNameError = "";
         }
@@ -546,8 +543,6 @@ import { vehiclelistapi } from "../../../Config/Api";
 
       if (value.trim() === "") {
         newFields[index].vehicleNameError = "Vehicle Name is required";
-      } else if (!/^[A-Za-z\s]+$/.test(value)) {
-        newFields[index].vehicleNameError = "Only letters and spaces allowed";
       } else {
         newFields[index].vehicleNameError = "";
       }

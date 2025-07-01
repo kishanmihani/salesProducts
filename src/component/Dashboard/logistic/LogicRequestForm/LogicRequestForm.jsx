@@ -86,7 +86,6 @@ export default function LogicRequestForm() {
   };
 
   const handleSubmit = async (e) => {
-    debugger;
 
     e.preventDefault();
     let hasError = false;
@@ -118,7 +117,6 @@ export default function LogicRequestForm() {
         hasError = true;
       }
       if (vessalInfo.wH_NAME == "Select") {
-        debugger;
         setVessalInfo((prev)=>({...prev,wH_NAMEError:true }));
         // setErrorsWhereHouse(true);
         hasError = true;
@@ -134,9 +132,6 @@ export default function LogicRequestForm() {
 
       if (field.vehicleName.trim() === "") {
         updatedField.vehicleNameError = "Vehicle Name is required";
-        hasError = true;
-      } else if (!/^[A-Za-z\s]+$/.test(field.vehicleName)) {
-        updatedField.vehicleNameError = "Only letters and spaces allowed";
         hasError = true;
       } else {
         updatedField.vehicleNameError = "";
@@ -609,9 +604,6 @@ export default function LogicRequestForm() {
                     if (value.trim() === "") {
                       newFields[index].vehicleNameError =
                         "Vehicle Name is required";
-                    } else if (!/^[A-Za-z\s]+$/.test(value)) {
-                      newFields[index].vehicleNameError =
-                        "Only letters and spaces allowed";
                     } else {
                       newFields[index].vehicleNameError = "";
                     }

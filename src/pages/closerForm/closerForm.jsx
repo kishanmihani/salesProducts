@@ -161,7 +161,7 @@ const handleSubmit = () => {
                                <TableCell>{row?.c_Type}</TableCell>
                              
                                <TableCell>{row?.c_QTY}</TableCell>
-                               <TableCell><Button  disabled={row?.c_Type === "Not Allocated"} variant="outlined" size="small" onClick={() => handleUpdateClick(row)}>
+                               <TableCell><Button   variant="outlined" size="small" onClick={() => handleUpdateClick(row)}>
                                 Update
                                 </Button></TableCell>
                             </TableRow>

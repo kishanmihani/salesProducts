@@ -10,7 +10,7 @@ import CustomeAlerts from '../commonComponent/CustomeAlert/CustomeAlert';
 export default function ApprovalRequestForm() {
     const navigate = useNavigate();
     const [tableData,setTableData]=React.useState([])
-    const [checkTableData,setCheckTableData]=React.useState(false)
+    const [checkTableData,setCheckTableData]=React.useState(true)
     const [userId] = React.useState(JSON.parse(localStorage.getItem("userInfo"))?.id);
     const [userName] = React.useState(JSON.parse(localStorage.getItem("userInfo"))?.login);
     const [page, setPage] = React.useState(0); // current page
@@ -40,7 +40,7 @@ export default function ApprovalRequestForm() {
     useEffect(() => {
       
     
-      if (!checkTableData && tableData.length === 0) {
+      if (checkTableData == true ) {
         fetchTableData();
       }
     }, [checkTableData, tableData, userId]);

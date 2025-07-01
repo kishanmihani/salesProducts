@@ -21,7 +21,6 @@ const tableHeaders = [
   "Remark",
   "Status",
  "Reacipt",
-  "Delete"
 ];
 
 export default function AccountList() {
@@ -214,11 +213,11 @@ export default function AccountList() {
             Recipt
                 </Button>
               </TableCell>
-              <TableCell>
+              {/* <TableCell>
                 <IconButton aria-label='Delete' onClick={()=>handleDeleteClick(row)} >
                   <DeleteIcon  color='error'/>
                 </IconButton>
-              </TableCell>
+              </TableCell> */}
             </TableRow>
             
           ))}
@@ -235,12 +234,12 @@ export default function AccountList() {
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
       </Paper>
-       <DeleteConfirmationDialog
+       {/* <DeleteConfirmationDialog
         isOpen={deleteDialog.isOpen}
         onClose={handleCloseDeleteDialog}
         onConfirm={handleDeleteConfirm}
         itemToDelete={deleteDialog.itemToDelete}
-      />
+      /> */}
       <StatusComfirm
         isOpen={statusDialog.isOpen}
         onClose={handleCloseStatusDialog}

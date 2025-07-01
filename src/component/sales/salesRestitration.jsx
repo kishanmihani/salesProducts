@@ -62,7 +62,7 @@ export default function SalesRestitration() {
     const handler = setTimeout(() => {
       if (selectedBitumenPrice !== "" || selectedTransportation !== "") {
         setSelectedBillingPrice(
-          () => Number(selectedBitumenPrice) + Number(selectedTransportation)
+          () => Number(selectedSellingPrice) - Number(selectedGST)
         );
       }
     }, 300);
@@ -75,7 +75,7 @@ export default function SalesRestitration() {
     const handler = setTimeout(() => {
       if (selectedBillingPrice !== "" || selectedBillingPrice !== 0) {
         setSelectedGST(
-          parseFloat((selectedBillingPrice / 100) * 18).toFixed(2)
+          parseFloat((selectedSellingPrice) * 0.18).toFixed(2)
         );
       }
       if (
@@ -84,9 +84,9 @@ export default function SalesRestitration() {
         selectedGST !== 0 ||
         selectedGST !== ""
       ) {
-        setSelectedSellingPrice(() =>
+        setSelectedGST(() =>
           parseFloat(
-            Number(selectedBillingPrice) + Number(selectedGST)
+            Number(selectedSellingPrice) * 0.18
           ).toFixed(2)
         );
       }
@@ -211,7 +211,7 @@ export default function SalesRestitration() {
       Delivery_Type: formJson["Delivery name"],
       Payment_Type: formJson["Payment name"],
       Product_Name: formJson["Product name"],
-      price: formJson["Bitumen Price"],
+      price: formJson["Selling Price"],
       Transport: formJson["Transportation"],
       Gst: formJson["GST 18%"],
       Discount: formJson["Discount"],
@@ -226,17 +226,19 @@ export default function SalesRestitration() {
   
       if (res.data.message === "Email sent successfully") {
         showSuccess("Email sent successfully")
-        resetForm()
-        setSubmitDisabled(false)
+        resetForm();
+        setSubmitDisabled(false);
+        navigate("/dashboard/sales/PendingApprovalForm");
         return 
       } else {
         showError(res.data.message)
-         setSubmitDisabled(false)
+         setSubmitDisabled(false);
          return
       }
     } catch (err) {
       console.error(err);
-      showError("An error occurred while submitting the form.")
+      showError("An error occurred while submitting the form.");
+      setSubmitDisabled(false);
     }
   }
     
@@ -353,7 +355,7 @@ export default function SalesRestitration() {
                   }else if(value > 0){
                     setSelectedTransporter("Seller")
                   }
-
+                  setSelectedBitumenPrice(selectedBillingPrice - value)
                 }}
                 error={!!errors?.["Transportation"]}
                 helperText={errors?.["Transportation"]}
@@ -384,6 +386,10 @@ export default function SalesRestitration() {
                 margin="normal"
                 type="number"
                 size="small"
+                onChange={(e) => {
+                 let value = e.target.value;
+                 setSelectedSellingPrice(value);
+                  }}
                 value={selectedSellingPrice}
               />
               <TextField
