@@ -111,17 +111,18 @@ const [page, setPage] = useState(0);
     errorAmount: '',
     errorReceiptType:''
   };
-
+if(formData.receiptType?.toLowerCase() !== "advance"){
   if (!formData.so_no || Number(formData.so_no) <= 0) {
-    newErrors.errorSo_no = "SO No is required and must be > 0";
+    newErrors.errorSo_no = "So no must be greater than 0";
     isValid = false;
   }
   if (!formData.tds || Number(formData.tds) < 0) {
-    newErrors.errorTds = "TDS must be 0 or greater";
+    newErrors.errorTds = "Tds must be greater than 0";
     isValid = false;
   }
+}
   if (!formData.amount || Number(formData.amount) <= 0) {
-    newErrors.errorAmount = "Amount is required and must be > 0";
+    newErrors.errorAmount = "Amount must be greater than 0";
     isValid = false;
   }
   if (!formData.receiptType || Number(formData.receiptType) <= 0) {
@@ -140,38 +141,50 @@ const [page, setPage] = useState(0);
       user_id:userId,
       Customer_Name:billing,
       Entry_Date: dayjs(entryDate).format("YYYY-MM-DD"),
-      So_No: formData.so_no,
-      Tds: formData.tds,
+      So_No: formData.receiptType.toLowerCase() !=="advance"? formData.so_no:"",
+      Tds: formData.receiptType.toLowerCase() !=="advance"? formData.tds:"",
       Amount: formData.amount,
       Recipt_type: formData.receiptType,
     };
     authAxios.post("/BituRep/Api/Account/Recipt_Entry_insert",JSON.stringify(payload))
-    .then((res)=>{if(res.data.massage=="Data insert"){showSuccess("Records Inserted");Fetchdata()}})
+    .then((res)=>{if(res.data.massage=="Data insert"){showSuccess("Records Inserted");Fetchdata();ResetHandler()}})
     .catch((err)=>{showError(err)})
     console.log("Submitting form with payload:", payload);
     
   }
 }
   function ResetHandler(){
-    setFormData({
-    so_no: 0,
-    tds: 0,
-    amount: 0,
-    errorSo_no:'',
-    errorTds:"",
-    errorAmount:"",
+  setFormData((prev) => ({
+    ...prev,
     receiptType: '',
-     errorReceiptType: ''
-  });
-   setBilling("Select");
- setBillingError(false);
-setEntryDate(null);
-seErrorDate(null);
+    errorReceiptType: '',
+  }));
+
+  setTimeout(() => {
+    setFormData((prev) => ({
+  ...prev,
+  so_no: 0
+}));
+    setFormData({
+      so_no: 0,
+      tds: 0,
+      amount: 0,
+      errorSo_no: '',
+      errorTds: '',
+      errorAmount: '',
+      receiptType: '',
+      errorReceiptType: ''
+    });
+    setBilling("Select");
+    setBillingError(false);
+    setEntryDate(null);
+    seErrorDate(null);
+  }, 0);
   }
-  function handleDeleteClick(row){
+  async function handleDeleteClick(row){
     let datas={"user_id":userId,"Table_Id":row.id}
-   authAxios.post("/BituRep/Api/Account/Recipt_Entry_Delete",datas)
-   .then(res=>{showSuccess(res.data.message);Fetchdata() })
+   await authAxios.post("/BituRep/Api/Account/Recipt_Entry_Delete",datas)
+   .then(res=>{showSuccess(res.data.massage);Fetchdata() })
    .catch(err=> {Fetchdata();showError(err)})
   }
 
@@ -221,6 +234,7 @@ seErrorDate(null);
         <TextField
             label="SO No"
             name="so_no"
+            disabled={formData.receiptType?.toLowerCase() === "advance"}
             type="number"
             fullWidth
             variant= "standard"
@@ -233,7 +247,7 @@ seErrorDate(null);
       ...prev,
       so_no: value,
       errorSo_no:
-        !value || Number(value) <= 0 ? "SO No must be greater than 0" : "",
+        !value || Number(value) < 0 ? "So_no Not negative" : "",
     }))}}
 error={!!formData.errorSo_no}
   helperText={formData.errorSo_no}
@@ -241,6 +255,7 @@ error={!!formData.errorSo_no}
           <TextField
             label="TDS"
             name="Tds"
+             disabled={formData.receiptType?.toLowerCase() === "advance"}
             type="number"
             variant= "standard"
             fullWidth
@@ -253,7 +268,7 @@ error={!!formData.errorSo_no}
       ...prev,
       tds: value,
       errorTds:
-        value === "" || Number(value) < 0 ? "TDS must be 0 or greater" : "",
+        value === "" || Number(value) < 0 ? "TDS not Negative" : "",
     }));
   }}
   error={!!formData.errorTds}

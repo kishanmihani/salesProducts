@@ -62,7 +62,7 @@ export default function SalesRestitration() {
     const handler = setTimeout(() => {
       if (selectedBitumenPrice !== "" || selectedTransportation !== "") {
         setSelectedBillingPrice(
-          () => Number(selectedSellingPrice) - Number(selectedGST)
+          () =>(( Number(selectedBitumenPrice) * 100 )/ 118).toFixed(2)
         );
       }
     }, 300);
@@ -74,8 +74,9 @@ export default function SalesRestitration() {
   useEffect(() => {
     const handler = setTimeout(() => {
       if (selectedBillingPrice !== "" || selectedBillingPrice !== 0) {
+        console.log(selectedBillingPrice , selectedTransportation)
         setSelectedGST(
-          parseFloat((selectedSellingPrice) * 0.18).toFixed(2)
+          parseFloat(((Number(selectedBillingPrice) + Number(selectedTransportation)   )/100) * 18).toFixed(2)
         );
       }
       if (
@@ -84,9 +85,9 @@ export default function SalesRestitration() {
         selectedGST !== 0 ||
         selectedGST !== ""
       ) {
-        setSelectedGST(() =>
+         setSelectedSellingPrice(() =>
           parseFloat(
-            Number(selectedSellingPrice) * 0.18
+            Number(selectedBillingPrice) + Number(selectedGST) + Number(selectedTransportation)
           ).toFixed(2)
         );
       }
@@ -327,21 +328,21 @@ export default function SalesRestitration() {
 
               <TextField
                 fullWidth
-                label="Bitumen Price"
+                label="Price Before Trans (Incl GST)"
                 name="Bitumen Price"
                 margin="normal"
                 type="number"
                 size="small"
                 value={selectedBitumenPrice}
-                onChange={(e) => {
-                  setSelectedBitumenPrice(e.target.value);
-                }}
+                 onChange={(e) => {
+                   setSelectedBitumenPrice(e.target.value);
+                 }}
                 error={!!errors?.["Bitumen Price"]}
                 helperText={errors?.["Bitumen Price"]}
               />
               <TextField
                 fullWidth
-                label="Transportation"
+                label="Transportation (Excl GST)"
                 name="Transportation"
                 margin="normal"
                 type="number"
@@ -355,7 +356,7 @@ export default function SalesRestitration() {
                   }else if(value > 0){
                     setSelectedTransporter("Seller")
                   }
-                  setSelectedBitumenPrice(selectedBillingPrice - value)
+                  // setSelectedBitumenPrice(selectedBillingPrice - value)
                 }}
                 error={!!errors?.["Transportation"]}
                 helperText={errors?.["Transportation"]}
@@ -363,7 +364,7 @@ export default function SalesRestitration() {
 
               <TextField
                 fullWidth
-                label="Billing Price"
+                label="Bitumen Basic Price (Excl GST)"
                 name="Billing_Price"
                 margin="normal"
                 type="number"
@@ -381,20 +382,20 @@ export default function SalesRestitration() {
               />
               <TextField
                 fullWidth
-                label="Selling Price"
+                label="Selling Price (After GST)"
                 name="Selling Price"
                 margin="normal"
                 type="number"
                 size="small"
-                onChange={(e) => {
-                 let value = e.target.value;
-                 setSelectedSellingPrice(value);
-                  }}
+                // onChange={(e) => {
+                //  let value = e.target.value;
+                //  setSelectedSellingPrice(value);
+                //   }}
                 value={selectedSellingPrice}
               />
               <TextField
                 fullWidth
-                label="Discount"
+                label="Discount through CN (Incl GST)"
                 name="Discount"
                 type="number"
                 margin="normal"
@@ -509,7 +510,7 @@ export default function SalesRestitration() {
               />
               <TextField
                 fullWidth
-                label="Selling value"
+                label="Selling Value (After GST)"
                 name="Selling value"
                 margin="normal"
                 size="small"
@@ -526,7 +527,7 @@ export default function SalesRestitration() {
               />
               <TextField
                 fullWidth
-                label="Net Price"
+                label="Net Amount Recivable"
                 name="Net Price"
                 type="number"
                 margin="normal"

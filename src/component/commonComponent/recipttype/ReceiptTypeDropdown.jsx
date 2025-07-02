@@ -30,7 +30,7 @@ export default function ReceiptTypeDropdown({ value, onChange, error, helperText
       <FormControl fullWidth variant="standard" margin='dense' error={error}>
       <InputLabel>Payment Type</InputLabel>
       <Select value={value} onChange={onChange}>
-      <MenuItem value="">Select</MenuItem>
+      <MenuItem value="" disabled>Select</MenuItem>
       {optionlist.map((option) => (
         <MenuItem key={option.status_id} value={option.status_Name}>
           {option.status_Name}

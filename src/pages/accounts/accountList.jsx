@@ -99,12 +99,13 @@ export default function AccountList() {
     );
     const data={
       "User_Id": userId,
-      "Table_Id": row?.table_id,
-      "Status_name": value
+      "table_id": row?.table_id,
+      "status_name": value
     }
-    authAxios.post("BituRep/Api/Account/Status_update",data)
-    .then(()=>{
-    //  showSuccess( res.data.message); 
+    authAxios.post("BituRep/Api/Account/AStatus_update",data)
+    .then((res)=>{
+     showSuccess( res.data.massage); 
+    console.log(res.data.message, res);
     }).catch((err)=>showError(err))
   }
   const handleDeleteClick = (item) => {

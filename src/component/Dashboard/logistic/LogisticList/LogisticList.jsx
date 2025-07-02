@@ -91,7 +91,7 @@ export default function Logisticlist() {
        setCheckTableData(true);
       }
     };
-  function StatusChange(row,value){
+ async function StatusChange(row,value){
     setTableData((prevState) => 
       prevState.map((tableData) => {
         if (tableData.table_id ===row.table_id) {
@@ -106,9 +106,9 @@ export default function Logisticlist() {
       "Table_Id": row?.table_id,
       "Status_name": value
     }
-    authAxios.post("BituRep/Api/Account/Status_update",data)
+  await  authAxios.post("BituRep/Api/Account/Status_update",data)
     .then((res)=>{
-     showSuccess( res.data.message); 
+     showSuccess( res.data.massage); 
     }).catch((err)=>showError(err))
   }
   const handleDeleteClick = (item) => {
