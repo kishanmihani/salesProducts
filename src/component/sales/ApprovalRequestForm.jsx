@@ -120,6 +120,25 @@ export default function ApprovalRequestForm() {
               const handleTabs = (event, newValue) => {
               setTabs(newValue);
             };
+            const handleApprove = async (row) => {
+  const payload = {
+    User_Id: userId, // Hardcoded or fetched from context/login
+    table_id: row.table_id,
+    status_name: row.status_name,
+  };
+
+  try {
+    const response = await authAxios.post("BituRep/Api/Account/Status_update_Approver", payload);
+      // console.log("API Success:", response.data);
+      if(response !==""){
+      fetchLogisticData()
+      }
+      // alert("Approved successfully!");
+    } catch (error) {
+      console.error("API Error:", error.message);
+      // alert("Approval failed!");
+    }
+  };
     return (
       <React.Fragment>
         <Box
@@ -219,6 +238,7 @@ export default function ApprovalRequestForm() {
               {headers.map((col) => (
               <TableCell align="left" sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}} key={col.key}>{col.label}</TableCell>
             ))}
+            <TableCell align="left" sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>Approve</TableCell>
             </TableRow>
             </TableHead>
             <TableBody>
@@ -229,6 +249,9 @@ export default function ApprovalRequestForm() {
             ? formatDateToUS(row[col.key])
             : row[col.key] || ""}</TableCell>
               ))}
+              <TableCell>
+              <Button variant='outlined' color='success' onClick={() => handleApprove(row)}>Approve</Button>
+              </TableCell>
             </TableRow>
           ))}
             </TableBody>
