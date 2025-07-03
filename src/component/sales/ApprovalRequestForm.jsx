@@ -194,7 +194,7 @@ export default function ApprovalRequestForm() {
                 <TableCell align="left">{row.transport_Name}</TableCell>
                 <TableCell align="left">{row.transport_ON}</TableCell>
                 <TableCell align="left">{row.port_Name}</TableCell>
-                <TableCell align="left">{row.Gst}</TableCell>
+                {/* <TableCell align="left">{row.Gst}</TableCell> */}
               <TableCell align="left">{row.payment_Type}</TableCell>
               <TableCell align="left">{row.product_Name}</TableCell>
               <TableCell align="left">{row?.price}</TableCell>
