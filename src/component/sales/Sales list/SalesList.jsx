@@ -243,7 +243,11 @@ export default function Saleslist() {
           <Typography variant='h5' sx={{textAlign:"center",py:1}}>Bill Info</Typography>
           <Typography variant='p' sx={{display:"flex",width:"100%" }}>
             <Typography  variant='subtitle1'sx={{width:"100%",fontSize:13}}>Selling Price</Typography>
-            <Typography  variant='subtitle1' sx={{width:"100%",fontSize:13}}>: {showPopupDetails.price}</Typography>
+            <Typography  variant='subtitle1' sx={{width:"100%",fontSize:13}}>: {Math.ceil(
+  Number(showPopupDetails.transport) +
+  Number(showPopupDetails.gst) +
+  (Number(showPopupDetails.price) * 100) / 118
+)}</Typography>
           </Typography>
           <Typography variant='p' sx={{display:"flex",width:"100%"}}>
             <Typography  variant='subtitle1'sx={{width:"100%",fontSize:13}}>Transportation Price</Typography>
@@ -251,7 +255,7 @@ export default function Saleslist() {
           </Typography>
           <Typography variant='p' sx={{display:"flex",width:"100%"}}>
             <Typography  variant='subtitle1'sx={{width:"100%",fontSize:13}}>Billing Price</Typography>
-            <Typography  variant='subtitle1' sx={{width:"100%",fontSize:13}}>: {(Number(showPopupDetails.price) - Number(showPopupDetails.gst))}</Typography>
+            <Typography  variant='subtitle1' sx={{width:"100%",fontSize:13}}>: {(((Number(showPopupDetails.price)*100)/118).toFixed(2))}</Typography>
           </Typography>
           <Typography variant='p' sx={{display:"flex",width:"100%"}}>
             <Typography  variant='subtitle1'sx={{width:"100%",fontSize:13}}>Gst 18%</Typography>
@@ -259,7 +263,7 @@ export default function Saleslist() {
           </Typography>
           <Typography variant='p' sx={{display:"flex",width:"100%"}}>
             <Typography  variant='subtitle1'sx={{width:"100%",fontSize:13}}>Bitumen Price</Typography>
-            <Typography  variant='subtitle1' sx={{width:"100%",fontSize:13}}>: { (Number(showPopupDetails.price) - Number(showPopupDetails.gst) -  Number(showPopupDetails?.transport)) }</Typography>
+            <Typography  variant='subtitle1' sx={{width:"100%",fontSize:13}}>: {showPopupDetails?.price}</Typography>
           </Typography>
           <Typography variant='p' sx={{display:"flex",width:"100%"}}>
             <Typography  variant='subtitle1'sx={{width:"100%",fontSize:13}}>Discount </Typography>
@@ -267,7 +271,11 @@ export default function Saleslist() {
           </Typography>
           <Typography variant='p' sx={{display:"flex",width:"100%"}}>
             <Typography  variant='subtitle1'sx={{width:"100%",fontSize:13}}>Net Price </Typography>
-            <Typography  variant='2' sx={{width:"100%",fontSize:13,}}>: {Number(showPopupDetails.price) - Number(showPopupDetails?.discount) }</Typography>
+            <Typography  variant='2' sx={{width:"100%",fontSize:13,}}>: {Math.ceil(
+  Number(showPopupDetails.transport) +
+  Number(showPopupDetails.gst) +
+  (Number(showPopupDetails.price) * 100) / 118
+) - Number(showPopupDetails?.discount)}</Typography>
           </Typography>
         </Box>
         </Paper>)}

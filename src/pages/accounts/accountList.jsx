@@ -192,7 +192,7 @@ export default function AccountList() {
               <TableCell>
                <FormControl fullWidth size='small'>
                 <Select
-                value={row?.status_name || "Select"}
+                value={row?.status_name1 || "Select"}
                 onChange={(e)=>{let rowthis={"value":e.target.value,"row":row};StatusOpen(rowthis)}} >
                   <MenuItem disabled value={"Select"}>Please Select</MenuItem>
                 {statuslist.map(data=>(
@@ -280,7 +280,7 @@ function StatusComfirm({ isOpen, onClose, onConfirm, itemToStatus,value }){
             <Typography>Are you sure you want to status change the following order?</Typography>
             <Typography variant="body2" sx={{display:"flex"}} ><Typography  sx={{width:"100px",fontWeight:800}}>Order ID:</Typography> {itemToStatus?.table_id}</Typography>
             <Typography variant="body2" sx={{display:"flex"}}><Typography sx={{width:"100px",fontWeight:800}}>Customer:</Typography> {itemToStatus?.customer_Name}</Typography>
-            <Typography variant="body2"sx={{display:"flex"}}><Typography sx={{width:"100px",fontWeight:800}} >Product:</Typography> {itemToStatus?.quantity}</Typography>
+            <Typography variant="body2"sx={{display:"flex"}}><Typography sx={{width:"100px",fontWeight:800}} >Product:</Typography> {itemToStatus?.produce_Name}</Typography>
             <Typography variant="body2"sx={{display:"flex"}}><Typography sx={{width:"100px",fontWeight:800}}>Quantity:</Typography> {itemToStatus?.quantity}</Typography>
           </>
         ) : (

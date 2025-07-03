@@ -212,7 +212,7 @@ export default function SalesRestitration() {
       Delivery_Type: formJson["Delivery name"],
       Payment_Type: formJson["Payment name"],
       Product_Name: formJson["Product name"],
-      price: formJson["Selling Price"],
+      price: formJson["Bitumen Price"],
       Transport: formJson["Transportation"],
       Gst: formJson["GST 18%"],
       Discount: formJson["Discount"],

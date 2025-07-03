@@ -225,10 +225,10 @@ import { vehiclelistapi } from "../../../Config/Api";
     "User_id": userId,
     "Customer_Name": customerName,
     "Port_Name": portName,
-    "vehicle_Name": fields?.vehicleName,
-    "P_Qut": fields?.quantity,
+    "vehicle_Name": arr?.vehicleName,
+    "P_Qut": arr?.quantity,
     "Remark": remark,
-    "Table_Id": tableData?.table,
+    "Table_Id": tableData["table_id"],
     "Transporter_Name": "u",
     "Produce_Name": selectedProduct,
     "Vessel_Name": vessalName.replaceAll("|", ",").split(",")?.[0],
@@ -243,14 +243,13 @@ import { vehiclelistapi } from "../../../Config/Api";
             "/" +
             vessalInfo.bl_No +
             "/" +
-            portName,
-    "status_name": tableData.status_name,
-    "active_id":  tableData?.active_id
+            portName
 ,
     "A_Qty": actualQuantity,
     "So_No": soNo
 }
-          
+console.log(data)
+          debugger;
           await authAxios.post('BituRep/Api/Account/logistic_data_Edit',JSON.stringify(data))
           .then((res)=>{
           if (res.data.massage == "Entry Done") {

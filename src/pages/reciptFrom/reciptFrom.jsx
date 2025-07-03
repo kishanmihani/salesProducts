@@ -13,6 +13,7 @@ import ReceiptTypeDropdown from '../../component/commonComponent/recipttype/Rece
 import { authAxios } from '../../component/utils/authAxios';
 import CustomPageHeader from '../../component/commonComponent/CustomPageHeader/CustomPageHeader';
 import { TableRows } from '@mui/icons-material';
+import formatDateToUS from '../../component/utils/DateFormate';
 export default function ReciptFrom() {
 const [tableHeaders] = useState([
   "S.N",
@@ -345,7 +346,7 @@ error={!!formData.errorSo_no}
               <TableCell align="left">{row?.id}</TableCell>
               <TableCell align="left">{row?.customer_Name}</TableCell>
               <TableCell align="left">{row?.payment_Type}</TableCell>
-              <TableCell align="left">{row?.date}</TableCell>
+              <TableCell align="left">{formatDateToUS(row?.date)}</TableCell>
               <TableCell align="left">{row?.so_No}</TableCell>
               <TableCell align="left">{row?.tds}</TableCell>
               <TableCell align="left">{row?.amount}</TableCell>
