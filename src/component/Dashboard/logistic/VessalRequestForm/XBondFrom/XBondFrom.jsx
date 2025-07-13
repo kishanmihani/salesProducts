@@ -307,7 +307,7 @@ x_BE_ID,xbE_Qty,xbE_NO
                           id="name"
                           name="name"
                           disabled={true}
-                          label="Be No"
+                          label="BOE No"
                           value={dataInfo?.BlNo}
                           type="text"
                           fullWidth

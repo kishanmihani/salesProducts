@@ -60,7 +60,7 @@ const calculatePercentage = () => {
   const otr = parseFloat(field.otrQut);
   const gross = parseFloat(field?.grossQuantity);
   if (!isNaN(otr) && !isNaN(gross) && gross !== 0) {
-    return ((otr / gross) * 100).toFixed(2) +" "+ "%";
+    return ((otr / gross) * 100).toFixed(3) +" "+ "%";
   }
   return 0 +" "+ "%";
 };
@@ -157,7 +157,7 @@ const calculatePercentage = () => {
             <TextField
               fullWidth
               size="small"
-              label="Purchase Name"
+              label="Shipper Name"
               id={`shipping_Name_${index}`}
               value={field?.shippingName}
               onChange={(e) => {
@@ -260,7 +260,7 @@ const calculatePercentage = () => {
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                           <DatePicker
                             htmlFor={`Be_${index}`}
-                            label="Be Date"
+                            label="BOE Date"
                             name="BeDate"
                             value={dayjs(field?.beDate)}
                             onChange={(newvalue) => {
@@ -282,7 +282,7 @@ const calculatePercentage = () => {
                                 variant: "standard",
                                 fullWidth: true,
                                 error: !!field?.beDateError,
-                                helperText: !!field?.beDateError && "Be Date is required",
+                                helperText: !!field?.beDateError && "BOE Date is required",
                               },
                             }}
                             
@@ -294,7 +294,7 @@ const calculatePercentage = () => {
                       <TextField
                         fullWidth
                         size="small"
-                        label="Be No"
+                        label="BOE No"
                         id={`Bill_Of_Entry_${index}`}
                         type="text"
                         value={field?.billOfEntry}
@@ -304,7 +304,7 @@ const calculatePercentage = () => {
           
                           if (value === "") {
                             newFields[index].billOfEntryError =
-                              "Be No is required";
+                              "BOE No is required";
                           } else {
                             newFields[index].billOfEntryError = "";
                           }
@@ -333,7 +333,7 @@ const calculatePercentage = () => {
                   wrap="wrap"
                 >
                   <BillingDropDownTwo
-                  label="saler name"
+                  label="Consignee Name"
                     billing={field?.billing}
                     variant="standard"
                     setBilling={(value) => {
@@ -440,7 +440,7 @@ const calculatePercentage = () => {
                   <TextField
                   id="QtrQut"
                     name="QtrQut"
-                    label="Qtr  Qut"
+                    label="QTR QTY"
                     value={field?.otrQut}
                     error={field?.otrQutError}
                     helperText={field?.otrQutError}
@@ -449,10 +449,10 @@ const calculatePercentage = () => {
                 const value = e.target.value;
 
                 if (value === "" || Number(value) === 0) {
-                  newFields[index].otrQutError = "otrQut is required";
+                  newFields[index].otrQutError = "QTR QTY is required";
                 } else if (Number(value) < 0) {
                   newFields[index].otrQutError =
-                    "otrQut cannot be negative";
+                    "QTR QTY cannot be negative";
                 } else {
                   newFields[index].otrQutError = "";
                 }
@@ -487,7 +487,7 @@ const calculatePercentage = () => {
           }}
         >
           <Button value="Open-tank" onClick={verify} variant="contained"  color="primary" sx={{p:1,textTransform:"capitalize",width:120}}  >
-            Open Tank
+            Storage Tank
           </Button>
           
           {/* <IconButton

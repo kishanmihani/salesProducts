@@ -9,6 +9,7 @@ import {
   Typography,
   Paper,
   Stack,
+  CircularProgress,
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import React, { useEffect, useState } from "react";
@@ -24,6 +25,7 @@ import PaymentDropDown from "../commonComponent/PaymentDropDown/PaymentDropDown"
 import { authAxios } from "../utils/authAxios";
 import { useNavigate } from "react-router";
 import CustomeAlerts from "../commonComponent/CustomeAlert/CustomeAlert";
+import dayjs from "dayjs";
 export default function SalesRestitration() {
   const [selectedBilling, setSelectedBilling] = useState("Select");
   const [selectedOrderDate, setSelectOrderDate] = useState(null);
@@ -31,13 +33,13 @@ export default function SalesRestitration() {
   const [selectedPort, setSelectedPort] = useState("Select");
   const [selectedProduct, setSelectedProduct] = useState("Select");
   const [selectedCustomer, setSelectedCustomer] = useState("Select");
-  const [selectedBitumenPrice, setSelectedBitumenPrice] = useState(0);
-  const [selectedTransportation, setSelectedTransportation] = useState(null);
+  const [selectedBitumenPrice, setSelectedBitumenPrice] = useState(null);
+  const [selectedTransportation, setSelectedTransportation] = useState(0);
   const [selectedBillingPrice, setSelectedBillingPrice] = useState(0);
   const [selectedGST, setSelectedGST] = useState(0);
   const [selectedSellingPrice, setSelectedSellingPrice] = useState(0);
-  const [selectedDiscount, setSelectedDiscount] = useState(0);
-  const [selectedQuntity, setSelectedQuntity] = useState(0);
+  const [selectedDiscount, setSelectedDiscount] = useState(null);
+  const [selectedQuntity, setSelectedQuntity] = useState(null);
   const [selectedDelivery, setSelectedDelivery] = useState("Select");
   const [selectedRemark, setSelectedRemark] = useState("");
   const [selectedPayment, setSelectedPayment] = useState("Select");
@@ -50,6 +52,7 @@ export default function SalesRestitration() {
   const [userId] = useState(JSON.parse(localStorage.getItem("userInfo"))?.id);
   const [submitDisabled,setSubmitDisabled] = useState(false);
   const [custAlert, setCustAlert] = useState(null);
+  const [loader,setLoader] = useState(false)
   const navigate = useNavigate();
   const showSuccess = (data) => {
     setCustAlert({ type: "success", message: data });
@@ -157,6 +160,7 @@ export default function SalesRestitration() {
     setSelectTransporterName("");
   };
   async function formSubmithandler(event) {
+    setLoader(true)
     event.preventDefault();
     setSubmitDisabled(true)
     const formData = new FormData(event.currentTarget);
@@ -187,8 +191,8 @@ export default function SalesRestitration() {
       }
       if(['Transporter name'].includes(key)){
         if(formJson?.['Transporter'] ==="Seller"){
-          if(key === ""){
-            newErrors[key] = `${key} name not be zero`;
+          if(key > 0 ){
+            newErrors[key] = `${key} name not be netative`;
           }
         }
       }
@@ -197,8 +201,9 @@ export default function SalesRestitration() {
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
         showError("Please fill required fields.")
-
+          
          setSubmitDisabled(false)
+         setLoader(false)
          return 
     }
   else if(emptyFields.length === 0){
@@ -227,17 +232,20 @@ export default function SalesRestitration() {
   
       if (res.data.message === "Email sent successfully") {
         showSuccess("Email sent successfully")
+        setLoader(false);
         resetForm();
         setSubmitDisabled(false);
         navigate("/dashboard/sales/PendingApprovalForm");
         return 
       } else {
         showError(res.data.message)
+        setLoader(false);
          setSubmitDisabled(false);
          return
       }
     } catch (err) {
       console.error(err);
+      setLoader(false);
       showError("An error occurred while submitting the form.");
       setSubmitDisabled(false);
     }
@@ -299,6 +307,7 @@ export default function SalesRestitration() {
                     label="Order Date"
                     name="Order Date"
                     value={selectedOrderDate}
+                    // minDate={dayjs().startOf('day')}
                     onChange={(newValue) => setSelectOrderDate(newValue)}
                     renderInput={(params) => (
                       <TextField {...params} id="order-date-picker" />
@@ -333,6 +342,7 @@ export default function SalesRestitration() {
                 margin="normal"
                 type="number"
                 size="small"
+                placeholder="0"
                 value={selectedBitumenPrice}
                  onChange={(e) => {
                    setSelectedBitumenPrice(e.target.value);
@@ -400,6 +410,7 @@ export default function SalesRestitration() {
                 type="number"
                 margin="normal"
                 size="small"
+                placeholder="0"
                 value={selectedDiscount}
                 error={!!errors?.["Discount"]}
                 helperText={errors?.["Discount"]}
@@ -415,6 +426,7 @@ export default function SalesRestitration() {
                 name="Quntity"
                 type="number"
                 size="small"
+                placeholder="0"
                 value={selectedQuntity}
                 error={!!errors?.["Quntity"]}
                 helperText={errors?.["Quntity"]}
@@ -434,6 +446,7 @@ export default function SalesRestitration() {
                     label="Validity Date"
                     name="Validity Date"
                     value={selectedValidityDate}
+                    minDate={dayjs().startOf('day')}
                     onChange={(newValue) => setSelectedValidityDate(newValue)}
                     slotProps={{
                       textField: {
@@ -442,6 +455,7 @@ export default function SalesRestitration() {
                         fullWidth: true,
                         error: !!errors?.["Validity Date"],
                         helperText: errors?.["Validity Date"],
+                      
                       },
                     }}
                     renderInput={(params) => (
@@ -449,6 +463,7 @@ export default function SalesRestitration() {
                         {...params}
                         id="validity-date-picker"
                         size="small"
+                        
                       />
                     )}
                   />
@@ -564,7 +579,7 @@ export default function SalesRestitration() {
               type="submit"
               disabled={submitDisabled}
             >
-              Submit
+      { !loader   ?   "Submit" : <CircularProgress sx={{color:"white",fontSize:17}} />}
             </Button>
           </Box>
         </form>

@@ -16,7 +16,7 @@ const tableHeaders = [
   "Estimated Quantity",
   "Actual Qty",
   "Vessal Name",
-  "Be No.",
+  "BOE No.",
   "Port Name",
   "Transporter Name",
   "Product Name",
@@ -184,7 +184,7 @@ export default function Logisticlist() {
               </TableCell>
                       <TableCell>
                 {row?.vessel_Name == ""? "No Vessel Name" : row?.vessel_Name}
-              </TableCell><TableCell align="left">{row?.bE_No === ""? "No Be No.":row?.bE_No}</TableCell>
+              </TableCell><TableCell align="left">{row?.bE_No === ""? "No BOE No.":row?.bE_No}</TableCell>
               <TableCell align="left">{row?.port_Name}</TableCell>
               <TableCell align="left">{row?.transporter_Name === ""? "No transporter":row?.transporter_Name}</TableCell>
               

@@ -14,7 +14,7 @@ const tableHeaders = [
   "Customer Name",
   "Vehicle Name",
   "Actual Qty",
-  "Be No.",
+  "BOE No.",
   "Port Name",
   
   

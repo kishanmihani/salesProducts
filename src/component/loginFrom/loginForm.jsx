@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Box,
   Button,
@@ -7,6 +7,7 @@ import {
   Paper,
   InputAdornment,
   IconButton,
+  CircularProgress,
 } from "@mui/material";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -21,6 +22,7 @@ const LoginForm = () => {
   const [showPassword, setShowPassword] = React.useState(false);
   const UserInfo = JSON.parse(localStorage.getItem("userInfo"));
   const CheckUserInfo = UserInfo?.message == null;
+  const [loader,setLoader] = useState(false);
   React.useEffect(() => {
     if (CheckUserInfo) {
       navigate("");
@@ -39,10 +41,8 @@ const LoginForm = () => {
     },
     validationSchema: Yup.object({
       user_name: Yup.string()
-        // .email('Enter a valid email')
         .required("Username is required"),
       password: Yup.string()
-        // .min(6, 'Password should be of minimum 6 characters length')
         .required("Password is required"),
     }),
     onSubmit: (values) => {
@@ -50,6 +50,7 @@ const LoginForm = () => {
         password: values?.password,
         user_name: values?.user_name,
       };
+       setLoader(true);
       sendresponse(userData);
     },
   });
@@ -65,24 +66,31 @@ const LoginForm = () => {
           let message = response?.data?.message;
           if (message === "login successfull") {
             datanotInvalid(response?.data);
+            setLoader(false);
           } else if (message === "invalid password") {
             Invalid_alert(message);
+            setLoader(false);
           } else if (message === "invalid user name") {
             Invalid_alert(message);
+            setLoader(false);
           }
         })
         .catch((error) => {
           if (error?.message !== "") {
             Invalid_alert(` ${error?.message}`);
+            setLoader(false);
           } else {
             Invalid_alert("something went wrong");
+            setLoader(false);
           }
         });
     } catch (error) {
       if (error?.message !== "") {
         Invalid_alert(` ${error?.message}`);
+        setLoader(false);
       } else {
         Invalid_alert("something went wrong");
+        setLoader(false);
       }
     }
   };
@@ -209,7 +217,7 @@ const LoginForm = () => {
             textTransform: "capitalize",
           }}
         >
-          Login
+        {!loader ? "Login" : <CircularProgress /> }
         </Button>
       </form>
       {/* </div> */}

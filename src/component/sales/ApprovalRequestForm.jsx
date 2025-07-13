@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Box, Button, Paper, Tab, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Tabs, Typography } from '@mui/material';
+import { Box, Button, Paper, Tab, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Tabs, Tooltip, Typography } from '@mui/material';
 import React, { useEffect } from 'react'
 import { useNavigate } from "react-router";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -21,7 +21,7 @@ const headers = [
     { key: "vessel_No", label: "Vessel No" },
     { key: "tank_name", label: "Tank Name" },
     { key: "terminal_NAME", label: "Terminal Name" },
-    { key: "bE_No", label: "BE No" },
+    { key: "bE_No", label: "BOE No" },
     { key: "bL_No", label: "BL No" },
     { key: "do_No", label: "DO No" },
     { key: "status_name", label: "Status" },
@@ -39,6 +39,10 @@ export default function ApprovalRequestForm() {
     const [page, setPage] = React.useState(0); // current page
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
     const [custAlert, setCustAlert] = React.useState(null);
+    const [popupPosition, setPopupPosition] = React.useState({ top: 0, left: 0 });
+    const [showPopupDetails,setShowPopupDetails]=React.useState(null);
+     const [prodPopup,setProdPopup] = React.useState(false);
+     const [showPopup, setShowPopup] = React.useState(false);
     const showSuccess = (data) => {
         setCustAlert({ type: "success", message: data });
       };
@@ -55,7 +59,7 @@ export default function ApprovalRequestForm() {
       setPage(0);
     };
   
-    const paginatedData = tableData.slice(
+    const paginatedData = [...tableData].sort((a, b) => new Date(b?.entry_Date) - new Date(a?.entry_Date))?.slice(
       page * rowsPerPage,
       page * rowsPerPage + rowsPerPage
     );
@@ -139,6 +143,33 @@ export default function ApprovalRequestForm() {
       // alert("Approval failed!");
     }
   };
+    const handleMouseEnter = (e,details) => {
+    const rect = e.target.getBoundingClientRect();
+    setPopupPosition({
+      top: rect.bottom + window.scrollY,
+      left: rect.left - 100+ window.scrollX,
+    });
+    setShowPopup(true);
+    setShowPopupDetails(details)
+  };
+
+  const handleMouseLeave = () => {
+    setShowPopup(false);
+    setShowPopupDetails();
+  };
+  const handleProdMouseEnter = (e,details) =>{
+ const rect = e.target.getBoundingClientRect();
+    setPopupPosition({
+      top: rect.bottom + window.scrollY,
+      left: rect.left + window.scrollX,
+    });
+    setProdPopup(true);
+    setShowPopupDetails(details)
+  }
+  const handleProdMouseLeave = () => {
+    setProdPopup(false);
+    setShowPopupDetails();
+  };
     return (
       <React.Fragment>
         <Box
@@ -181,19 +212,22 @@ export default function ApprovalRequestForm() {
         <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
           <TableHead sx={{fontSize:14,fontWeight:600,bgcolor:"rgba(25, 118, 210, 0.08)"}}>
             <TableRow>
-              <TableCell  sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>Billing Name</TableCell>
-              <TableCell align="left" sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>Customer Name</TableCell>
-              <TableCell align="left"sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>Transporter Name</TableCell>
-              <TableCell align="left"sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>Transporter</TableCell>
-              <TableCell align="left"sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>Port Name</TableCell>
-              {/* <TableCell align="left"sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>Gst</TableCell> */}
-              <TableCell align="left"sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>Payment Type</TableCell>
-              <TableCell align="left"sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>Product Name</TableCell>
-              <TableCell align="left"sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>Bitumens price</TableCell>
-              <TableCell align="left"sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>Quantity</TableCell>
               <TableCell align="left"sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>Order Date</TableCell>
-              <TableCell align="left"sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>validity Date</TableCell>
-              <TableCell align="left"sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>validity Days</TableCell>
+              <TableCell align="left"sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>validity</TableCell>
+              <TableCell  sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>Billing</TableCell>
+              <TableCell align="left" sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>Customer</TableCell>
+              
+              <TableCell align="left"sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>Quantity</TableCell>
+              <TableCell align="left"sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>Product</TableCell>
+              <TableCell align="left"sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>Price</TableCell>
+              <TableCell align="left"sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>Port Name</TableCell>
+              {/* <TableCell align="left"sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>Transporter Name</TableCell>
+              <TableCell align="left"sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>Transporter</TableCell> */}
+              
+              {/* <TableCell align="left"sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>Gst</TableCell> */}
+              {/* <TableCell align="left"sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>Payment Type</TableCell>
+              <TableCell align="left"sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>Product</TableCell> */}
+              
               <TableCell align="left"sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>Approve</TableCell>
                 <TableCell align="left"sx={{fontSize:14,fontWeight:600,whiteSpace:"nowrap"}}>Disapprove</TableCell>
             </TableRow>
@@ -206,21 +240,28 @@ export default function ApprovalRequestForm() {
                 key={row.name}
                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
               >
+                <TableCell align="left">{new Date(row.entry_Date).toLocaleDateString()}</TableCell>
+                 <TableCell align="left"><Tooltip title={new Date(row.validity_Date).toLocaleDateString()}><Typography variant='body1' color="primary">{row.validity_Days}</Typography></Tooltip></TableCell>
                 <TableCell component="th" scope="row">
                   {row.company_Name}
                 </TableCell>
                 <TableCell align="left">{row.customer_Name}</TableCell>
-                <TableCell align="left">{row.transport_Name}</TableCell>
-                <TableCell align="left">{row.transport_ON}</TableCell>
+                <TableCell align="left">{row.quantity}</TableCell>
+                <TableCell align="left"  onMouseEnter={(e)=>handleProdMouseEnter(e,row)}
+                onMouseLeave={handleProdMouseLeave}><Typography variant='body1' color="primary">{row.product_Name}</Typography></TableCell>
+                <TableCell align="left" onMouseEnter={(e)=>handleMouseEnter(e,row)}
+              onMouseLeave={handleMouseLeave}><Typography variant='body1' color="primary">{row?.price}</Typography>
+                </TableCell>
                 <TableCell align="left">{row.port_Name}</TableCell>
-                {/* <TableCell align="left">{row.Gst}</TableCell> */}
-              <TableCell align="left">{row.payment_Type}</TableCell>
-              <TableCell align="left">{row.product_Name}</TableCell>
-              <TableCell align="left">{row?.price}</TableCell>
-              <TableCell align="left">{row.quantity}</TableCell>
-              <TableCell align="left">{new Date(row.entry_Date).toLocaleDateString()}</TableCell>
-              <TableCell align="left">{new Date(row.validity_Date).toLocaleDateString()}</TableCell>
-              <TableCell align="left">{row.validity_Days}</TableCell>
+                {/* <TableCell align="left">{row.transport_Name}</TableCell>
+                <TableCell align="left">{row.transport_ON}</TableCell>
+                
+              <TableCell align="left">{row.payment_Type}</TableCell> */}
+              
+              
+              
+              
+              
                <TableCell align="left"><Button variant="outlined" onClick={()=>ApproveAction(row.table_Id)} sx={{p:1,fontSize:"12px"}} color="success">Approve</Button></TableCell>
              <TableCell align="left"><Button variant="outlined"sx={{p:1, fontSize:"12px"}} onClick={()=>DispproveAction(row.table_Id)} color="secondary">Disapprove</Button></TableCell>
               </TableRow>
@@ -271,6 +312,90 @@ export default function ApprovalRequestForm() {
         {custAlert && (
                 <CustomeAlerts type={custAlert.type} message={custAlert.message} onClose={handleClose} />
               )}
+              {prodPopup && (
+                      <Paper
+                        elevation={3}
+                        sx={{
+                          position: "absolute",
+                          top: popupPosition.top,
+                          left: popupPosition.left,
+                          padding: 1,
+                          width:300,
+                          backgroundColor: "lightyellow",
+                          zIndex: 10,
+                          
+                        }}
+                      >
+                      <Box>
+                        <Typography variant='h5' sx={{textAlign:"center",py:1}}>Product Info</Typography>
+                        <Typography variant='p' sx={{display:"flex",width:"100%" }}>
+                           <Typography  variant='subtitle1'sx={{width:"100%",fontSize:13}}>Payment Type</Typography>
+                          <Typography  variant='subtitle1' sx={{width:"100%",fontSize:13}}>: {showPopupDetails?.payment_Type}</Typography>     
+                          </Typography> 
+                        <Typography variant='p' sx={{display:"flex",width:"100%" }}>
+                          <Typography  variant='subtitle1'sx={{width:"100%",fontSize:13}}>Transportion</Typography>
+                          <Typography  variant='subtitle1' sx={{width:"100%",fontSize:13}}>: {showPopupDetails?.transport_ON}</Typography>     
+                        </Typography>
+                        <Typography variant='p' sx={{display:"flex",width:"100%" }}>
+                          <Typography  variant='subtitle1'sx={{width:"100%",fontSize:13}}>Transportor Name</Typography>
+                          <Typography  variant='subtitle1' sx={{width:"100%",fontSize:13}}>: {showPopupDetails.transport_Name}</Typography>     
+                        </Typography> 
+                        </Box>
+                        </Paper>)}    
+                        {showPopup && (
+                                <Paper
+                                  elevation={3}
+                                  sx={{
+                                    position: "absolute",
+                                    top: popupPosition.top,
+                                    left: popupPosition.left,
+                                    padding: 1,
+                                    width:300,
+                                    backgroundColor: "lightyellow",
+                                    zIndex: 10,
+                                    
+                                  }}
+                                >
+                                <Box>
+                                  <Typography variant='h5' sx={{textAlign:"center",py:1}}>Bill Info</Typography>
+                                  <Typography variant='p' sx={{display:"flex",width:"100%" }}>
+                                    <Typography  variant='subtitle1'sx={{width:"100%",fontSize:13}}>Selling Price</Typography>
+                                    <Typography  variant='subtitle1' sx={{width:"100%",fontSize:13}}>: {Math.ceil(
+                          Number(showPopupDetails.transport) +
+                          Number(showPopupDetails.gst) +
+                          (Number(showPopupDetails.price) * 100) / 118
+                        )}</Typography>
+                                  </Typography>
+                                  <Typography variant='p' sx={{display:"flex",width:"100%"}}>
+                                    <Typography  variant='subtitle1'sx={{width:"100%",fontSize:13}}>Transportation Price</Typography>
+                                    <Typography  variant='subtitle1' sx={{width:"100%",fontSize:13}}>: {showPopupDetails?.transport}</Typography>
+                                  </Typography>
+                                  <Typography variant='p' sx={{display:"flex",width:"100%"}}>
+                                    <Typography  variant='subtitle1'sx={{width:"100%",fontSize:13}}>Billing Price</Typography>
+                                    <Typography  variant='subtitle1' sx={{width:"100%",fontSize:13}}>: {(((Number(showPopupDetails.price)*100)/118).toFixed(2))}</Typography>
+                                  </Typography>
+                                  <Typography variant='p' sx={{display:"flex",width:"100%"}}>
+                                    <Typography  variant='subtitle1'sx={{width:"100%",fontSize:13}}>Gst 18%</Typography>
+                                    <Typography  variant='subtitle1' sx={{width:"100%",fontSize:13}}>: {showPopupDetails?.gst}</Typography>
+                                  </Typography>
+                                  <Typography variant='p' sx={{display:"flex",width:"100%"}}>
+                                    <Typography  variant='subtitle1'sx={{width:"100%",fontSize:13}}>Bitumen Price</Typography>
+                                    <Typography  variant='subtitle1' sx={{width:"100%",fontSize:13}}>: {showPopupDetails?.price}</Typography>
+                                  </Typography>
+                                  <Typography variant='p' sx={{display:"flex",width:"100%"}}>
+                                    <Typography  variant='subtitle1'sx={{width:"100%",fontSize:13}}>Discount </Typography>
+                                    <Typography  variant='subtitle1' sx={{width:"100%",fontSize:13}}>: {showPopupDetails?.discount }</Typography>
+                                  </Typography>
+                                  <Typography variant='p' sx={{display:"flex",width:"100%"}}>
+                                    <Typography  variant='subtitle1'sx={{width:"100%",fontSize:13}}>Net Price </Typography>
+                                    <Typography  variant='2' sx={{width:"100%",fontSize:13,}}>: {Math.ceil(
+                          Number(showPopupDetails.transport) +
+                          Number(showPopupDetails.gst) +
+                          (Number(showPopupDetails.price) * 100) / 118
+                        ) - Number(showPopupDetails?.discount)}</Typography>
+                                  </Typography>
+                                </Box>
+                                </Paper>)}   
       </React.Fragment>
     )
   }

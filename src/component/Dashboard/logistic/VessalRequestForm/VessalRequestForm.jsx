@@ -46,9 +46,9 @@ export default function VessalRequestForm() {
   {
     shippingName: "",
     shippingNameError: "",
-    quantity: 0,
+    quantity: null,
     quantityError: "",
-    BLNo: 0,
+    BLNo: null,
     BLNoError: "",
     blDate: null,
     blDateError: false,
@@ -62,11 +62,11 @@ export default function VessalRequestForm() {
     billOfEntry:"",
     beDate:null,
     beDateError:false,
-    grossQuantity:0,
+    grossQuantity:null,
     grossQuantityError:"",
-    otrQut:0,
+    otrQut:null,
     otrQutError:"",
-    otrpersent:0,
+    otrpersent:null,
     otrpersentError:""
   }  
   ])
@@ -74,9 +74,9 @@ export default function VessalRequestForm() {
   {
     shippingName: "",
     shippingNameError: "",
-    quantity: 0,
+    quantity: null,
     quantityError: "",
-    BLNo: 0,
+    BLNo: null,
     BLNoError: "",
     blDate: null,
     blDateError: false,
@@ -90,11 +90,11 @@ export default function VessalRequestForm() {
     billOfEntry:"",
     beDate:null,
     beDateError:false,
-    grossQuantity:0,
+    grossQuantity:null,
     grossQuantityError:"",
-    otrQut:0,
+    otrQut:null,
     otrQutError:"",
-    otrpersent:0,
+    otrpersent:null,
     otrpersentError:""
   }
 ]);
@@ -109,17 +109,17 @@ export default function VessalRequestForm() {
       {
         // Custom: 0,
         shippingName: "",
-        BLNo: 0,
-        quantity: 0,
+        BLNo: null,
+        quantity: null,
         blDate: null,
         beDate:null,
         ProductName:"Select",
         billing:"Select",
         portName:"Select",
         billOfEntry:"",
-        grossQuantity:0,
-        otrQut:0,
-        otrpersent:0
+        grossQuantity:null,
+        otrQut:null,
+        otrpersent:null
         // cargoPrice: 0,
         // iGst: 0,
         // roe: 0,
@@ -133,17 +133,17 @@ export default function VessalRequestForm() {
       {
         // Custom: 0,
         shippingName: "",
-        BLNo: 0,
-        quantity: 0,
+        BLNo: null,
+        quantity: null,
         blDate: null,
         beDate:null,
         ProductName:"Select",
         billing:"Select",
         portName:"Select",
         billOfEntry:"",
-        grossQuantity:0,
-        otrQut:0,
-        otrpersent:0
+        grossQuantity:null,
+        otrQut:null,
+        otrpersent:null
         // cargoPrice: 0,
         // iGst: 0,
         // roe: 0,
@@ -155,17 +155,17 @@ export default function VessalRequestForm() {
       {
         // Custom: 0,
         shippingName: "",
-        BLNo: 0,
-        quantity: 0,
+        BLNo: null,
+        quantity: null,
         blDate: null,
         beDate:null,
         ProductName:"Select",
         billing:"Select",
         portName:"Select",
         billOfEntry:"",
-        grossQuantity:0,
-        otrQut:0,
-        otrpersent:0
+        grossQuantity:null,
+        otrQut:null,
+        otrpersent:null
         // cargoPrice: 0,
         // iGst: 0,
         // roe: 0,
@@ -253,10 +253,10 @@ export default function VessalRequestForm() {
           updatedField.grossQuantityError = "";
         }
         if (field.otrQut === "" || Number(field.otrQut) === 0) {
-          updatedField.otrQutError = "Otr Qut is required";
+          updatedField.otrQutError = "OTR QTY is required";
           hasError = true;
         } else if (Number(field.otrQut) < 0) {
-          updatedField.otrQutError = "Otr Qut cannot be negative";
+          updatedField.otrQutError = "OTR QTY cannot be negative";
           hasError = true;
         } else {
           updatedField.otrQutError = "";
@@ -346,10 +346,10 @@ export default function VessalRequestForm() {
         }
         if (field.otrQut === "" || Number(field.otrQut) === 0) {
         
-          updatedEditField.otrQutError = "Otr Qut is required";
+          updatedEditField.otrQutError = "OTR QTY is required";
           hasError = true;
         } else if (Number(field.otrQut) < 0) {
-          updatedEditField.otrQutError = "Otr Qut cannot be negative";
+          updatedEditField.otrQutError = "OTR QTY cannot be negative";
           hasError = true;
         } else {
           updatedEditField.otrQutError = "";
@@ -440,10 +440,10 @@ export default function VessalRequestForm() {
           updatedField.grossQuantityError = "";
         }
         if (field.otrQut === "" || Number(field.otrQut) === 0) {
-          updatedField.otrQutError = "Otr Qut is required";
+          updatedField.otrQutError = "OTR QTY is required";
           hasError = true;
         } else if (Number(field.otrQut) < 0) {
-          updatedField.otrQutError = "Otr Qut cannot be negative";
+          updatedField.otrQutError = "OTR QTY cannot be negative";
           hasError = true;
         } else {
           updatedField.otrQutError = "";
@@ -662,9 +662,9 @@ authAxios.post(Vessel_Edit_Data,JSON.stringify(data))
   {
     shippingName: "",
     shippingNameError: "",
-    quantity: 0,
+    quantity: null,
     quantityError: "",
-    BLNo: 0,
+    BLNo: null,
     BLNoError: "",
     blDate: null,
     blDateError: false,
@@ -678,11 +678,11 @@ authAxios.post(Vessel_Edit_Data,JSON.stringify(data))
     billOfEntry:"",
     beDate:null,
     beDateError:false,
-    grossQuantity:0,
+    grossQuantity:null,
     grossQuantityError:"",
-    otrQut:0,
+    otrQut:null,
     otrQutError:"",
-    otrpersent:0,
+    otrpersent:null,
     otrpersentError:""
   }]);//
   }
@@ -964,7 +964,7 @@ id
                 name="VessalNumber"
                 type="text"
                 disabled={editBeData?.isEdit === true ? true : false}
-                label="Vessal Number"
+                label="Voyage No"
                 value={vessalNumber}
                 onChange={vessalNumberChange}
                 error={!vessalNumberError.valid}

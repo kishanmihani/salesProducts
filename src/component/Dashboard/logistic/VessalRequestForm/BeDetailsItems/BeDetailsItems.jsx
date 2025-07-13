@@ -88,7 +88,7 @@ const BeDetailsItem = ({
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
                   htmlFor={`Be_${index}`}
-                  label="Be Date"
+                  label="BOE Date"
                   name="BeDate"
                   value={dayjs(field.beDate)}
                   onChange={(newvalue) => {
@@ -110,7 +110,7 @@ const BeDetailsItem = ({
                       variant: "standard",
                       fullWidth: true,
                       error: !!field.beDateError,
-                      helperText: !!field.beDateError && "Be Date is required",
+                      helperText: !!field.beDateError && "BOE Date is required",
                     },
                   }}
                   

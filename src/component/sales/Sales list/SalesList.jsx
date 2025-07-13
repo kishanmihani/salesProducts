@@ -1,4 +1,4 @@
-import { Box, Paper, Tab, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Tabs, Typography } from '@mui/material';
+import { Box, Paper, Tab, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Tabs, Tooltip, Typography } from '@mui/material';
 import React, { useEffect } from 'react'
 import { useNavigate } from "react-router";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -18,6 +18,7 @@ export default function Saleslist() {
   };
  const [showPopup, setShowPopup] = React.useState(false);
  const [showPopupDetails,setShowPopupDetails]=React.useState(null);
+ const [prodPopup,setProdPopup] = React.useState(false);
   const [popupPosition, setPopupPosition] = React.useState({ top: 0, left: 0 });
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
@@ -25,7 +26,7 @@ export default function Saleslist() {
   };
 
   // pagination slice
-  const paginatedData = tableData.slice(
+  const paginatedData = [...tableData].sort((a, b) => new Date(b?.entry_Date) - new Date(a?.entry_Date))?.slice(
     page * rowsPerPage,
     page * rowsPerPage + rowsPerPage
   );
@@ -114,7 +115,7 @@ export default function Saleslist() {
     const rect = e.target.getBoundingClientRect();
     setPopupPosition({
       top: rect.bottom + window.scrollY,
-      left: rect.left + window.scrollX,
+      left: rect.left - 100+ window.scrollX,
     });
     setShowPopup(true);
     setShowPopupDetails(details)
@@ -122,6 +123,20 @@ export default function Saleslist() {
 
   const handleMouseLeave = () => {
     setShowPopup(false);
+    setShowPopupDetails();
+  };
+const handleProdMouseEnter = (e,details) =>{
+ const rect = e.target.getBoundingClientRect();
+    setPopupPosition({
+      top: rect.bottom + window.scrollY,
+      left: rect.left + window.scrollX,
+    });
+    setProdPopup(true);
+    setShowPopupDetails(details)
+  }
+  const handleProdMouseLeave = () => {
+    setProdPopup(false);
+    setShowPopupDetails();
   };
   return (
     <React.Fragment>
@@ -167,19 +182,21 @@ export default function Saleslist() {
       <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
         <TableHead sx={{fontSize:14,fontWeight:600,bgcolor:"rgba(25, 118, 210, 0.08)"}}>
           <TableRow>
-            <TableCell  className="table-th">Billing Name</TableCell>
-            <TableCell align="left" className="table-th">Customer Name</TableCell>
-            <TableCell align="left"className="table-th">Transporter Name</TableCell>
-            <TableCell align="left"className="table-th">Transporter</TableCell>
-            <TableCell align="left"className="table-th">Port Name</TableCell>
-            {/* <TableCell align="left"className="table-th">Gst</TableCell> */}
-            <TableCell align="left"className="table-th">Payment Type</TableCell>
-            <TableCell align="left"className="table-th">Product Name</TableCell>
-            <TableCell align="left"className="table-th">Bitumens price</TableCell>
-            <TableCell align="left"className="table-th">Quantity</TableCell>
             <TableCell align="left"className="table-th">Order Date</TableCell>
-            <TableCell align="left"className="table-th">validity Date</TableCell>
-            <TableCell align="left"className="table-th">validity Days</TableCell>
+            <TableCell align="left"className="table-th">validity</TableCell>
+            <TableCell  className="table-th">Billing</TableCell>
+            <TableCell align="left" className="table-th">Customer</TableCell>
+            <TableCell align="left"className="table-th">Quantity</TableCell>
+            <TableCell align="left"className="table-th">Product</TableCell>
+
+            <TableCell align="left"className="table-th">Price</TableCell>
+            <TableCell align="left"className="table-th">Port Name</TableCell>
+          
+            
+            
+            
+            {/* <TableCell align="left"className="table-th">validity Date</TableCell> */}
+            
               {/* <TableCell align="left"className="table-th">Approve</TableCell> */}
             {/* <TableCell align="left"className="table-th">Disapprove</TableCell> */}
           </TableRow>
@@ -192,22 +209,27 @@ export default function Saleslist() {
               key={row.name}
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
             >
+              <TableCell align="left">{new Date(row.entry_Date).toLocaleDateString()}</TableCell>
+              <TableCell align="left"><Tooltip title={new Date(row.validity_Date).toLocaleDateString()}><Typography variant='body1' color="primary">{row.validity_Days}</Typography></Tooltip></TableCell>
               <TableCell component="th" scope="row">
                 {row.company_Name}
               </TableCell>
               <TableCell align="left">{row.customer_Name}</TableCell>
-              <TableCell align="left">{row.transport_Name}</TableCell>
-              <TableCell align="left">{row.transport_ON}</TableCell>
+              <TableCell align="left">{row.quantity}</TableCell>
+              <TableCell align="left"  onMouseEnter={(e)=>handleProdMouseEnter(e,row)}
+                onMouseLeave={handleProdMouseLeave}><Typography color="primary">{row.product_Name}</Typography></TableCell>
+              <TableCell align="left" color="primary"  onMouseEnter={(e)=>handleMouseEnter(e,row)}
+              onMouseLeave={handleMouseLeave}><Typography color="primary">{row?.price}</Typography></TableCell>
               <TableCell align="left">{row.port_Name}</TableCell>
+    
               {/* <TableCell align="left">{row.Gst}</TableCell> */}
-            <TableCell align="left">{row.payment_Type}</TableCell>
-            <TableCell align="left">{row.product_Name}</TableCell>
-            <TableCell align="left"  onMouseEnter={(e)=>handleMouseEnter(e,row)}
-              onMouseLeave={handleMouseLeave}>{row?.price}</TableCell>
-            <TableCell align="left">{row.quantity}</TableCell>
-            <TableCell align="left">{new Date(row.entry_Date).toLocaleDateString()}</TableCell>
-            <TableCell align="left">{new Date(row.validity_Date).toLocaleDateString()}</TableCell>
-            <TableCell align="left">{row.validity_Days}</TableCell>
+            {/* <TableCell align="left">{row.payment_Type}</TableCell> */}
+            
+            
+            
+            
+            {/* <TableCell align="left"><Tooltip title={new Date(row.validity_Date).toLocaleDateString()}><Typography variant='body1' color="primary">View</Typography></Tooltip></TableCell> */}
+            
             {/* <TableCell align="left"><button variant="outlined">Approve</button></TableCell> */}
             {/* <TableCell align="left"><button variant="outlined">Disapprove</button></TableCell> */}
             </TableRow>
@@ -279,6 +301,36 @@ export default function Saleslist() {
           </Typography>
         </Box>
         </Paper>)}
+{prodPopup && (
+        <Paper
+          elevation={3}
+          sx={{
+            position: "absolute",
+            top: popupPosition.top,
+            left: popupPosition.left,
+            padding: 1,
+            width:300,
+            backgroundColor: "lightyellow",
+            zIndex: 10,
+            
+          }}
+        >
+        <Box>
+          <Typography variant='h5' sx={{textAlign:"center",py:1}}>Product Info</Typography>
+          <Typography variant='p' sx={{display:"flex",width:"100%" }}>
+             <Typography  variant='subtitle1'sx={{width:"100%",fontSize:13}}>Payment Type</Typography>
+            <Typography  variant='subtitle1' sx={{width:"100%",fontSize:13}}>: {showPopupDetails?.payment_Type}</Typography>     
+            </Typography> 
+          <Typography variant='p' sx={{display:"flex",width:"100%" }}>
+            <Typography  variant='subtitle1'sx={{width:"100%",fontSize:13}}>Transportion</Typography>
+            <Typography  variant='subtitle1' sx={{width:"100%",fontSize:13}}>: {showPopupDetails?.transport_ON}</Typography>     
+          </Typography>
+          <Typography variant='p' sx={{display:"flex",width:"100%" }}>
+            <Typography  variant='subtitle1'sx={{width:"100%",fontSize:13}}>Transportor Name</Typography>
+            <Typography  variant='subtitle1' sx={{width:"100%",fontSize:13}}>: {showPopupDetails.transport_Name}</Typography>     
+          </Typography> 
+          </Box>
+          </Paper>)}       
       </Paper>
     </React.Fragment>
   )

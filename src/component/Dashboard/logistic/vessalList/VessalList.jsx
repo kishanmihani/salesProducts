@@ -15,8 +15,8 @@ import { a11yProps, CustomTabPanel } from '../../../commonComponent/CustomTabPan
 import { useNavigate } from 'react-router';
 import { setEditVessalArray } from '../../../features/vessalDetails';
 import { useDispatch } from 'react-redux';
-const Table_headVessal=["vessal_Name","vessal No","discarge Date","chA Name","Edit","Vessal Details"]
-const TblHead_vessalDetails = ["produce Name","port Name","BL Name","Bl No","BL Date","BL Qty","BE Name","BE No","bE Date","BE Gross Qty","BE Net Qty","Be OTR Qty","Be Details"]
+const Table_headVessal=["vessal_Name","Voyage No No","discarge Date","chA Name","Edit","Vessal Details"]
+const TblHead_vessalDetails = ["produce Name","port Name","BL Name","Bl No","BL Date","BL Qty","BE Name","BOE No","BOE Date","BE Gross Qty","BE Net Qty","Be OTR Qty","Be Details"]
 const TblHead_Tank = ["bE_NO","terminal_Name","tank_name","net_Quantity"]
 const BeXbontTbl_head=["bE_No", "xbE_date", "xbE_NO", "xbE_Qty"]
 const userId = JSON.parse(localStorage.getItem("userInfo"))?.id;
@@ -197,7 +197,7 @@ await authAxios.post(Vessel_Detail_list, JSON.stringify({
                  {vessalLoading && <p>Loading . . .</p>}
            
           <TableContainer elevation={0} component={Paper} style={{overflow:"auto",minWidth:800}}>
-              <Table size="small"  aria-label="purchases">
+              <Table size="small"  aria-label="Shipper Name">
                 <TableHead>
                   <TableRow>
                     {TblHead_vessalDetails.map((head,index)=>( 
@@ -353,7 +353,7 @@ authAxios.post(vessailBE_Detail_List,JSON.stringify({
         <CustomTabPanel value={tabs} index={0}  >
               {/* <Box> */}
                {vessalLoading && <p>Loading . . .</p>}
-             {bedata?.tanK_BE !==undefined  &&  <Table size="small" sx={{overflow:"auto",p:0}} aria-label="purchases">
+             {bedata?.tanK_BE !==undefined  &&  <Table size="small" sx={{overflow:"auto",p:0}} aria-label="Shipper Name">
                 <TableHead>
                   <TableRow>
                     {TblHead_Tank.map((head,index)=>(
@@ -391,7 +391,7 @@ authAxios.post(vessailBE_Detail_List,JSON.stringify({
                 </CustomTabPanel>
         <CustomTabPanel value={tabs} index={1}>
               {vessalLoading && <p>Loading . . .</p>}
-             {bedata?.xbE_BE !==undefined  &&   <Table size="small" sx={{overflow:"auto"}} aria-label="purchases">
+             {bedata?.xbE_BE !==undefined  &&   <Table size="small" sx={{overflow:"auto"}} aria-label="Shipper Name">
                 <TableHead>
                   <TableRow>
                     {BeXbontTbl_head.map((head,index)=>(

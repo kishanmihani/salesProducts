@@ -406,9 +406,9 @@ export default function LogicRequestForm() {
                 size="small"
                 error={vessalInfo.be_NoError}
               >
-                <InputLabel id="demo-simple-select-label">Be No</InputLabel>
+                <InputLabel id="demo-simple-select-label">BOE No</InputLabel>
                 <Select
-                  label="Be No"
+                  label="BOE No"
                   value={vessalInfo.be_No}
                   onChange={(e) => {
                     let value = e.target.value;
@@ -430,7 +430,7 @@ export default function LogicRequestForm() {
                   ))}
                 </Select>
                 {vessalInfo.be_NoError && (
-                  <FormHelperText>Be No is required</FormHelperText>
+                  <FormHelperText>BOE No is required</FormHelperText>
                 )}
               </FormControl>
             )}

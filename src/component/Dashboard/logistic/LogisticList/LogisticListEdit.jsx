@@ -402,9 +402,9 @@ console.log(data)
                 {vessalNameError && <FormHelperText>Vessal name is required</FormHelperText>}
                 </FormControl>
                  <FormControl variant="standard" fullWidth size='small' error={vessalInfo.be_NoError}>
-                 <InputLabel id="demo-simple-select-label">Be No</InputLabel>
+                 <InputLabel id="demo-simple-select-label">BOE No</InputLabel>
                 <Select 
-                label="Be No"
+                label="BOE No"
                 value={vessalInfo.be_No }
                 onChange={(e)=>{
                 let value=e.target.value;
@@ -422,7 +422,7 @@ console.log(data)
                                     </MenuItem>
                                   ))}
                 </Select>
-                {vessalInfo.be_NoError && <FormHelperText>Be No is required</FormHelperText>}
+                {vessalInfo.be_NoError && <FormHelperText>BOE No is required</FormHelperText>}
                 </FormControl>
                  {/* <FormControl variant="standard" fullWidth size='small' error={vessalInfo.bl_NoError}>
                  <InputLabel id="demo-simple-select-label">Bl No</InputLabel>

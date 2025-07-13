@@ -304,7 +304,7 @@ tank_ID,net_Quantity,tank_name
                           required
                           id="name"
                           name="name"
-                          label="Be No"
+                          label="BOE No"
                           disabled={true}
                           value={dataInfo?.BlNo}
                           type="text"

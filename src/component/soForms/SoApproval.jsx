@@ -20,6 +20,8 @@ import {
   TableRow,
   Tabs,
   Tab,
+  Tooltip,
+  Typography,
 } from '@mui/material';
 import CancelIcon from '@mui/icons-material/Cancel';
 import { useNavigate } from 'react-router';
@@ -30,20 +32,15 @@ import { a11yProps, CustomTabPanel } from '../commonComponent/CustomTabPanel/Cus
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 export default function SoApproval() {
   const [soTble_head] = useState([
-    'Cha Name',
+    'Validety Date',
     'So Date',
     'So No',
     'So Qty',
-    'Actual Out Qty',
-    'Product Out Qty',
-    'bal Qty',
-    'R PMT',
-    'P Count',
-    'A Count',
-    'R GST PMT',
-    'Validety Date',
-    // 'Validety Date',
-    'Port Name',
+    'A_Qty/count',
+    'P_Qty/P Count',
+    'B_Qty',
+     'R PMT',
+    'Port Name', 
     'Add Vehicle',
     'Actions',
   ]);
@@ -101,7 +98,7 @@ function SodataRow({ data }) {
     'Vehicle Name',
     'Planned Qty',
     'Actual Qty',
-    'BE No',
+    'BOE No',
     'Transporter Name',
     'Tank Name',
     'Warehouse Name',
@@ -142,20 +139,23 @@ function SodataRow({ data }) {
   return (
     <React.Fragment>
       <TableRow sx={{ '& > *': { borderBottom: 'unset' }, }}>
-        <TableCell>{data?.c_Name}</TableCell>
+        <TableCell>{formatDateToUS(data?.v_Date)}</TableCell>
         <TableCell>{formatDateToUS(data?.sO_Date)}</TableCell>
         <TableCell>{data?.sO_N0}</TableCell>
         <TableCell>{data?.so_Qty}</TableCell>
-        <TableCell>{data?.a_Out_Qty}</TableCell>
-        <TableCell>{data?.p_Out_Qty}</TableCell>
+        <TableCell>{data?.a_Out_Qty}/{data?.a_Count}</TableCell>
+        <TableCell>{data?.p_Out_Qty}/{data?.p_Count}</TableCell>
         <TableCell>{data?.bal_Qty}</TableCell>
         <TableCell>{data?.r_PMT}</TableCell>
-        <TableCell>{data?.p_Count}</TableCell>
-        <TableCell>{data?.a_Count}</TableCell>
-        <TableCell>{data?.r_GST_PMT}</TableCell>
-        <TableCell>{formatDateToUS(data?.v_Date)}</TableCell>
-        {/* <TableCell>{formatDateToUS(data?.validity_date)}</TableCell> */}
         <TableCell>{data?.port}</TableCell>
+        {/* <TableCell>{data?.c_Name}</TableCell> */}
+        
+        
+        
+        {/* <TableCell></TableCell> */}
+        
+        {/* <TableCell>{formatDateToUS(data?.validity_date)}</TableCell> */}
+        
         <TableCell>
           <Button
             variant="outlined"
