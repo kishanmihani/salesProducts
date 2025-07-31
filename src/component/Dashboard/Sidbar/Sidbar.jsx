@@ -38,9 +38,21 @@ const Sidbar = ({ message}) => {
   const navigate = useNavigate();
   const location = useLocation();
   const user = message?.[0];
-  const [open, setOpen] = useState(false);
-  const [openLogistic,setOpenLogistic] = useState(false);
-  const [openAccount,setOpenAccount] = useState(false);
+  const [openModules, setOpenModules] = useState({
+  sales: false,
+  logistic: false,
+  account: false,
+});
+const toggleModule = (key) => {
+  setOpenModules((prev) => {
+    const newState = Object.keys(prev).reduce((acc, currKey) => {
+      acc[currKey] = currKey === key ? !prev[key] : false;
+      return acc;
+    }, {});
+    return newState;
+  });
+}
+
   const handleProfileClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -61,6 +73,9 @@ const Sidbar = ({ message}) => {
   const handleToggle = () => {
     setOpen(!open);
   };
+  const handleLogistic =()=>{
+    setOpenLogistic(prev=>(!prev))
+  }
   return (
     <Box
       sx={{
@@ -92,7 +107,7 @@ const Sidbar = ({ message}) => {
         <ListItemButton
           sx={{ display: pagelist.includes("Sale_Modual") ? "flex" : "none" }}
           component={NavLink}
-          onClick={handleToggle}
+          onClick={() => toggleModule("sales")}
           to="/dashboard/sales"
           selected={location.pathname === "/dashboard/sales" || location.pathname.startsWith("/dashboard/sales")}
         >
@@ -101,9 +116,9 @@ const Sidbar = ({ message}) => {
             {/* <img src={salesicon} width={20} alt="salesicon" /> */}
           </ListItemIcon>
           <ListItemText primary="Sales" />
-          {open ? <FaChevronDown /> : <FaChevronRight />}
+          {openModules.sales ? <FaChevronDown /> : <FaChevronRight />}
         </ListItemButton>
-        <Collapse in={open} timeout="auto" unmountOnExit>
+        <Collapse in={openModules.sales} timeout="auto" unmountOnExit>
           <List component="div" Padding>
             <ListItemButton
               component={NavLink}
@@ -182,7 +197,7 @@ const Sidbar = ({ message}) => {
          <ListItemButton
           sx={{display: pagelist.includes("Logistic_Modual") ? "flex" : "none"}}
           component={NavLink}
-          onClick={()=>setOpenLogistic(!openLogistic)}
+          onClick={() => toggleModule("logistic")}
           to="/dashboard/Logistic"
           selected={location.pathname.includes("/dashboard/Logistic")}
         >
@@ -190,9 +205,9 @@ const Sidbar = ({ message}) => {
           <GrMoney />
             </ListItemIcon>
           <ListItemText primary="Logistic" />
-          <FaChevronRight />
+         {openModules.logistic?  <FaChevronDown /> : <FaChevronRight />}
         </ListItemButton>
-        <Collapse in={openLogistic} timeout="auto" unmountOnExit>
+        <Collapse in={openModules.logistic} timeout="auto" unmountOnExit>
           <List component="div" Padding>
             <ListItemButton
               component={NavLink}
@@ -359,7 +374,7 @@ const Sidbar = ({ message}) => {
           </Collapse>
            <ListItemButton
           component={NavLink}
-          onClick={()=>setOpenAccount(!openAccount)}
+          onClick={() => toggleModule("account")}
           to="/dashboard/Account"
           selected={location.pathname.includes("/dashboard/Account")}
           sx={{display: pagelist.includes("Account_Modual") ? "flex" : "none"}}
@@ -368,9 +383,9 @@ const Sidbar = ({ message}) => {
           <ContactsIcon />
             </ListItemIcon>
           <ListItemText primary="Account" />
-          <FaChevronRight />
+        {openModules.account ?  <FaChevronDown /> : <FaChevronRight />}
         </ListItemButton>
-        <Collapse in={openAccount} timeout="auto" unmountOnExit>
+        <Collapse in={openModules.account} timeout="auto" unmountOnExit>
           <List component="div" Padding>
             <ListItemButton
               component={NavLink}
