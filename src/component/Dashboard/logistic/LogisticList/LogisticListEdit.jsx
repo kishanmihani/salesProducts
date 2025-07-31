@@ -50,7 +50,7 @@ import { vehiclelistapi } from "../../../Config/Api";
     const [actualQuantity,setActQuantity] = React.useState(0);
     const [errorActQut,seterrorActQut] = React.useState(""); 
     const [custAlert, setCustAlert] = React.useState(null);
-    const [userId] = React.useState(JSON.parse(localStorage.getItem("userInfo"))?.id);
+    const [userId] = React.useState(JSON.parse(sessionStorage.getItem("userInfo"))?.id);
     const showSuccess = (data) => {
       setCustAlert({ type: "success", message: data });
     };

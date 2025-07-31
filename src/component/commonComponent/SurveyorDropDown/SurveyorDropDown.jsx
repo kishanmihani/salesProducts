@@ -23,7 +23,7 @@ export default function SurveyorDropDown({selectedSurveyor,
               const [addtolist, setAddtolist] = React.useState("");
               const [addlabelPopup, setAddlabelPopup] = React.useState("Add Port list");
               const [addPortlink, setAddPortlink] = React.useState("");
-              const [userId] = React.useState(JSON.parse(localStorage.getItem("userInfo"))?.id);
+              const [userId] = React.useState(JSON.parse(sessionStorage.getItem("userInfo"))?.id);
               const handleChange = (event) => {
                       let value=event.target.value;
                       if(value == "Select"){

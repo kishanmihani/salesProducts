@@ -20,7 +20,7 @@ import { authAxios } from "../utils/authAxios";
 const LoginForm = () => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = React.useState(false);
-  const UserInfo = JSON.parse(localStorage.getItem("userInfo"));
+  const UserInfo = JSON.parse(sessionStorage.getItem("userInfo"));
   const CheckUserInfo = UserInfo?.message == null;
   const [loader,setLoader] = useState(false);
   React.useEffect(() => {
@@ -120,7 +120,7 @@ const LoginForm = () => {
   }
   const datanotInvalid = (data) => {
     // Success_alert(data)
-    localStorage.setItem(
+    sessionStorage.setItem(
       "userInfo",
       JSON.stringify({
         login: data.login,

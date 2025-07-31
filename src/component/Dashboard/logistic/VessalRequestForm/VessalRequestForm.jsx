@@ -35,7 +35,7 @@ export default function VessalRequestForm() {
   const [chaNameError, setChaNameError] = useState(false);
   const [vessalNumber, setVessalNumber] = useState("");
   const navigate = useNavigate();
-  // const [beData] = JSON.parse(localStorage.getItem("editBeDetalis"))
+  // const [beData] = JSON.parse(sessionStorage.getItem("editBeDetalis"))
   const [vessalNumberError, setVessalNumberError] = useState({
     error: "",
     valid: true,
@@ -101,7 +101,7 @@ export default function VessalRequestForm() {
   const [blDataCheck, setBlDataCheck] = useState(true);
   
   const [custAlert, setCustAlert] = React.useState(null);
-  const [userId] = useState(JSON.parse(localStorage.getItem("userInfo"))?.id);
+  const [userId] = useState(JSON.parse(sessionStorage.getItem("userInfo"))?.id);
   const handleAddFieldsBlData = () => {
     if(editBeData?.isEdit == false){
     setFields([

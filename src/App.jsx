@@ -49,7 +49,7 @@ function App() {
           } />
           <Route path="Dashboard" element={<Dashboard />} >
             <Route path="sales" element={<SalesForm />} >
-            <Route index  element={<SalesRestitration />} />
+            <Route path='Sale_Registeration_Form'  element={<SalesRestitration />} />
             <Route path='PendingApprovalForm' element={<Saleslist  />} />
             <Route path='Approval_Request_form' element={<ApprovalRequestForm  />} />
             
@@ -57,9 +57,9 @@ function App() {
 
             <Route path="logistic" element={<LogicForm />} >
             <Route path="logistic_Request_form"  element={<LogicRequestForm />} />
-            <Route  index element={<Navigate to="So_Approval" replace />} />
+            {/* <Route  index element={<Navigate to="So_Approval" replace />} /> */}
           <Route  path='So_Approval' element={<SoApproval  />} />
-            <Route index element={<Navigate to="logistic_Pending_form" replace />} />
+            {/* <Route index element={<Navigate to="logistic_Pending_form" replace />} /> */}
             <Route path='logistic_Pending_form' element={<LogisticList />} />
             <Route path='logistic_list_Edit_Form/:id?' element={<LogisticListEdit />} />
             
@@ -72,7 +72,7 @@ function App() {
             </Route>
 
             <Route path="Account" element={<LogicForm />}>
-            <Route index element={<Navigate to="Account_list" replace />} />
+            {/* <Route index element={<Navigate to="Account_list" replace />} /> */}
     <Route path="Account_list" element={<AccountList />} />
     <Route path="Approval_list" element={<ApprovalList />} />
     <Route path="CloserForm" element={<CloserForm />} />

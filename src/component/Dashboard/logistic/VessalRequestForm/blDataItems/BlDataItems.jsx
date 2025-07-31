@@ -39,7 +39,7 @@ export default function BlDataItems({
   const [dataInfo,setDataInfo] = useState({BlNo:0,NetQuantity:0,grossQuantity:0,vessalName:0, vessalNumber:0})
   const [isValid,setIsValid] = useState(false);
   const [open, setOpen] = useState(false);
-  const [userId] = useState(JSON.parse(localStorage.getItem("userInfo"))?.id);
+  const [userId] = useState(JSON.parse(sessionStorage.getItem("userInfo"))?.id);
   const [xbondOpen,setXbondOpen] = useState(false)
   const verify = (e) => {
     let value=e.target.value;

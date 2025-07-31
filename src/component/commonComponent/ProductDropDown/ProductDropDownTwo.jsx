@@ -25,7 +25,7 @@ export default function ProductDropDownTwo({
   const [addtolist, setAddtolist] = useState("");
   const [addlabelPopup, setAddlabelPopup] = useState("Add Port list");
   const [addPortlink, setAddPortlink] = useState("");
-  const [userId] = useState(JSON.parse(localStorage.getItem("userInfo"))?.id);
+  const [userId] = useState(JSON.parse(sessionStorage.getItem("userInfo"))?.id);
   const handleChange = (event) => {
     let value=event.target.value;
     if(value == "Select"){

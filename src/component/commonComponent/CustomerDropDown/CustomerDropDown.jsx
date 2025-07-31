@@ -15,7 +15,7 @@ export default function CustomerDropDown({
   const [addtolist, setAddtolist] = useState("");
   const [addlabelPopup, setAddlabelPopup] = useState("");
   const [addPortlink, setAddPortlink] = useState("");
-  const [userId] = useState(JSON.parse(localStorage.getItem("userInfo"))?.id);
+  const [userId] = useState(JSON.parse(sessionStorage.getItem("userInfo"))?.id);
   const handleChange = (event) => {
     setSelectedCustomer(event.target.value);
   };

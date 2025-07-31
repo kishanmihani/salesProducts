@@ -34,8 +34,8 @@ export default function ApprovalRequestForm() {
     const navigate = useNavigate();
     const [tableData,setTableData]=React.useState([])
     const [checkTableData,setCheckTableData]=React.useState(true)
-    const [userId] = React.useState(JSON.parse(localStorage.getItem("userInfo"))?.id);
-    const [userName] = React.useState(JSON.parse(localStorage.getItem("userInfo"))?.login);
+    const [userId] = React.useState(JSON.parse(sessionStorage.getItem("userInfo"))?.id);
+    const [userName] = React.useState(JSON.parse(sessionStorage.getItem("userInfo"))?.login);
     const [page, setPage] = React.useState(0); // current page
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
     const [custAlert, setCustAlert] = React.useState(null);

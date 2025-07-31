@@ -46,7 +46,7 @@ export default function SoApproval() {
   ]);
 
   const [sodata, setSodata] = useState([]);
-  const [userId] = useState(JSON.parse(localStorage.getItem('userInfo'))?.id);
+  const [userId] = useState(JSON.parse(sessionStorage.getItem('userInfo'))?.id);
 
   useEffect(() => {
     if (sodata.length === 0) {
@@ -111,7 +111,7 @@ function SodataRow({ data }) {
   const [approvallist]=useState([...vehicle_head,"Approved","Disapproved"])
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [userId] = useState(JSON.parse(localStorage.getItem('userInfo'))?.id);
+  const [userId] = useState(JSON.parse(sessionStorage.getItem('userInfo'))?.id);
   const [open, setOpen] = useState(false);
   const [innerData, setInnerData] = useState([]);
 

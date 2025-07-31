@@ -17,7 +17,7 @@ export default function PortDropDown({ selectedPort, setSelectedPort,errors }) {
   const [addtolist, setAddtolist] = useState("");
   const [addlabelPopup, setAddlabelPopup] = useState("");
   const [addPortlink, setAddPortlink] = useState("");
-  const [userId] = useState(JSON.parse(localStorage.getItem("userInfo"))?.id);
+  const [userId] = useState(JSON.parse(sessionStorage.getItem("userInfo"))?.id);
   const handleChange = (event) => {
     setSelectedPort(event.target.value);
   };

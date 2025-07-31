@@ -19,7 +19,7 @@ const Table_headVessal=["vessal_Name","Voyage No No","discarge Date","chA Name",
 const TblHead_vessalDetails = ["produce Name","port Name","BL Name","Bl No","BL Date","BL Qty","BE Name","BOE No","BOE Date","BE Gross Qty","BE Net Qty","Be OTR Qty","Be Details"]
 const TblHead_Tank = ["bE_NO","terminal_Name","tank_name","net_Quantity"]
 const BeXbontTbl_head=["bE_No", "xbE_date", "xbE_NO", "xbE_Qty"]
-const userId = JSON.parse(localStorage.getItem("userInfo"))?.id;
+const userId = JSON.parse(sessionStorage.getItem("userInfo"))?.id;
 export default function VessalList() {
    const [vessalLoading, setVessalLoading] = useState(true);
     const [vessaldata,setVessaldata] = useState([]);
@@ -278,7 +278,7 @@ function VessalDetailsRow({tblbody, vessal_Name,vessal_No,bE_No,key}){
 //       produce_Name:data[0],port_Name:data[1],bl_Name:data[2],bl_No:data[3],bL_Date:data[4],bL_Qty:data[5],bE_Name:data[6],
 //       bE_No:data[7],bE_Date:data[8],bE_G_Qty:data[9],bE_N_Qty:data[10],bE_OTR_Qty:data[11],bL_BE_ID:bL_BE_ID,isEdit:true
 //      });
-//       // localStorage.setItem("editBeDetalis",BeData)
+//       // sessionStorage.setItem("editBeDetalis",BeData)
 //      navigate(`/dashboard/Logistic/Vessal_Edit_Form/${bL_BE_ID}?BeData=${BeData}`)
 //    }
 //   }

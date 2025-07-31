@@ -27,7 +27,7 @@ export default function CloserForm() {
       ]);
       const [sodata, setSodata] = useState([]);
       const [statusListCheck,setStatusListCheck] = React.useState(true);
-        const [userId] = useState(JSON.parse(localStorage.getItem('userInfo'))?.id);
+        const [userId] = useState(JSON.parse(sessionStorage.getItem('userInfo'))?.id);
       const [statuslist,setStatuslist] = React.useState([]);
       const [dialogOpen, setDialogOpen] = useState(false);
 // const [selectedRow, setSelectedRow] = useState(null);

@@ -53,7 +53,7 @@ function Dashboard() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [notmobileOpen, setNotMobileOpen] = useState(true);
   const navigate = useNavigate();
-  const [userInfo] = useState(JSON.parse(localStorage.getItem("userInfo")));
+  const [userInfo] = useState(JSON.parse(sessionStorage.getItem("userInfo")));
   useEffect(() => {
     if (userInfo?.message !== "login successfull") {
       navigate("/");

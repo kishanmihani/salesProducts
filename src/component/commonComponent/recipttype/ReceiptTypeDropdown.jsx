@@ -7,7 +7,7 @@ import { authAxios } from '../../utils/authAxios';
 export default function ReceiptTypeDropdown({ value, onChange, error, helperText }) {
   const [optionlistCheck, setOptionlistCheck] = React.useState(false);
   const [optionlist, setOptionlist] = React.useState([]);
-  const [userId] = React.useState(JSON.parse(localStorage.getItem("userInfo"))?.id);
+  const [userId] = React.useState(JSON.parse(sessionStorage.getItem("userInfo"))?.id);
    React.useEffect(() => {
             if (optionlist?.length == 0 && !optionlistCheck)
               authAxios

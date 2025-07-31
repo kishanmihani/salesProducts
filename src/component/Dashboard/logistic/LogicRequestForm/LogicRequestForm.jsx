@@ -67,7 +67,7 @@ export default function LogicRequestForm() {
   const [remark, setRemark] = React.useState("");
   const [custAlert, setCustAlert] = React.useState(null);
   const [userId] = React.useState(
-    JSON.parse(localStorage.getItem("userInfo"))?.id
+    JSON.parse(sessionStorage.getItem("userInfo"))?.id
   );
   const showSuccess = (data) => {
     setCustAlert({ type: "success", message: data });

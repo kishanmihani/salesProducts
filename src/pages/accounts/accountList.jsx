@@ -29,7 +29,7 @@ export default function AccountList() {
   const navigate = useNavigate();
   const [tableData,setTableData]=React.useState([])
   const [checkTableData,setCheckTableData]=React.useState(false)
-  const [userId] = React.useState(JSON.parse(localStorage.getItem("userInfo"))?.id);
+  const [userId] = React.useState(JSON.parse(sessionStorage.getItem("userInfo"))?.id);
   const [page, setPage] = React.useState(0); 
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [custAlert, setCustAlert] = React.useState(null);
@@ -207,7 +207,9 @@ export default function AccountList() {
                                   aria-label="Edit"
                                   color="primary"
                                   onClick={() =>{let data={so_no:row?.so_No,customer:row.customer_Name};
-                                  localStorage.setItem("ReciptFrom",JSON.stringify(data)); navigate("/dashboard/Account/ReciptFrom");
+                                  // sessionStorage.setItem("ReciptFrom",JSON.stringify(data)); 
+                                  const query = new URLSearchParams({ data: JSON.stringify(data) }).toString()
+                                  navigate(`/dashboard/Account/ReciptFrom?${query}`)
                                 }}
                                  
                                 >

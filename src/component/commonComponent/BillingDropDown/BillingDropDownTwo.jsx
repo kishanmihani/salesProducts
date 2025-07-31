@@ -11,7 +11,7 @@ export default function BillingDropDownTwo({ billing, setBilling,errorsBilling,s
   const [addPortlink, setAddPortlink] = useState("");
   const [addtolist, setAddtolist] = useState("");
   const [optionlistCheck, setOptionlistCheck] = useState(false);
-  const [userId] = useState(JSON.parse(localStorage.getItem("userInfo"))?.id);
+  const [userId] = useState(JSON.parse(sessionStorage.getItem("userInfo"))?.id);
   const handleChange = (event) => {
     let value=event.target.value
     if(value == "Select"){

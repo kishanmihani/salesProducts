@@ -49,7 +49,7 @@ export default function SalesRestitration() {
   const [selectedSellingValue, setSelectedSellingValue] = useState(0);
   const [selectTransporterName, setSelectTransporterName] = useState("");
   const [errors, setErrors] = useState({});
-  const [userId] = useState(JSON.parse(localStorage.getItem("userInfo"))?.id);
+  const [userId] = useState(JSON.parse(sessionStorage.getItem("userInfo"))?.id);
   const [submitDisabled,setSubmitDisabled] = useState(false);
   const [custAlert, setCustAlert] = useState(null);
   const [loader,setLoader] = useState(false)

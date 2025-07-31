@@ -28,8 +28,10 @@ const Sidbar = ({ message}) => {
   let pagelist = [];
   let pageView = message?.[0]?.pageView;
   for (let key of pageView) {
-    if (key.value == "True") {
+    
+    if (key.value !== "") {
       pagelist.push(key.page_Name);
+      console.log(key.page_Name)
     }
   }
   const [anchorEl, setAnchorEl] = useState(null);
@@ -48,7 +50,7 @@ const Sidbar = ({ message}) => {
   };
 
   const Logout = () => {
-    localStorage.clear();
+    sessionStorage.clear();
     navigate("/");
   };
 
@@ -88,7 +90,7 @@ const Sidbar = ({ message}) => {
       {/* Navigation List */}
       <List sx={{ px: 1,marginTop:-1 }}>
         <ListItemButton
-          sx={{ display: pagelist.includes("Sale_Form") ? "flex" : "none" }}
+          sx={{ display: pagelist.includes("Sale_Modual") ? "flex" : "none" }}
           component={NavLink}
           onClick={handleToggle}
           to="/dashboard/sales"
@@ -105,12 +107,12 @@ const Sidbar = ({ message}) => {
           <List component="div" Padding>
             <ListItemButton
               component={NavLink}
-              to="/dashboard/sales"
-              selected={location.pathname === "/dashboard/sales"}
-              sx={{ pl: 4 }} 
+              to="/dashboard/sales/Sale_Registeration_Form"
+              selected={location.pathname === "/dashboard/sales/Sale_Registeration_Form"}
+              sx={{ pl: 4,display: pagelist.includes("Sale _Request_Form") ? "flex" : "none" }} 
             >
               <ListItemIcon color="#756f6f">
-                {location.pathname === "/dashboard/sales" ? (
+                {location.pathname === "/dashboard/sales/Sale_Registeration_Form" ? (
                   <RadioButtonCheckedIcon
                     style={{ height: 17, width: 17, mr: 2 }}
                   ></RadioButtonCheckedIcon>
@@ -130,7 +132,7 @@ const Sidbar = ({ message}) => {
               component={NavLink}
               to="/dashboard/sales/PendingApprovalForm"
               selected={location.pathname === "/dashboard/sales/PendingApprovalForm"}
-              sx={{ pl: 4 }} 
+              sx={{ pl: 4,display: pagelist.includes("Pending_Approval_Form") ? "flex" : "none" }} 
             >
               <ListItemIcon color="#756f6f">
                 {location.pathname === "/dashboard/sales/PendingApprovalForm" ? (
@@ -153,7 +155,7 @@ const Sidbar = ({ message}) => {
               component={NavLink}
               to="/dashboard/sales/Approval_Request_form"
               selected={location.pathname === "/dashboard/sales/Approval_Request_form"}
-              sx={{ pl: 4 }} 
+              sx={{ pl: 4 ,display: pagelist.includes("Approvel_Request_Form") ? "flex" : "none"}} 
             >
               <ListItemIcon color="#756f6f">
                 {location.pathname === "/dashboard/sales/Approval_Request_form" ? (
@@ -178,6 +180,7 @@ const Sidbar = ({ message}) => {
         </Collapse>
     
          <ListItemButton
+          sx={{display: pagelist.includes("Logistic_Modual") ? "flex" : "none"}}
           component={NavLink}
           onClick={()=>setOpenLogistic(!openLogistic)}
           to="/dashboard/Logistic"
@@ -218,7 +221,7 @@ const Sidbar = ({ message}) => {
               component={NavLink}
               to="/dashboard/Logistic/So_Approval"
               selected={location.pathname === "/dashboard/Logistic/So_Approval"}
-              sx={{ pl: 4 }} 
+              sx={{ pl: 4, display: pagelist.includes("So_Approvel") ? "flex" : "none"}} 
             >
               <ListItemIcon color="#756f6f">
                 {location.pathname === "/dashboard/Logistic/So_Approval" ? (
@@ -241,7 +244,7 @@ const Sidbar = ({ message}) => {
               component={NavLink}
               to="/dashboard/Logistic/Logistic_Pending_form"
               selected={location.pathname === "/dashboard/Logistic/Logistic_Pending_form"}
-              sx={{ pl: 4 }} 
+              sx={{ pl: 4 ,display: pagelist.includes("Vehical_Pool") ? "flex" : "none"}} 
             >
               <ListItemIcon color="#756f6f">
                 {location.pathname === "/dashboard/Logistic/Logistic_Pending_form" ? (
@@ -264,7 +267,7 @@ const Sidbar = ({ message}) => {
               component={NavLink}
               to="/dashboard/Logistic/Vessal_Request_Form"
               selected={location.pathname === "/dashboard/Logistic/Vessal_Request_Form"}
-              sx={{ pl: 4 }} 
+              sx={{ pl: 4 ,display: pagelist.includes("Vessel_Form") ? "flex" : "none"}} 
             >
               <ListItemIcon color="#756f6f">
                 {location.pathname === "/dashboard/Logistic/Vessal_Request_Form" ? (
@@ -287,7 +290,7 @@ const Sidbar = ({ message}) => {
               component={NavLink}
               to="/dashboard/Logistic/Vessal_List"
               selected={location.pathname === "/dashboard/Logistic/Vessal_List"}
-              sx={{ pl: 4 }} 
+              sx={{ pl: 4,display: pagelist.includes("Vessel_List") ? "flex" : "none" }} 
             >
               <ListItemIcon color="#756f6f">
                 {location.pathname === "/dashboard/Logistic/Vessal_List" ? (
@@ -359,6 +362,7 @@ const Sidbar = ({ message}) => {
           onClick={()=>setOpenAccount(!openAccount)}
           to="/dashboard/Account"
           selected={location.pathname.includes("/dashboard/Account")}
+          sx={{display: pagelist.includes("Account_Modual") ? "flex" : "none"}}
         >
           <ListItemIcon sx={{ color: '#756f6f' ,fontSize:22}}>
           <ContactsIcon />
@@ -372,7 +376,7 @@ const Sidbar = ({ message}) => {
               component={NavLink}
               to="/dashboard/Account/Account_list"
               selected={location.pathname === "/dashboard/Account/Account_list"}
-              sx={{ pl: 4 }} 
+              sx={{ pl: 4 ,display: pagelist.includes("Account_List") ? "flex" : "none"}} 
             >
               <ListItemIcon color="#756f6f">
                 {location.pathname === "/dashboard/Account/Account_list" ? (
@@ -395,7 +399,7 @@ const Sidbar = ({ message}) => {
               component={NavLink}
               to="/dashboard/Account/ReciptFrom"
               selected={location.pathname === "/dashboard/Account/ReciptFrom"}
-              sx={{ pl: 4 }} 
+              sx={{ pl: 4,display: pagelist.includes("Recipt_Form") ? "flex" : "none" }} 
             >
               <ListItemIcon color="#756f6f">
                 {location.pathname === "/dashboard/Account/ReciptFrom" ? (
@@ -418,7 +422,7 @@ const Sidbar = ({ message}) => {
               component={NavLink}
               to="/dashboard/Account/CloserForm"
               selected={location.pathname === "/dashboard/Account/CloserForm"}
-              sx={{ pl: 4 }} 
+              sx={{ pl: 4 ,display: pagelist.includes("Closer_Form") ? "flex" : "none"}} 
             >
               <ListItemIcon color="#756f6f">
                 {location.pathname === "/dashboard/Account/CloserForm" ? (
