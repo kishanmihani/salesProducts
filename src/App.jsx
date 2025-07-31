@@ -72,12 +72,13 @@ function App() {
             </Route>
 
             <Route path="Account" element={<LogicForm />}>
-            {/* <Route index element={<Navigate to="Account_list" replace />} /> */}
-    <Route path="Account_list" element={<AccountList />} />
-    <Route path="Approval_list" element={<ApprovalList />} />
-    <Route path="CloserForm" element={<CloserForm />} />
-    <Route path="ReciptFrom?" element={<ReciptFrom />} />
-            </Route>
+  {/* <Route index element={<Navigate to="Account_list" replace />} /> */}
+  <Route path="Account_list" element={<AccountList />} />
+  <Route path="Approval_list" element={<ApprovalList />} />
+  <Route path="CloserForm" element={<CloserForm />} />
+  <Route path="ReciptFrom" element={<ReciptFrom />} />
+</Route>
+
           </Route>
         </Routes>
       </Box>
