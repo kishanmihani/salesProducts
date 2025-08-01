@@ -96,7 +96,7 @@ export default function ApprovalRequestForm() {
               Role: "Approver",
             })
           );
-        let  filterdata= response.data.filter(row => row.user_Name === userName )
+        let  filterdata= response.data;
           setTableData(filterdata);
         } catch (error) {
           console.error(error);
