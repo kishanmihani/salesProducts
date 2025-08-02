@@ -35,7 +35,7 @@ export default function ApprovalRequestForm() {
     const [tableData,setTableData]=React.useState([])
     const [checkTableData,setCheckTableData]=React.useState(true)
     const [userId] = React.useState(JSON.parse(sessionStorage.getItem("userInfo"))?.id);
-    const [userName] = React.useState(JSON.parse(sessionStorage.getItem("userInfo"))?.login);
+    // const [userName] = React.useState(JSON.parse(sessionStorage.getItem("userInfo"))?.login);
     const [page, setPage] = React.useState(0); // current page
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
     const [custAlert, setCustAlert] = React.useState(null);
@@ -96,8 +96,8 @@ export default function ApprovalRequestForm() {
               Role: "Approver",
             })
           );
-        let  filterdata= response.data;
-          setTableData(filterdata);
+         const filterData = response.data;
+          setTableData(filterData);
         } catch (error) {
           console.error(error);
         } finally {

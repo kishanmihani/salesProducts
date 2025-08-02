@@ -5,7 +5,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { authAxios } from '../../utils/authAxios';
 import { salesListApi } from '../../Config/Api';
 import { a11yProps } from '../../commonComponent/CustomTabPanel/CustomTabPanel';
-export default function Saleslist() {
+export default function ApprovalPendingForm() {
   const navigate = useNavigate();
   const [tableData,setTableData]=React.useState([])
   const [checkTableData,setCheckTableData]=React.useState(false)
@@ -38,7 +38,7 @@ export default function Saleslist() {
         salesListApi,
         JSON.stringify({
           user_id: userId,
-          Role: "Entry",
+          Role: "Approver",
         })
       );
 
@@ -63,7 +63,7 @@ export default function Saleslist() {
           salesListApi,
           JSON.stringify({
             user_id: userId,
-            Role: "Entry_1",
+            Role: "Approver_1",
           })
         );
       let  filterdata= response.data;
@@ -79,7 +79,7 @@ export default function Saleslist() {
           salesListApi,
           JSON.stringify({
             user_id: userId,
-            Role: "Entry",
+            Role: "Approver",
           })
         );
       let  filterdata= response.data;
@@ -95,7 +95,7 @@ export default function Saleslist() {
           salesListApi,
           JSON.stringify({
             user_id: userId,
-            Role: "Entry_2",
+            Role: "Approver_2",
           })
         );
       let  filterdata= response.data;
@@ -162,14 +162,14 @@ const handleProdMouseEnter = (e,details) =>{
           <ArrowBackIcon width={90} color="#000" />
         </button>
         <Typography variant="h5" align="center" width="100%">
-          &nbsp; Pending Approval Form
+          &nbsp;  Approval Pending Form
         </Typography>
       </Box>
       <Box sx={{ borderBottom: 1, borderColor: 'divider',width:"100%" }}>
                         <Tabs value={tabs} onChange={handleTabs} aria-label="basic tabs example" sx={{width:"100%",justifyContent:"center"}}>
-                         <Tab label="Pending list"sx={{width:"33%"}}  onClick={()=>Pendinglist()} {...a11yProps(0)}></Tab>
-                          <Tab label="Approve list" onClick={()=>Approvelist()}  sx={{width:"33%"}}{...a11yProps(2)} />
-                        <Tab label="Disapprove list" sx={{width:"33%"}} onClick={()=>DisApproveList()} {...a11yProps(3)} />
+                         <Tab label="Approval One"sx={{width:"33%"}}  onClick={()=>Pendinglist()} {...a11yProps(0)}></Tab>
+                          <Tab label="Approval two" onClick={()=>Approvelist()}  sx={{width:"33%"}}{...a11yProps(2)} />
+                        <Tab label="Approval Three" sx={{width:"33%"}} onClick={()=>DisApproveList()} {...a11yProps(3)} />
                         </Tabs>
                       </Box>
       <Paper sx={{ p: 2 }} elevation={0}>

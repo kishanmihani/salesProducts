@@ -65,17 +65,6 @@ const toggleModule = (key) => {
     sessionStorage.clear();
     navigate("/");
   };
-
-  // const hideSidebar = () => {
-  //   const sidebar = document.getElementById('left-container');
-  //   if (sidebar) sidebar.style.display = 'none';
-  // };
-  const handleToggle = () => {
-    setOpen(!open);
-  };
-  const handleLogistic =()=>{
-    setOpenLogistic(prev=>(!prev))
-  }
   return (
     <Box
       sx={{
@@ -164,6 +153,29 @@ const toggleModule = (key) => {
               <ListItemText
                 primaryTypographyProps={{ fontSize: "12px" }}
                 primary="Pending Approval Form"
+              />
+            </ListItemButton>
+            <ListItemButton
+              component={NavLink}
+              to="/dashboard/sales/ApprovalPendingForm"
+              selected={location.pathname === "/dashboard/sales/ApprovalPendingForm"}
+              sx={{ pl: 4,display: pagelist.includes("Pending_Approval_Form") ? "flex" : "none" }} 
+            >
+              <ListItemIcon color="#756f6f">
+                {location.pathname === "/dashboard/sales/ApprovalPendingForm" ? (
+                  <RadioButtonCheckedIcon
+                    style={{ height: 17, width: 17, mr: 2 }}
+                  ></RadioButtonCheckedIcon>
+                ) : (
+                  <RadioButtonUncheckedIcon
+                  
+                    style={{ height: 17, width: 17, mr: 2,color:"#756f6f" }}
+                  />
+                )}
+              </ListItemIcon>
+              <ListItemText
+                primaryTypographyProps={{ fontSize: "12px" }}
+                primary="Approval Pending Form"
               />
             </ListItemButton>
             <ListItemButton

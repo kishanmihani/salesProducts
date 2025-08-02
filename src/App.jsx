@@ -22,6 +22,7 @@ import AccountList from './pages/accounts/accountList';
 import ApprovalList from './pages/ApprovalList/ApprovalList';
 import ReciptFrom from './pages/reciptFrom/reciptFrom';
 import CloserForm from './pages/closerForm/closerForm';
+import ApprovalPendingForm from './component/sales/Sales list/ApprovalPendingForm';
 function App() {
   // const navigate=useNavigate();
 //  window.addEventListener("beforeunload", function (e) {
@@ -51,6 +52,7 @@ function App() {
             <Route path="sales" element={<SalesForm />} >
             <Route path='Sale_Registeration_Form'  element={<SalesRestitration />} />
             <Route path='PendingApprovalForm' element={<Saleslist  />} />
+            <Route path='ApprovalPendingForm' element={<ApprovalPendingForm />} />
             <Route path='Approval_Request_form' element={<ApprovalRequestForm  />} />
             
             </Route>

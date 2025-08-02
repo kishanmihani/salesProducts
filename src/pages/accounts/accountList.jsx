@@ -6,8 +6,7 @@ import { authAxios } from '../../component/utils/authAxios';
 import DeleteIcon from "@mui/icons-material/Delete";
 import CustomPageHeader from '../../component/commonComponent/CustomPageHeader/CustomPageHeader';
 import ReciptFrom  from '../reciptFrom/reciptFrom';
-import DeleteConfirmationDialog from '../../component/commonComponent/DeleteConfirmationDialog/DeleteConfirmationDialog';
-import { vehicleDelete } from '../../component/Config/Api'; 
+import DeleteConfirmationDialog from '../../component/commonComponent/DeleteConfirmationDialog/DeleteConfirmationDialog'; 
 import CustomeAlerts from '../../component/commonComponent/CustomeAlert/CustomeAlert';
 const tableHeaders = [
   "So No",
@@ -24,7 +23,7 @@ const tableHeaders = [
 ];
 
 export default function AccountList() {
-  const [deleteDialog, setDeleteDialog] = React.useState({ isOpen: false, itemToDelete: null });
+  // const [deleteDialog, setDeleteDialog] = React.useState({ isOpen: false, itemToDelete: null });
   const [statusDialog,setStatusDialog] =  React.useState({ isOpen: false, itemToStatus: null });
   const navigate = useNavigate();
   const [tableData,setTableData]=React.useState([])
@@ -34,7 +33,7 @@ export default function AccountList() {
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [custAlert, setCustAlert] = React.useState(null);
   const [statuslist,setStatuslist] = React.useState([]);
-  const [open, setOpen] = React.useState(false);
+  // const [open, setOpen] = React.useState(false);
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -108,9 +107,7 @@ export default function AccountList() {
     console.log(res.data.message, res);
     }).catch((err)=>showError(err))
   }
-  const handleDeleteClick = (item) => {
-    setDeleteDialog({ isOpen: true, itemToDelete: item });
-  };
+  
   const StatusOpen = (item) => {
     setStatusDialog({ isOpen: true, itemToStatus: item.row,value:item.value });
   };
@@ -118,20 +115,7 @@ export default function AccountList() {
   const handleCloseStatusDialog = () => {
     setStatusDialog({ isOpen: false, itemToDelete: null,value:null });
   }
-   const handleCloseDeleteDialog = () => {
-    setDeleteDialog({ isOpen: false, itemToDelete: null });
-  }
-  const handleDeleteConfirm = async (item) => {
-     let data={
-      
-  "user_id": userId,
-  "Table_Id": item.table_id
-}
-    
-    authAxios.post(vehicleDelete,JSON.stringify(data))
-    .then(res =>{showSuccess("record delete");console.log(res);fetchTableData();})
-    .catch(err =>{showError(err.message);})
-  }
+   
   const showSuccess = (data) => {
             setCustAlert({ type: "success", message: data });
           };
@@ -192,7 +176,7 @@ export default function AccountList() {
               <TableCell>
                <FormControl fullWidth size='small'>
                 <Select
-                value={row?.status_name1 || "Select"}
+                value={row?.status_Name1 || "Select"}
                 onChange={(e)=>{let rowthis={"value":e.target.value,"row":row};StatusOpen(rowthis)}} >
                   <MenuItem disabled value={"Select"}>Please Select</MenuItem>
                 {statuslist.map(data=>(
