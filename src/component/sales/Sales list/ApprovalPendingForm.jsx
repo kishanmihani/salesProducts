@@ -167,9 +167,9 @@ const handleProdMouseEnter = (e,details) =>{
       </Box>
       <Box sx={{ borderBottom: 1, borderColor: 'divider',width:"100%" }}>
                         <Tabs value={tabs} onChange={handleTabs} aria-label="basic tabs example" sx={{width:"100%",justifyContent:"center"}}>
-                         <Tab label="Approval One"sx={{width:"33%"}}  onClick={()=>Pendinglist()} {...a11yProps(0)}></Tab>
-                          <Tab label="Approval two" onClick={()=>Approvelist()}  sx={{width:"33%"}}{...a11yProps(2)} />
-                        <Tab label="Approval Three" sx={{width:"33%"}} onClick={()=>DisApproveList()} {...a11yProps(3)} />
+                         <Tab label="Pending list"sx={{width:"33%"}}  onClick={()=>Pendinglist()} {...a11yProps(0)}></Tab>
+                          <Tab label="Approve list" onClick={()=>Approvelist()}  sx={{width:"33%"}}{...a11yProps(2)} />
+                        <Tab label="Disapprove list" sx={{width:"33%"}} onClick={()=>DisApproveList()} {...a11yProps(3)} />
                         </Tabs>
                       </Box>
       <Paper sx={{ p: 2 }} elevation={0}>

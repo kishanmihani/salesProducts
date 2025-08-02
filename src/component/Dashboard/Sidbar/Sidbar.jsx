@@ -159,7 +159,7 @@ const toggleModule = (key) => {
               component={NavLink}
               to="/dashboard/sales/ApprovalPendingForm"
               selected={location.pathname === "/dashboard/sales/ApprovalPendingForm"}
-              sx={{ pl: 4,display: pagelist.includes("Pending_Approval_Form") ? "flex" : "none" }} 
+              sx={{ pl: 4,display: pagelist.includes("Approvel_Pending_Form") ? "flex" : "none" }} 
             >
               <ListItemIcon color="#756f6f">
                 {location.pathname === "/dashboard/sales/ApprovalPendingForm" ? (
