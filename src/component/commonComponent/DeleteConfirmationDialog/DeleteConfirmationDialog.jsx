@@ -20,7 +20,7 @@ function DeleteConfirmationDialog({ isOpen, onClose, onConfirm, itemToDelete }) 
             <Typography>Are you sure you want to delete the following order?</Typography>
             <Typography variant="body2" sx={{display:"flex"}} ><Typography  sx={{width:"100px",fontWeight:800}}>Order ID:</Typography> {itemToDelete.table_id}</Typography>
             <Typography variant="body2" sx={{display:"flex"}}><Typography sx={{width:"100px",fontWeight:800}}>Customer:</Typography> {itemToDelete.customer_Name}</Typography>
-            <Typography variant="body2"sx={{display:"flex"}}><Typography sx={{width:"100px",fontWeight:800}} >Product:</Typography> {itemToDelete.quantity}</Typography>
+            <Typography variant="body2"sx={{display:"flex"}}><Typography sx={{width:"100px",fontWeight:800}} >Product:</Typography> {itemToDelete.produce_Name}</Typography>
             <Typography variant="body2"sx={{display:"flex"}}><Typography sx={{width:"100px",fontWeight:800}}>Quantity:</Typography> {itemToDelete.quantity}</Typography>
           </>
         ) : (

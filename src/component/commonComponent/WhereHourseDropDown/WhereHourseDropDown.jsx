@@ -117,10 +117,10 @@ export default function WhereHourseDropDown(
                          setOpen={setOpen}
                          label={addlabelPopup}
                          apilink={addPortlink}
-                         paramName="surveyor_List_Update"
+                         paramName="Warehouse_List_Update"
                          setAddtolist={setAddtolist}
                          userId={userId}
-                         dropname="Surveyor name"
+                         dropname="WareHouse name"
                        />
     </React.Fragment>
   )

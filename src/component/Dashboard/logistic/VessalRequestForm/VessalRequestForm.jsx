@@ -64,7 +64,7 @@ export default function VessalRequestForm() {
     beDateError:false,
     grossQuantity:null,
     grossQuantityError:"",
-    otrQut:null,
+    otrQut:0,
     otrQutError:"",
     otrpersent:null,
     otrpersentError:""
@@ -92,7 +92,7 @@ export default function VessalRequestForm() {
     beDateError:false,
     grossQuantity:null,
     grossQuantityError:"",
-    otrQut:null,
+    otrQut:0,
     otrQutError:"",
     otrpersent:null,
     otrpersentError:""
@@ -103,7 +103,8 @@ export default function VessalRequestForm() {
   const [custAlert, setCustAlert] = React.useState(null);
   const [userId] = useState(JSON.parse(sessionStorage.getItem("userInfo"))?.id);
   const handleAddFieldsBlData = () => {
-    if(editBeData?.isEdit == false){
+    debugger;
+    if(editBeData?.isEdit == undefined || editBeData?.isEdit == false){
     setFields([
       ...fields,
       {
@@ -118,7 +119,7 @@ export default function VessalRequestForm() {
         portName:"Select",
         billOfEntry:"",
         grossQuantity:null,
-        otrQut:null,
+        otrQut:0,
         otrpersent:null
         // cargoPrice: 0,
         // iGst: 0,
@@ -142,7 +143,7 @@ export default function VessalRequestForm() {
         portName:"Select",
         billOfEntry:"",
         grossQuantity:null,
-        otrQut:null,
+        otrQut:0,
         otrpersent:null
         // cargoPrice: 0,
         // iGst: 0,
@@ -164,7 +165,7 @@ export default function VessalRequestForm() {
         portName:"Select",
         billOfEntry:"",
         grossQuantity:null,
-        otrQut:null,
+        otrQut:0,
         otrpersent:null
         // cargoPrice: 0,
         // iGst: 0,
@@ -213,12 +214,17 @@ export default function VessalRequestForm() {
       setChaNameError(false);
     }
 
-    const { error, isValid } = validateVesselNumber(vessalNumber);
-    setVessalNumberError({ error: error, valid: isValid });
-    if (!isValid) {
-      hasError = true;
-    }
-    
+    // const { error, isValid } = validateVesselNumber(vessalNumber);
+    // setVessalNumberError({ error: error, valid: isValid });
+    // if (!isValid) {
+    //   hasError = true;
+    // }
+    if (vessalNumber == null || vessalNumber.trim() === "") {
+    setVessalNumberError({ error: "Vessel Number is required", valid: true });
+    hasError = true;
+  } else {
+    setVessalNumberError({ error: "", valid: false });
+  }
     let updatedFields;
     if (editBeData?.isEdit !==true) {
       updatedFields = fields.map((field) => {
@@ -680,7 +686,7 @@ authAxios.post(Vessel_Edit_Data,JSON.stringify(data))
     beDateError:false,
     grossQuantity:null,
     grossQuantityError:"",
-    otrQut:null,
+    otrQut:0,
     otrQutError:"",
     otrpersent:null,
     otrpersentError:""
@@ -694,7 +700,7 @@ authAxios.post(Vessel_Edit_Data,JSON.stringify(data))
   setChaNameError(false);
 
   setVessalNumber("");
-  setVessalNumberError({ error: "", valid: true });
+  setVessalNumberError({ error: "", valid: false });
 
   setDisChargeDate(null);
  
@@ -719,11 +725,15 @@ authAxios.post(Vessel_Edit_Data,JSON.stringify(data))
     setChaName(value);
   }
   function vessalNumberChange(event) {
-    const value = event.target.value;
-    setVessalNumber(value);
-    const { error, isValid } = validateVesselNumber(value);
-    setVessalNumberError({ error: error, valid: isValid });
+  const value = event.target.value;
+  setVessalNumber(value);
+
+  if (value == null || value.trim() === "") {
+    setVessalNumberError({ error: "Vessel Number is required", valid: true });
+  } else {
+    setVessalNumberError({ error: "", valid: false });
   }
+}
   function dischargeDateChange(newvalue) {
     let value = newvalue;
     if (value === "") {
@@ -769,11 +779,15 @@ authAxios.post(Vessel_Edit_Data,JSON.stringify(data))
       setChaNameError(false);
     }
 
-    const { error, isValids } = validateVesselNumber(vessalNumber);
-    setVessalNumberError({ error: error, valid: isValids });
-    if (!isValid) {
-      isValid = false;
+    // const { error, isValids } = validateVesselNumber(vessalNumber);
+    if(vessalNumber == null || vessalNumber == ""){
+      setVessalNumberError({error:"vessalNumber is required"})
+       isValid = false;
     }
+    // setVessalNumberError({ error: error, valid: isValids });
+    // if (!isValid) {
+    //   isValid = false;
+    // }
     newFields.forEach((fieldItem, i) => {
       if (index === i) {
         // BL Date
@@ -792,11 +806,15 @@ authAxios.post(Vessel_Edit_Data,JSON.stringify(data))
   
         // BL No
         if (!fieldItem.BLNo || Number(fieldItem.BLNo) <= 0) {
-          newFields[index].BLNoError =
-            Number(fieldItem.BLNo) < 0
-              ? "BL No cannot be negative"
-              : "BL No No is required";
-          isValid = false;
+          if (fieldItem.BLNo === "" || fieldItem.BLNo == null) {
+  newFields[index].BLNoError = "BL No is required";
+  isValid = false;
+} else if (Number(fieldItem.BLNo) < 0) {
+  newFields[index].BLNoError = "BL No cannot be negative";
+  isValid = false;
+} else {
+  newFields[index].BLNoError = "";
+}
         }
         if (field.grossQuantity === "" || Number(field.grossQuantity) === 0) {
           newFields[index].grossQuantityError =
@@ -967,7 +985,7 @@ id
                 label="Voyage No"
                 value={vessalNumber}
                 onChange={vessalNumberChange}
-                error={!vessalNumberError.valid}
+                error={vessalNumberError.valid}
                 helperText={vessalNumberError.error}
               />
               <FormControl fullWidth size="small" margin="normal">

@@ -64,7 +64,12 @@ const calculatePercentage = () => {
   }
   return 0 +" "+ "%";
 };
-   
+
+  //  if( field?.quantity !== "" && field?.grossQuantity !==""){
+  //   const newFields = [...fields];
+    // newFields[index].otrQut =Number(field.grossQuantity) - Number(field.quantity);;
+    // setFields(newFields);
+  //  }
   return (
     <React.Fragment>
     <Stack
@@ -229,31 +234,35 @@ const calculatePercentage = () => {
           
           <Box sx={{ width: "100%" }}>
             <TextField
-              fullWidth
-              size="small"
-              label="Net Quantity"
-              type="number"
-              id={`Quantity_${index}`}
-              value={field?.quantity}
-              onChange={(e) => {
-                const newFields = [...fields];
-                const value = e.target.value;
-                if (value === "" || Number(value) === 0) {
-                  newFields[index].quantityError = "Net Quantity is required";
-                } else if (Number(value) < 0) {
-                  newFields[index].quantityError =
-                    "Net Quantity cannot be negative";
-                } else {
-                  newFields[index].quantityError = "";
-                }
+                  id="QtrQut"
+                    name="QtrQut"
+                    label="OTR QTY"
+                    value={field?.otrQut}
+                    error={field?.otrQutError}
+                    helperText={field?.otrQutError}
+//                     onChange={(e)=>{
+//                       const newFields = [...fields];
+//                 const value = e.target.value;
 
-                newFields[index].quantity = value;
-                setFields(newFields);
-              }}
-              error={!!field?.quantityError}
-              helperText={field?.quantityError || ""}
-              variant="standard" // or "outlined" / "filled" based on your design
-            />
+//                 if (value === "" || Number(value) === 0) {
+//                   newFields[index].otrQutError = "OTR QTY is required";
+//                 } else if (Number(value) < 0) {
+//                   newFields[index].otrQutError =
+//                     "OTR QTY cannot be negative";
+//                 } else {
+//                   newFields[index].otrQutError = "";
+//                 }
+
+//                 newFields[index].otrQut = value;
+//                 setFields(newFields);
+//               newFields[index].quantity = field?.grossQuantity -  value ;
+//               setFields(newFields);
+//                     }}
+                    type="number"
+                    fullWidth
+                    variant="standard"
+                  />
+            
           </Box>
           <Box sx={{ width: "100%" }}>
                       <FormControl fullWidth size="small">
@@ -430,41 +439,51 @@ const calculatePercentage = () => {
 
                 newFields[index].grossQuantity = value;
                 setFields(newFields);
-              
+                if(field.quantity !=="" && field.quantity !==0){
+                newFields[index].otrQut =Number(value) - Number(field.quantity);;
+
+setFields(newFields);
+                }
                     }}
                     error={field?.grossQuantityError}
                     helperText={field?.grossQuantityError || ""}
                     fullWidth
                     variant="standard"
                   />
+                  {/* <label htmlFor={`Quantity_${index}`}>Net Quantity</label> */}
                   <TextField
-                  id="QtrQut"
-                    name="QtrQut"
-                    label="QTR QTY"
-                    value={field?.otrQut}
-                    error={field?.otrQutError}
-                    helperText={field?.otrQutError}
-                    onChange={(e)=>{
-                      const newFields = [...fields];
+              fullWidth
+              size="small"
+              label="Net Quantity"
+              type="number"
+              id={`Quantity_${index}`}
+              value={field?.quantity}
+              onChange={(e) => {
+                const newFields = [...fields];
                 const value = e.target.value;
-
                 if (value === "" || Number(value) === 0) {
-                  newFields[index].otrQutError = "QTR QTY is required";
+                  newFields[index].quantityError = "Net Quantity is required";
                 } else if (Number(value) < 0) {
-                  newFields[index].otrQutError =
-                    "QTR QTY cannot be negative";
+                  newFields[index].quantityError =
+                    "Net Quantity cannot be negative";
                 } else {
-                  newFields[index].otrQutError = "";
+                  newFields[index].quantityError = "";
                 }
 
-                newFields[index].otrQut = value;
+                newFields[index].quantity = value;
                 setFields(newFields);
-              
-                    }}
-                    type="number"
-                    fullWidth
-                    variant="standard"
-                  />
+                // newFields[index].otrQut = field?.grossQuantity -  value ;
+//               setFields(newFields);
+if(field.grossQuantity !=="" && field.grossQuantity !==0){
+                newFields[index].otrQut =Number(field.grossQuantity) - Number(value);;
+
+setFields(newFields);
+                }
+              }}
+              error={!!field?.quantityError}
+              helperText={field?.quantityError || ""}
+              variant="standard" // or "outlined" / "filled" based on your design
+            />       
                   <TextField
                   id="name"
                     name="name"
