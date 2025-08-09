@@ -287,7 +287,7 @@ const toggleModule = (key) => {
               </ListItemIcon>
               <ListItemText
                 primaryTypographyProps={{ fontSize: "12px" }}
-                primary="Vehicle Pull"
+                primary="Vehicle Pool"
               />
             </ListItemButton>
             <ListItemButton

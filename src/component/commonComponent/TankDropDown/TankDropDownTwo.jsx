@@ -56,7 +56,7 @@ export default function TankDropDownTwo({selectedTank,
           setOpen(true);
           setAddlabelPopup("Add Tank List");
     
-          setAddPortlink("BituRep/Api/Account/Tank_List");
+          setAddPortlink("BituRep/Api/Account/Tank_List_Update");
         }
       }, [selectedTank]);
       const fetchList = useCallback(async () => {

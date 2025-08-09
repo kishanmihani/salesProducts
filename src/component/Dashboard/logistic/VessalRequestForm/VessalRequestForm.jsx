@@ -968,11 +968,11 @@ id
                 disabled={editBeData?.isEdit === true ? true : false}
                 name="VessalName"
                 type="text"
-                label="Vessal Name"
+                label="Voyage name"
                 value={vessalName}
                 onChange={vessalNameChange}
                 error={vessalNameError}
-                helperText={vessalNameError && "Vessal Name is required"}
+                helperText={vessalNameError && "Voyage name is required"}
               />
               <TextField
                 fullWidth

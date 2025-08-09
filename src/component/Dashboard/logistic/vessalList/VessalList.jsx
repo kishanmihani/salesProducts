@@ -77,7 +77,7 @@ export default function VessalList() {
          <TextField type='text'sx={{mt:1}}
          size='small'
          value={selectedName}
-         label="Vessal Name"
+         label="Voyage name"
          onChange={(e)=>{
           let value = e.currentTarget.value;
           setSelectedName(value)

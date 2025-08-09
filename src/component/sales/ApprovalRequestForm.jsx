@@ -263,7 +263,7 @@ export default function ApprovalRequestForm() {
               
               
                <TableCell align="left"><Button variant="outlined" onClick={()=>ApproveAction(row.table_Id)} sx={{p:1,fontSize:"12px"}} color="success">Approve</Button></TableCell>
-             <TableCell align="left"><Button variant="outlined"sx={{p:1, fontSize:"12px"}} onClick={()=>DispproveAction(row.table_Id)} color="secondary">Disapprove</Button></TableCell>
+             <TableCell align="left"><Button variant="outlined"sx={{p:1, fontSize:"12px"}} onClick={()=>DispproveAction(row.table_Id)} color="secondary">Rejected</Button></TableCell>
               </TableRow>
               
             ))}

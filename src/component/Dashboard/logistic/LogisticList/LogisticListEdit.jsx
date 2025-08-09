@@ -12,7 +12,7 @@ import { authAxios } from "../../../utils/authAxios";
 import CustomeAlerts from "../../../commonComponent/CustomeAlert/CustomeAlert";
 import CustomPageHeader from "../../../commonComponent/CustomPageHeader/CustomPageHeader";
 import ProductDropDownTwo from "../../../commonComponent/ProductDropDown/ProductDropDownTwo";
-import { vehiclelistapi } from "../../../Config/Api";
+import { vehiclelistapi, VessalFormData } from "../../../Config/Api";
   export default function LogicticListEdit() {
     const tableId=useParams().id;
     // const {id} = useLocation;
@@ -72,7 +72,7 @@ import { vehiclelistapi } from "../../../Config/Api";
 
       const tabledata = response.data.filter(data => data.table_id == tableId);
      
-
+      console.log(tabledata);
       if (tabledata.length > 0) {
         const item = tabledata[0];
         setTableData(item) // get the first match
@@ -311,7 +311,7 @@ console.log(data)
         "Vessal_Name": value.replaceAll("|", ",").split(",")[0],
         "Vessal_No": value.replaceAll("|", ",").split(",")[1]
       }
-      authAxios.post("BituRep/Api/Account/Vessel_Detail_List",data)
+      authAxios.post(VessalFormData,data)
       .then(res=>{setVessalData(res.data);
        if(editVslCheck === true){
         
@@ -389,9 +389,9 @@ console.log(data)
               />
               {/* </Box> */}
               <FormControl variant="standard" fullWidth size='small' error={vessalNameError}>
-                 <InputLabel id="demo-simple-select-label">Vessal name</InputLabel>
+                 <InputLabel id="demo-simple-select-label">Voyage name</InputLabel>
                 <Select 
-                label="Vessal name"
+                label="Voyage name"
                 value={vessalName }
                 onChange={(e)=>VessalChange(e.target.value)}  >
                  <MenuItem disabled value={"Select"}>Please Select</MenuItem>
@@ -399,10 +399,10 @@ console.log(data)
                   <MenuItem key={data.vesselName_List}  value={data.vesselName_List}>{data.vesselName_List.replaceAll("|", ",").split(",")[0]}</MenuItem>
                 ))}
                 </Select>
-                {vessalNameError && <FormHelperText>Vessal name is required</FormHelperText>}
+                {vessalNameError && <FormHelperText>Voyage name is required</FormHelperText>}
                 </FormControl>
                  <FormControl variant="standard" fullWidth size='small' error={vessalInfo.be_NoError}>
-                 <InputLabel id="demo-simple-select-label">BOE No</InputLabel>
+                 <InputLabel id="demo-simple-select-label">IN -BOE</InputLabel>
                 <Select 
                 label="BOE No"
                 value={vessalInfo.be_No }
@@ -416,9 +416,9 @@ console.log(data)
                 setVessalInfo((prev)=>({...prev,be_No:value}))
                 } } >
                  <MenuItem disabled value={"Select"}>Please Select</MenuItem>
-                {vessalData.map((item, index) => (
-                                    <MenuItem key={`${item.bE_No}${index}`} value={item?.bE_No}>
-                                      {item?.bE_No}
+                {vessalData[0]?.v_BE?.map((item, index) => (
+                                    <MenuItem key={`${item.bl}${index}`} value={item?.bl}>
+                                      {item?.bl.replaceAll("|", ",").split(",")?.[1]}
                                     </MenuItem>
                                   ))}
                 </Select>
@@ -473,7 +473,7 @@ console.log(data)
                  <InputLabel id="demo-simple-select-label">tank Name</InputLabel>
                 <Select 
                 label="tank Name"
-                value={vessalInfo.tank }
+                value={vessalInfo.tank.trim() }
                 onChange={(e)=>{
                   let value=e.target.value;
                   if(value == "Select"){
@@ -483,10 +483,22 @@ console.log(data)
                   }
                   setVessalInfo((prev)=>({...prev,tank:e.target.value}))}}  >
                  <MenuItem disabled value={"Select"}>Please Select</MenuItem>
-                 <MenuItem value={"tank"}>tank</MenuItem>
-                {/* {vessalData?.tank.map((data,index)=>(
-                  <MenuItem key={`${data?.view_List}${index}`}  value={data?.view_List}>{data?.view_List}</MenuItem>
-                ))} */}
+                {vessalData[0]?.v_BE
+                   .filter(item => item.bl === vessalInfo.be_No)
+                   .flatMap(item =>
+                     (item.wH_Name_Tank_Name || []).map((tank, index) => (
+                       <MenuItem
+                         key={`${tank.wH_Name_Tank_Name}-${index}`}
+                         value={tank.wH_Name_Tank_Name
+                           ?.replaceAll("|", ",")
+                           ?.split(",")?.[1]}
+                       >
+                         {tank.wH_Name_Tank_Name
+                           ?.replaceAll("|", ",")
+                           ?.split(",")?.[1]}
+                       </MenuItem>
+                     ))
+                   )}
                 </Select>
                 {vessalInfo.tankError && <FormHelperText>tank is required</FormHelperText>}
                 </FormControl>
@@ -494,7 +506,7 @@ console.log(data)
                  <InputLabel id="demo-simple-select-label">WareHouse Name</InputLabel>
                 <Select 
                 label="WareHouse Name"
-                value={vessalInfo.wH_NAME }
+                value={vessalInfo.wH_NAME.trim() }
                 onChange={(e)=>{
                   let value=e.target.value;
                   if(value == "Select"){
@@ -505,7 +517,23 @@ console.log(data)
                   }
                   setVessalInfo((prev)=>({...prev,wH_NAME:value}))}}  >
                  <MenuItem disabled value={"Select"}>Please Select</MenuItem>
-                 <MenuItem value={"whare"}>whare</MenuItem>
+                 {/* <MenuItem value={"whare"}>whare</MenuItem> */}
+                 {vessalData[0]?.v_BE
+                   .filter(item => item.bl === vessalInfo.be_No)
+                   .flatMap(item =>
+                     (item.wH_Name_Tank_Name || []).map((ware, index) => (
+                       <MenuItem
+                         key={`${ware.wH_Name_Tank_Name}-${index}`}
+                         value={ware.wH_Name_Tank_Name
+                           ?.replaceAll("|", ",")
+                           ?.split(",")?.[0]}
+                       >
+                         {ware.wH_Name_Tank_Name
+                           ?.replaceAll("|", ",")
+                           ?.split(",")?.[0]}
+                       </MenuItem>
+                     ))
+                   )}
                 {/* {vessalData?.wH_NAME.map((data,index)=>(
                   <MenuItem key={`${data?.view_List}${index}`}  value={data?.view_List}>{data?.view_List}</MenuItem>
                 ))} */}
