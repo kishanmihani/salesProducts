@@ -21,3 +21,5 @@ export const soVhicledetails="BituRep/Api/Account/VW_Vehical_Detail";
 export const vehicleDelete = "BituRep/Api/Account/log_Vehical_Delete";
 export const vehiclelistapi="BituRep/Api/Account/logistic_data_list";
 export const salesListApi="BituRep/Api/Account/send_sodata_userwise";
+export const ExbodDeleteapi="BituRep/Api/Account/EXBOE_Delete";
+export const VessalFormData="BituRep/Api/Account/Vessel_From_Data";

@@ -237,7 +237,7 @@ const calculatePercentage = () => {
                   id="QtrQut"
                     name="QtrQut"
                     label="OTR QTY"
-                    value={field?.otrQut}
+                    value={parseFloat(field?.otrQut)?.toFixed(3)}
                     error={field?.otrQutError}
                     helperText={field?.otrQutError}
 //                     onChange={(e)=>{

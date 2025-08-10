@@ -10,6 +10,7 @@ import {
   IconButton,
   FormHelperText,
   TextField,
+  CircularProgress,
 } from "@mui/material";
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router";
@@ -20,7 +21,7 @@ import PortDropDownTwo from "../../../commonComponent/PortDropdown/ProtDropDownt
 import { authAxios } from "../../../utils/authAxios";
 import CustomeAlerts from "../../../commonComponent/CustomeAlert/CustomeAlert";
 import CustomPageHeader from "../../../commonComponent/CustomPageHeader/CustomPageHeader";
-import { Vessel_Detail_list, vhicleInsert } from "../../../Config/Api";
+import { VessalFormData, Vessel_Detail_list, vhicleInsert } from "../../../Config/Api";
 import ProductDropDownTwo from "../../../commonComponent/ProductDropDown/ProductDropDownTwo";
 import WhereHourseDropDown from "../../../commonComponent/WhereHourseDropDown/WhereHourseDropDown";
 import TankDropDownTwo from "../../../commonComponent/TankDropDown/TankDropDownTwo";
@@ -31,6 +32,7 @@ export default function LogicRequestForm() {
   const [vessalName, setVessalNmae] = React.useState("Select");
   const [vessalNameError, setVessalNameError] = React.useState(false);
   const [vessalData, setVessalData] = React.useState([]);
+  const [loader,setloader] = React.useState(false);
   const [vessalInfo, setVessalInfo] = React.useState({
     be_No: "Select",
     be_NoError: false,
@@ -77,7 +79,7 @@ export default function LogicRequestForm() {
   };
 
   const handleAddFields = () => {
-    setFields([...fields, { vehicleName: "", quantity: 0, transporter: "" }]);
+    setFields([...fields, { vehicleName: "", quantity: "", transporter: "" }]);
   };
 
   const handleRemoveField = (index) => {
@@ -86,7 +88,7 @@ export default function LogicRequestForm() {
   };
 
   const handleSubmit = async (e) => {
-
+   setloader(true);
     e.preventDefault();
     let hasError = false;
 
@@ -178,7 +180,6 @@ export default function LogicRequestForm() {
           Tank_name:vessalInfo.tank,
           Produce_Name: selectedProduct,
           Teminal_NAME:vessalInfo?.wH_NAME,
-          // "cha_No":vessalInfo?.cha_Name,
           BE_No: vessalInfo.be_No,
           So_No: sodata?.sO_N0,
           BL_No: "8",
@@ -213,6 +214,7 @@ export default function LogicRequestForm() {
           });
       }
     }
+    setloader(false);
   };
   const handleReset = () => {
     setCustomerName("Select");
@@ -276,9 +278,10 @@ export default function LogicRequestForm() {
       Vessal_No: value.replaceAll("|", ",").split(",")?.[1],
     };
     await authAxios
-      .post(Vessel_Detail_list, data)
+      .post(VessalFormData, data)
       .then((res) => {
         setVessalData(res.data);
+        debugger;
         setVessalInfo((prev) => ({
           ...prev,
           be_No: "Select",
@@ -306,7 +309,7 @@ export default function LogicRequestForm() {
     showError("Failed to parse data sodata:", sodata, err);
   }
    },[sodata])
-   const balQut = sodata?.bal_Qty - fields.map(data => Number(data?.quantity)).reduce((accumulator, currentValue) => Number(accumulator) + Number(currentValue), 0);
+  //  const balQut = sodata?.bal_Qty - fields.map(data => Number(data?.quantity)).reduce((accumulator, currentValue) => Number(accumulator) + Number(currentValue), 0);
   
    
   return (
@@ -368,7 +371,7 @@ export default function LogicRequestForm() {
               disabled="true"
               multiline
               rows={1}
-              value={balQut} />
+              value={sodata?.bal_Qty} />
             <FormControl
               variant="standard"
               fullWidth
@@ -376,9 +379,9 @@ export default function LogicRequestForm() {
               error={vessalNameError}
               style={{margin:0}}
             >
-              <InputLabel id="demo-simple-select-label">Vessal name</InputLabel>
+              <InputLabel id="demo-simple-select-label">Voyage name</InputLabel>
               <Select
-                label="Vessal name"
+                label="Voyage name"
                 value={vessalName}
                 onChange={(e) => VessalChange(e.target.value)}
               >
@@ -395,7 +398,7 @@ export default function LogicRequestForm() {
                 ))}
               </Select>
               {vessalNameError && (
-                <FormHelperText>Vessal name is required</FormHelperText>
+                <FormHelperText>Voyage name is required</FormHelperText>
               )}
             </FormControl>
             {vessalData.length !== 0 && (
@@ -406,9 +409,9 @@ export default function LogicRequestForm() {
                 size="small"
                 error={vessalInfo.be_NoError}
               >
-                <InputLabel id="demo-simple-select-label">BOE No</InputLabel>
+                <InputLabel id="demo-simple-select-label"> IN -BOE</InputLabel>
                 <Select
-                  label="BOE No"
+                  label="IN -BOE"
                   value={vessalInfo.be_No}
                   onChange={(e) => {
                     let value = e.target.value;
@@ -423,9 +426,9 @@ export default function LogicRequestForm() {
                   <MenuItem disabled value={"Select"}>
                     Please Select
                   </MenuItem>
-                  {vessalData?.map((item, index) => (
-                    <MenuItem key={`${item.bE_No}${index}`} value={item?.bE_No}>
-                      {item?.bE_No}
+                  {vessalData[0]?.v_BE?.map((item, index) => (
+                    <MenuItem key={`${item.bl}${index}`} value={item?.bl}>
+                      {item?.bl.replaceAll("|", ",").split(",")?.[1]}
                     </MenuItem>
                   ))}
                 </Select>
@@ -499,6 +502,7 @@ export default function LogicRequestForm() {
             {vessalData.length !== 0 && <FormControl variant="standard" fullWidth size='small' margin="normal" error={vessalInfo.tankError}>
                              <InputLabel id="demo-simple-select-label">tank Name</InputLabel>
                             <Select 
+                            disabled={!vessalInfo.be_No}
                             label="tank Name"
                             value={vessalInfo.tank }
                             onChange={(e)=>{
@@ -510,7 +514,24 @@ export default function LogicRequestForm() {
                               }
                               setVessalInfo((prev)=>({...prev,tank:e.target.value}))}}  >
                                 <MenuItem disabled value={"Select"}>Please Select</MenuItem>
-                                <MenuItem value={"tank"}>tank</MenuItem>
+    {vessalData[0]?.v_BE
+  .filter(item => item.bl === vessalInfo.be_No)
+  .flatMap(item =>
+    (item.wH_Name_Tank_Name || []).map((tank, index) => (
+      <MenuItem
+        key={`${tank.wH_Name_Tank_Name}-${index}`}
+        value={tank.wH_Name_Tank_Name
+          ?.replaceAll("|", ",")
+          ?.split(",")?.[0]}
+      >
+        {tank.wH_Name_Tank_Name
+          ?.replaceAll("|", ",")
+          ?.split(",")?.[0]}
+      </MenuItem>
+    ))
+  )}
+
+
                              {/* <MenuItem disabled value={"Select"}>Please Select</MenuItem>
                              {alhabetelysort(vessalData?.tank,"view_List").map((data,index)=>(
                               <MenuItem key={`${data?.view_List}${index}`}  value={data?.view_List}>{data?.view_List}</MenuItem>
@@ -521,6 +542,7 @@ export default function LogicRequestForm() {
                               {vessalData.length !== 0 && <FormControl variant="standard" fullWidth size='small' margin="normal" error={vessalInfo.wH_NAMEError}>
                              <InputLabel id="demo-simple-select-label">WareHouse Name</InputLabel>
                              <Select 
+                             disabled={!vessalInfo.be_No}
                             label="WareHouse Name"
                             value={vessalInfo.wH_NAME }
                             onChange={(e)=>{
@@ -533,7 +555,25 @@ export default function LogicRequestForm() {
                               }
                               setVessalInfo((prev)=>({...prev,wH_NAME:value}))}}  >
                                 <MenuItem disabled value={"Select"}>Please Select</MenuItem>
-                                <MenuItem value={"whare"}>whare</MenuItem>
+                                {/* <MenuItem value={"whare"}>whare</MenuItem> */}
+{vessalData[0]?.v_BE
+  .filter(item => item.bl === vessalInfo.be_No)
+  .flatMap(item =>
+    (item.wH_Name_Tank_Name || []).map((tank, index) => (
+      <MenuItem
+        key={`${tank.wH_Name_Tank_Name}-${index}`}
+        value={tank.wH_Name_Tank_Name
+          ?.replaceAll("|", ",")
+          ?.split(",")?.[1]}
+      >
+        {tank.wH_Name_Tank_Name
+          ?.replaceAll("|", ",")
+          ?.split(",")?.[1]}
+      </MenuItem>
+    ))
+  )}
+
+
                              {/* <MenuItem disabled value={"Select"}>Please Select</MenuItem>
                              {alhabetelysort(vessalData?.wH_NAME,"view_List").map((data,index)=>(
                               <MenuItem key={`${data?.view_List}${index}`}  value={data?.view_List}>{data?.view_List}</MenuItem>
@@ -629,22 +669,23 @@ export default function LogicRequestForm() {
                   onChange={(e) => {
                     const newFields = [...fields];
                     const value = e.target.value;
-
+                    
+                    newFields[index].quantity = value;
+                    setFields(newFields);
+                    const totalQty = newFields.reduce((sum, item) => sum + Number(item.quantity || 0), 0);
                     if (value === "" || Number(value) === 0) {
                       newFields[index].quantityError = "Quantity is required";
                     } else if (Number(value) < 0) {
                       newFields[index].quantityError =
                         "Quantity cannot be negative";
-                    }else if(Number(value) > balQut) {
+                    }else if(totalQty >= sodata?.bal_Qty) {
                       newFields[index].quantityError =
-                        "Quantity cannot be greater than bal Qut";
+                        `Total quantity cannot be greater than ${sodata?.bal_Qty}`;
                     }
                     else {
                       newFields[index].quantityError = "";
                     }
-
-                    newFields[index].quantity = value;
-                    setFields(newFields);
+                  setFields(newFields);
                   }}
                 />
               </Box>
@@ -711,13 +752,21 @@ export default function LogicRequestForm() {
               Cancel
             </Button>
             <Button
-              sx={{ textTransform: "capitalize" }}
-              variant="contained"
-              color="success"
-              type="submit"
-            >
-              Submit
-            </Button>
+  sx={{ textTransform: "capitalize" }}
+  variant="contained"
+  color="success"
+  type="submit"
+  disabled={loader}
+>
+  {loader ? (
+    <CircularProgress
+      size={24}
+      color="inherit"
+    />
+  ) : (
+    "Submit"
+  )}
+</Button>
           </Stack>
         </Paper>
       </form>

@@ -15,7 +15,7 @@ const tableHeaders = [
   "Vehicle Name",
   "Estimated Quantity",
   "Actual Qty",
-  "Vessal Name",
+  "Voyage name",
   "BOE No.",
   "Port Name",
   "Transporter Name",
@@ -146,7 +146,7 @@ export default function Logisticlist() {
           };
   return (
     <React.Fragment>
-     <CustomPageHeader pageHeaderText="Vehicle Pull"/>
+     <CustomPageHeader pageHeaderText="Vehicle Pool"/>
       <Paper sx={{ p: 2 }} elevation={0}>
       <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
