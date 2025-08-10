@@ -15,7 +15,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditSquareIcon from '@mui/icons-material/EditSquare';
 import { authAxios } from '../../../../utils/authAxios';
 import CustomeAlerts from '../../../../commonComponent/CustomeAlert/CustomeAlert';
-import {TankDeleteapi, vessailBE_Detail_List, VesselDataBEapi, VesselEditTankapi } from '../../../../Config/Api';
+import {TankDeleteapi, vessailBE_Detail_List, VesselDataBEapi, VesselEditTankapi ,ExbodDeleteapi,VesselEditExbodeapi } from '../../../../Config/Api';
 import formatDateToUS from '../../../../utils/DateFormate';
 // import formatDateToUS from '../../../../utils/DateFormate';
 
@@ -215,7 +215,7 @@ x_BE_ID,xbE_Qty,xbE_NO
    setBillEntry(xbE_NO)
      } 
      function handleSaveEdit(){
-                  authAxios.post(VesselEditTankapi,{
+                  authAxios.post(VesselEditExbodeapi,{
        user_id: userId,
        BE_No:dataInfo?.BlNo,
        XBE_NO: Billentry,
@@ -245,7 +245,7 @@ x_BE_ID,xbE_Qty,xbE_NO
                                          });
                }  
                function handleDelete(row){
-                            authAxios.post(TankDeleteapi,{
+                            authAxios.post(ExbodDeleteapi,{
                  "user_id": userId,
                  "X_BE_ID": row.x_BE_ID})
                  .then(res => { if (res.data.massage == "Update Done") {
