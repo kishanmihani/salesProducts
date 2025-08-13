@@ -24,14 +24,16 @@ import CustomeAlerts from "../../../commonComponent/CustomeAlert/CustomeAlert";
 import { vessalDataListapi, Vessel_Edit_Data, VesselDataBLapi} from "../../../Config/Api";
 import { useLocation, useNavigate, useParams } from "react-router";
 import { useSelector } from 'react-redux';
+import ChaDropDown from "../../../commonComponent/ChaDropDown/ChaDropDown";
+import VessalNameDropDown from "../../../commonComponent/VessalNameDropDown/VessalNameDropDown";
 export default function VessalRequestForm() {
   const BlId=useId()
   const { id } = useParams();
   const param = useLocation();
   const editVessal = useSelector(state => state?.editVessal?.data);
-  const [vessalName, setVessalName] = useState("");
+  const [vessalName, setVessalName] = useState("Select");
   const [vessalNameError, setVessalNameError] = useState(false);
-  const [chaName, setChaName] = useState("");
+  const [chaName, setChaName] = useState("Select");
   const [chaNameError, setChaNameError] = useState(false);
   const [vessalNumber, setVessalNumber] = useState("");
   const navigate = useNavigate();
@@ -194,10 +196,10 @@ export default function VessalRequestForm() {
     
     let hasError = false;
     
-    if (vessalName === "" || vessalName === undefined) {
+    if (vessalName === "Select" || vessalName === undefined) {
       setVessalNameError(true);
       hasError = true;
-    } else if (vessalName !== "") {
+    } else if (vessalName !== "Select") {
       setVessalNameError(false);
     }
     if (dischargeDate == "" || dischargeDate == null) {
@@ -207,10 +209,10 @@ export default function VessalRequestForm() {
       setDischargeDateError(false);
       // hasError =false;
     }
-    if (chaName === "" || chaName === undefined) {
+    if (chaName === "Select" || chaName === undefined) {
       setChaNameError(true);
       hasError = true;
-    } else if (chaName !== "") {
+    } else if (chaName !== "Select") {
       setChaNameError(false);
     }
 
@@ -693,10 +695,10 @@ authAxios.post(Vessel_Edit_Data,JSON.stringify(data))
   }]);//
   }
   function handleReset() {
-     setVessalName("");
+     setVessalName("Select");
   setVessalNameError(false);
 
-  setChaName("");
+  setChaName("Select");
   setChaNameError(false);
 
   setVessalNumber("");
@@ -759,10 +761,10 @@ authAxios.post(Vessel_Edit_Data,JSON.stringify(data))
   const validateFields = (field, index) => {
     const newFields =editBeData?.isEdit == true ? [...editfields] : [...fields];
     let isValid = true;
-    if (vessalName === "") {
+    if (vessalName === "Select") {
       setVessalNameError(true);
       isValid = false;
-    } else if (vessalName !== "") {
+    } else if (vessalName !== "Select") {
       setVessalNameError(false);
     }
     if (dischargeDate == "" || dischargeDate == null) {
@@ -772,10 +774,10 @@ authAxios.post(Vessel_Edit_Data,JSON.stringify(data))
       setDischargeDateError(false);
       // hasError =false;
     }
-    if (chaName === "") {
+    if (chaName === "Select") {
       setChaNameError(true);
       isValid = false;
-    } else if (chaName !== "") {
+    } else if (chaName !== "Select") {
       setChaNameError(false);
     }
 
@@ -960,19 +962,12 @@ id
               direction={{ xs: "column", md: "row" }}
               sx={{ p: 0, pb: 0 }}
             >
-              <TextField
-                fullWidth
-                size="small"
-                margin="normal"
-                id="VessalName"
-                disabled={editBeData?.isEdit === true ? true : false}
-                name="VessalName"
-                type="text"
-                label="Voyage name"
-                value={vessalName}
-                onChange={vessalNameChange}
-                error={vessalNameError}
-                helperText={vessalNameError && "Voyage name is required"}
+              <VessalNameDropDown 
+              vessalName={vessalName} setVessalName={setVessalName}
+              errorsVessalName={vessalNameError}
+              setErrorsVessalName={setVessalNameError} variant="outlined"
+              NotIsList={false}label="Vogaye Name"
+              disabled={editBeData?.isEdit === true ? true : false}  
               />
               <TextField
                 fullWidth
@@ -1010,20 +1005,18 @@ id
                   />
                 </LocalizationProvider>
               </FormControl>
-              <TextField
-                fullWidth
-                size="small"
-                margin="normal"
-                id="chaName"
-                disabled={editBeData?.isEdit === true ? true : false}
-                name="ChaName"
-                type="text"
-                label="Cha Name"
-                value={chaName}
-                onChange={ChaNameChange}
-                error={chaNameError}
-                helperText={chaNameError && "Cha Name is required"}
-              />
+              
+              <ChaDropDown 
+  cha={chaName}
+  setCha={setChaName}
+  errorsCha={chaNameError} 
+  setErrorsCha={setChaNameError}
+  variant="outlined"
+  NotIsList={false}
+  label="Cha Name"
+  disabled={!!editBeData?.isEdit}
+/>
+
             </Stack>
           </Box>
           {/* <Stack></Stack> */}

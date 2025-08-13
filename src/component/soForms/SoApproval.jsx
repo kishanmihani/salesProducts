@@ -166,6 +166,7 @@ function SodataRow({ data }) {
               borderRadius: 6,
               textTransform: 'capitalize',
             }}
+            disabled={data?.v_flg == "0" ? false  : true}
             color="success"
             onClick={() => AddVehicle(data)}
           >

@@ -109,10 +109,7 @@ export default function LogicRequestForm() {
         setVessalInfo((prev) => ({ ...prev, be_NoError: true }));
         hasError = true;
       }
-      // if (vessalInfo.bl_No == "Select") {
-      //   setVessalInfo((prev) => ({ ...prev, bl_NoError: true }));
-      //   hasError = true;
-      // }
+      
       if (vessalInfo.tank == "Select") {
         setVessalInfo((prev)=>({...prev,tankError:true }));
         // setErrorsTank(true);
@@ -181,6 +178,7 @@ export default function LogicRequestForm() {
           Produce_Name: selectedProduct,
           Teminal_NAME:vessalInfo?.tank.replaceAll("|", ",").split(",")?.[0],
           BE_No: vessalInfo.be_No,
+          Xboe:vessalInfo.XBoe,
           So_No: sodata?.sO_N0,
           BL_No: vessalInfo.be_No.replaceAll("|", ",").split(",")?.[0],
           Do_No:

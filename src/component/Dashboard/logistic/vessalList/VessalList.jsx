@@ -15,6 +15,8 @@ import { a11yProps, CustomTabPanel } from '../../../commonComponent/CustomTabPan
 import { useNavigate } from 'react-router';
 import { setEditVessalArray } from '../../../features/vessalDetails';
 import { useDispatch } from 'react-redux';
+import ChaDropDown from '../../../commonComponent/ChaDropDown/ChaDropDown';
+import VessalNameDropDown from '../../../commonComponent/VessalNameDropDown/VessalNameDropDown';
 const Table_headVessal=["vessal_Name","Voyage No No","discarge Date","chA Name","Edit","Vessal Details"]
 const TblHead_vessalDetails = ["produce Name","port Name","BL Name","Bl No","BL Date","BL Qty","BE Name","BOE No","BOE Date","BE Gross Qty","BE Net Qty","Be OTR Qty","Be Details"]
 const TblHead_Tank = ["bE_NO","terminal_Name","tank_name","net_Quantity"]
@@ -24,8 +26,10 @@ export default function VessalList() {
    const [vessalLoading, setVessalLoading] = useState(true);
     const [vessaldata,setVessaldata] = useState([]);
     const [selectedDate, setSelectedDate] = useState(null);
-    const [selectedName, setSelectedName] = useState(null);
-    const [selectedChaName, setSelectedChaName] = useState(null);
+    const [selectedName, setSelectedName] = useState("Select");
+    const [selectedChaName, setSelectedChaName] = useState("Select");
+    const [chaNameError, setChaNameError] = useState(false);
+    const [vessalNameError, setVessalNameError] = useState(false);
     useEffect(()=>{
       if(vessalLoading == true){
      authAxios.post(Vessel_Detail,JSON.stringify({
@@ -42,61 +46,73 @@ export default function VessalList() {
    
   const filteredPatients = vessaldata?.filter((patient) => {
        const matchDate = !selectedDate || dayjs(patient?.discarge_Date)?.isSame(selectedDate, 'day');
-       const matchVessalname = !selectedName || patient?.vessal_Name === selectedName;
-       const matchchA_Name = !selectedChaName || patient?.chA_Name === selectedChaName;
+       const matchVessalname = !selectedName ||selectedName === "Select" || patient?.vessal_Name === selectedName;
+       const matchchA_Name = !selectedChaName || selectedChaName === "Select" || patient?.chA_Name === selectedChaName;
+
     return matchDate && matchVessalname && matchchA_Name ;
   });
   const handleClear = () => {
     setSelectedDate(null);
-    setSelectedName(null);
-    setSelectedChaName(null);
+    setSelectedName("Select");
+    setSelectedChaName("Select");
     // setSelectedVeNo(null);
   };
   return (
     <React.Fragment>
 
          <CustomPageHeader pageHeaderText='Vessal List' ></CustomPageHeader>
-         <Stack spacing={2} sx={{p:2}}>
-            <Stack spacing={2} sx={{py:2,display:"flex",}}>
-           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 ,flexDirection: {
-    xs: 'column',  
-    md: 'row',  
-  },}} >
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <DemoContainer  components={['DatePicker']}>
-          <DatePicker
-            label="Filter by discharge Date"
-            value={selectedDate}
-            onChange={(newValue) => setSelectedDate(newValue)}
-            format="MM/DD/YYYY"
-            slotProps={{ textField: { size: 'small',variant: 'outlined',
-      fullWidth: true, } }}
-          />
-        </DemoContainer>
-         </LocalizationProvider>
-         <TextField type='text'sx={{mt:1}}
-         size='small'
-         value={selectedName}
-         label="Voyage name"
-         onChange={(e)=>{
-          let value = e.currentTarget.value;
-          setSelectedName(value)
-         }} />
-         <TextField type='text'sx={{mt:1}}
-         size='small'
-         value={selectedChaName}
-         label="Cha Name"
-         onChange={(e)=>{
-          let value = e.currentTarget.value;
-          setSelectedChaName(value)
-         }} />
-         
-        <Button sx={{mt:1}} onClick={handleClear} variant="outlined">
-          Clear Date
-        </Button>
-        
-      </Box>
-            </Stack>
+         <Stack spacing={2} sx={{ p: 2 }}>
+  <Stack
+    spacing={2}
+    direction={{ xs: 'column', md: 'row' }}
+    alignItems="center"
+  >
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <DemoContainer components={['DatePicker']} sx={{ width: { xs: '100%', md: '25%' } }}>
+        <DatePicker
+          label="Filter by discharge Date"
+          value={selectedDate}
+          onChange={(newValue) => setSelectedDate(newValue)}
+          format="MM/DD/YYYY"
+          slotProps={{
+            textField: { size: 'small', variant: 'outlined', fullWidth: true }
+          }}
+        />
+      </DemoContainer>
+    </LocalizationProvider>
+
+    <Box sx={{ width: { xs: '100%', md: '25%' } }} pt={1}>
+      <VessalNameDropDown
+        vessalName={selectedName}
+        setVessalName={setSelectedName}
+        errorsVessalName={vessalNameError}
+        setErrorsVessalName={setVessalNameError}
+        variant="outlined"
+        NotIsList={false}
+        label="Vogaye Name"
+      />
+    </Box>
+
+    <Box sx={{ width: { xs: '100%', md: '25%' } }} pt={1}>
+      <ChaDropDown
+        cha={selectedChaName}
+        setCha={setSelectedChaName}
+        errorsCha={chaNameError}
+        setErrorsCha={setChaNameError}
+        variant="outlined"
+        label="Cha Name"
+      />
+    </Box>
+
+    <Box sx={{ width: { xs: '100%', md: 'auto' } }}>
+      <Button onClick={handleClear} variant="outlined" fullWidth>
+        Clear Date
+      </Button>
+    </Box>
+  </Stack>
+{/* </Stack> */}
+
+
               {vessalLoading && <p>Loading . . .</p>}
             <TableContainer component={Paper} style={{overflow:"auto"}}>
                    <Table aria-label="collapsible table" >

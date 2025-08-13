@@ -100,7 +100,7 @@ export default function TankForm({ open,
               "User_Id": userId,
               "Vessal_Name": dataInfo?.vessalName,
               "Vessal_No": dataInfo?.vessalNumber,
-              "BE_No": dataInfo.BlNo,
+              "BE_No": dataInfo.BoeNo,
               "Tank": selectedTank,
               "Terminal_Name":selectedWhereHouse ,
               "Quantity": quantity
@@ -132,7 +132,7 @@ export default function TankForm({ open,
             // alert(dataInfo.isEdit)
             authAxios.post(VesselEditTankapi,{
   "user_id": userId,
-  "BE_No":dataInfo?.BlNo,
+  "BE_No":dataInfo?.BoeNo,
   "Terminal_Name": selectedWhereHouse,
   "Tank_name": selectedTank,
   "Net_Quantity": quantity,
@@ -182,20 +182,20 @@ export default function TankForm({ open,
               "User_Id": userId,
               "Vessal_Name": dataInfo?.vessalName,
               "Vessal_No": dataInfo?.vessalNumber,
-              "BE_No": dataInfo.BlNo,
+              "BE_No": dataInfo.BoeNo,
             }
             authAxios.post(vessailBE_Detail_List,datasend)
             .then(res =>{ setTanklist(res?.data?.tanK_BE);setTanklistCheck(true);})
             .catch(err => console.log(err))
   }
-}, [dataInfo.BlNo, dataInfo.vessalName, dataInfo.vessalNumber, tanklistCheck, userId]);
+}, [dataInfo.BoeNo, dataInfo.vessalName, dataInfo.vessalNumber, tanklistCheck, userId]);
           // },[ tanklistCheck])
        const  Tanklist= async () =>{
             let datasend={
               "User_Id": userId,
               "Vessal_Name": dataInfo?.vessalName,
               "Vessal_No": dataInfo?.vessalNumber,
-              "BE_No": dataInfo.BlNo,
+              "BE_No": dataInfo.BoeNo,
             }
             authAxios.post(vessailBE_Detail_List,datasend)
             .then(res => setTanklist(res?.data?.tanK_BE))
@@ -215,7 +215,7 @@ tank_ID,net_Quantity,tank_name
          function handleSaveEdit(){
              authAxios.post(VesselEditTankapi,{
   "user_id": userId,
-  "BE_No":dataInfo?.BlNo,
+  "BE_No":dataInfo?.BoeNo,
   "Terminal_Name": selectedWhereHouse,
   "Tank_name": selectedTank,
   "Net_Quantity": quantity,
@@ -306,7 +306,7 @@ tank_ID,net_Quantity,tank_name
                           name="name"
                           label="BOE No"
                           disabled={true}
-                          value={dataInfo?.BlNo}
+                          value={dataInfo?.BoeNo}
                           type="text"
                           fullWidth
                           variant="standard"

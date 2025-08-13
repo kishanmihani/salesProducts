@@ -36,7 +36,7 @@ export default function BlDataItems({
   edit,//
   editlabel
 }) {
-  const [dataInfo,setDataInfo] = useState({BlNo:0,NetQuantity:0,grossQuantity:0,vessalName:0, vessalNumber:0})
+  const [dataInfo,setDataInfo] = useState({BoeNo:0,NetQuantity:0,grossQuantity:0,vessalName:0, vessalNumber:0})
   const [isValid,setIsValid] = useState(false);
   const [open, setOpen] = useState(false);
   const [userId] = useState(JSON.parse(sessionStorage.getItem("userInfo"))?.id);
@@ -44,7 +44,7 @@ export default function BlDataItems({
   const verify = (e) => {
     let value=e.target.value;
     setIsValid(validateFields(field, index));
-    setDataInfo({BlNo:field.BLNo,NetQuantity:field.quantity,grossQuantity:field.grossQuantity,otrQut:field.otrQut,vessalName:vessalInfo[0], vessalNumber:vessalInfo[1]})
+    setDataInfo({BoeNo:field.billOfEntry,NetQuantity:field.quantity,grossQuantity:field.grossQuantity,otrQut:field.otrQut,vessalName:vessalInfo[0], vessalNumber:vessalInfo[1]})
     if(isValid){
       if(value === "X-Bond"){
         setXbondOpen(true)

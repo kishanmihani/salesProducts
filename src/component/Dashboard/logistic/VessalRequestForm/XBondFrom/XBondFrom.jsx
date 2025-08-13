@@ -108,7 +108,7 @@ export default function XBondForm({ open,
               "User_Id": userId,
              "Vessal_Name": dataInfo?.vessalName,
               "Vessal_No": dataInfo?.vessalNumber,
-              "BE_No": dataInfo.BlNo,
+              "BE_No": dataInfo.BoeNo,
               "XBE_date": selectedDate,
               "XBE_NO": Billentry,
               "XBE_Qty": quantity
@@ -139,7 +139,7 @@ export default function XBondForm({ open,
            else if(!hasError &&  dataInfo?.isEdit){
 authAxios.post(VesselEditTankapi,{
   "user_id": userId,
-  "BE_No":dataInfo?.BlNo,
+  "BE_No":dataInfo?.BoeNo,
   "XBE_date": selectedDate,
   "XBE_NO": Billentry,
   "Net_Quantity": quantity,
@@ -179,7 +179,7 @@ authAxios.post(VesselEditTankapi,{
                                   "User_Id": userId,
                                   "Vessal_Name": dataInfo?.vessalName,
                                   "Vessal_No": dataInfo?.vessalNumber,
-                                  "BE_No": dataInfo.BlNo,
+                                  "BE_No": dataInfo.BoeNo,
                                 }
                                 authAxios.post(vessailBE_Detail_List,datasend)
                                 .then(res =>{ setXBondlist(res?.data?.xbE_BE);setXBondlistCheck(true)})
@@ -194,13 +194,13 @@ authAxios.post(VesselEditTankapi,{
                               "User_Id": userId,
                               "Vessal_Name": dataInfo?.vessalName,
                               "Vessal_No": dataInfo?.vessalNumber,
-                              "BE_No": dataInfo.BlNo,
+                              "BE_No": dataInfo.BoeNo,
                             }
                             authAxios.post(vessailBE_Detail_List,datasend)
                             .then(res => setXBondlist(res?.data?.xbE_BE))
                             .catch(err => console.log(err))
                   }
-                }, [dataInfo.BlNo, dataInfo.vessalName, dataInfo.vessalNumber, xBondlistCheck, userId]);
+                }, [dataInfo.BoeNo, dataInfo.vessalName, dataInfo.vessalNumber, xBondlistCheck, userId]);
     // bE_No: "99", xbE_date: "5/13/2025 12:00:00 AM", xbE_NO: "yy", xbE_Qty: "2", x_BE_ID: "21"
      function handleEdit(row){
               console.log(row)
@@ -217,7 +217,7 @@ x_BE_ID,xbE_Qty,xbE_NO
      function handleSaveEdit(){
                   authAxios.post(VesselEditExbodeapi,{
        user_id: userId,
-       BE_No:dataInfo?.BlNo,
+       BE_No:dataInfo?.BoeNo,
        XBE_NO: Billentry,
        XBE_date: selectedDate,
        XBE_Qty: quantity,
@@ -308,7 +308,7 @@ x_BE_ID,xbE_Qty,xbE_NO
                           name="name"
                           disabled={true}
                           label="BOE No"
-                          value={dataInfo?.BlNo}
+                          value={dataInfo?.BoeNo}
                           type="text"
                           fullWidth
                           variant="standard"
