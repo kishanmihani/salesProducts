@@ -37,7 +37,7 @@ export default function LogicRequestForm() {
     be_No: "Select",
     be_NoError: false,
     wH_NAME: "Select",
-    wH_NAMEError: false,
+    XBoeError: false,
     tank: "Select",
     tankError: false,
     bl_No: "8",
@@ -118,8 +118,8 @@ export default function LogicRequestForm() {
         // setErrorsTank(true);
         hasError = true;
       }
-      if (vessalInfo.wH_NAME == "Select") {
-        setVessalInfo((prev)=>({...prev,wH_NAMEError:true }));
+      if (vessalInfo.XBoe == "Select") {
+        setVessalInfo((prev)=>({...prev,XBoeError:true }));
         // setErrorsWhereHouse(true);
         hasError = true;
       }
@@ -177,12 +177,12 @@ export default function LogicRequestForm() {
           Remark: remark,
           Vessel_Name: vessalName.replaceAll("|", ",").split(",")?.[0],
           Vessel_No: vessalName.replaceAll("|", ",").split(",")?.[1],
-          Tank_name:vessalInfo.tank,
+          Tank_name:vessalInfo.tank.replaceAll("|", ",").split(",")?.[0],
           Produce_Name: selectedProduct,
-          Teminal_NAME:vessalInfo?.wH_NAME,
+          Teminal_NAME:vessalInfo?.tank.replaceAll("|", ",").split(",")?.[0],
           BE_No: vessalInfo.be_No,
           So_No: sodata?.sO_N0,
-          BL_No: "8",
+          BL_No: vessalInfo.be_No.replaceAll("|", ",").split(",")?.[0],
           Do_No:
             arr.quantity +
             "/" +
@@ -237,7 +237,7 @@ export default function LogicRequestForm() {
       be_No: "Select",
       be_NoError: false,
       wH_NAME: "Select",
-      wH_NAMEError: false,
+      XBoeError: false,
       tank: "Select",
       tankError: false,
       bl_No: "Select",
@@ -287,7 +287,7 @@ export default function LogicRequestForm() {
           be_No: "Select",
           be_NoError: false,
           wH_NAME: "Select",
-          wH_NAMEError: false,
+          XBoeError: false,
           tank: "Select",
           tankError: false,
           bl_No: "Select",
@@ -381,7 +381,7 @@ export default function LogicRequestForm() {
             >
               <InputLabel id="demo-simple-select-label">Voyage name</InputLabel>
               <Select
-                label="Voyage name"
+                label="Voyage"pl
                 value={vessalName}
                 onChange={(e) => VessalChange(e.target.value)}
               >
@@ -393,12 +393,12 @@ export default function LogicRequestForm() {
                     key={data.vesselName_List}
                     value={data.vesselName_List}
                   >
-                    {data.vesselName_List.replaceAll("|", ",").split(",")[0]}
+                    {data.vesselName_List}
                   </MenuItem>
                 ))}
               </Select>
               {vessalNameError && (
-                <FormHelperText>Voyage name is required</FormHelperText>
+                <FormHelperText>Voyage is required</FormHelperText>
               )}
             </FormControl>
             {vessalData.length !== 0 && (
@@ -428,7 +428,7 @@ export default function LogicRequestForm() {
                   </MenuItem>
                   {vessalData[0]?.v_BE?.map((item, index) => (
                     <MenuItem key={`${item.bl}${index}`} value={item?.bl}>
-                      {item?.bl.replaceAll("|", ",").split(",")?.[1]}
+                      {item?.bl}
                     </MenuItem>
                   ))}
                 </Select>
@@ -500,7 +500,7 @@ export default function LogicRequestForm() {
               onChange={(e) => setRemark(e.target.value)}
             />
             {vessalData.length !== 0 && <FormControl variant="standard" fullWidth size='small' margin="normal" error={vessalInfo.tankError}>
-                             <InputLabel id="demo-simple-select-label">tank Name</InputLabel>
+                             <InputLabel id="demo-simple-select-label">tank | WhareHouse name</InputLabel>
                             <Select 
                             disabled={!vessalInfo.be_No}
                             label="tank Name"
@@ -520,13 +520,9 @@ export default function LogicRequestForm() {
     (item.wH_Name_Tank_Name || []).map((tank, index) => (
       <MenuItem
         key={`${tank.wH_Name_Tank_Name}-${index}`}
-        value={tank.wH_Name_Tank_Name
-          ?.replaceAll("|", ",")
-          ?.split(",")?.[0]}
+        value={tank.wH_Name_Tank_Name}
       >
-        {tank.wH_Name_Tank_Name
-          ?.replaceAll("|", ",")
-          ?.split(",")?.[0]}
+        {tank.wH_Name_Tank_Name}
       </MenuItem>
     ))
   )}
@@ -539,47 +535,43 @@ export default function LogicRequestForm() {
                             </Select> 
                             {vessalInfo.tankError && <FormHelperText>tank is required</FormHelperText>}
                             </FormControl>}
-                              {vessalData.length !== 0 && <FormControl variant="standard" fullWidth size='small' margin="normal" error={vessalInfo.wH_NAMEError}>
-                             <InputLabel id="demo-simple-select-label">WareHouse Name</InputLabel>
+                             {vessalData.length !== 0 && <FormControl variant="standard" fullWidth size='small' margin="normal" error={vessalInfo.XBoeError}>
+                             <InputLabel id="demo-simple-select-label">Xboe name</InputLabel>
                              <Select 
                              disabled={!vessalInfo.be_No}
-                            label="WareHouse Name"
-                            value={vessalInfo.wH_NAME }
+                            label="Xboe name"
+                            value={vessalInfo.XBoe }
                             onChange={(e)=>{
                               let value=e.target.value;
                               if(value == "Select"){
-                                setVessalInfo((prev)=>({...prev,wH_NAMEError:true}))
+                                setVessalInfo((prev)=>({...prev,XBoeError:true}))
                               }
                               else{
-                                setVessalInfo((prev)=>({...prev,wH_NAMEError:false}))
+                                setVessalInfo((prev)=>({...prev,XBoeError:false}))
                               }
                               setVessalInfo((prev)=>({...prev,wH_NAME:value}))}}  >
                                 <MenuItem disabled value={"Select"}>Please Select</MenuItem>
                                 {/* <MenuItem value={"whare"}>whare</MenuItem> */}
-{vessalData[0]?.v_BE
+ {vessalData[0]?.v_BE
   .filter(item => item.bl === vessalInfo.be_No)
   .flatMap(item =>
-    (item.wH_Name_Tank_Name || []).map((tank, index) => (
+    (item.exboe || []).map((tank, index) => (
       <MenuItem
-        key={`${tank.wH_Name_Tank_Name}-${index}`}
-        value={tank.wH_Name_Tank_Name
-          ?.replaceAll("|", ",")
-          ?.split(",")?.[1]}
+        key={`${tank.exboe}-${index}`}
+        value={tank.exboe}
       >
-        {tank.wH_Name_Tank_Name
-          ?.replaceAll("|", ",")
-          ?.split(",")?.[1]}
+        {tank.exboe}
       </MenuItem>
     ))
   )}
 
 
-                             {/* <MenuItem disabled value={"Select"}>Please Select</MenuItem>
-                             {alhabetelysort(vessalData?.wH_NAME,"view_List").map((data,index)=>(
+                              {/* <MenuItem disabled value={"Select"}>Please Select</MenuItem>
+                             {(vessalData?.wH_NAME,"view_List").map((data,index)=>(
                               <MenuItem key={`${data?.view_List}${index}`}  value={data?.view_List}>{data?.view_List}</MenuItem>
-                            ))}  */}
-                             </Select>
-                            {vessalInfo.wH_NAMEError && <FormHelperText>WareHouse is required</FormHelperText>}
+                            ))}   */}
+                             </Select> 
+                            {vessalInfo.XBoeError && <FormHelperText>Xboe name required</FormHelperText>}
                             </FormControl> } 
             {/* {vessalData.length !== 0 && (
               <TankDropDownTwo
