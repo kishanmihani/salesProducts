@@ -15,7 +15,11 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditSquareIcon from '@mui/icons-material/EditSquare';
 import { authAxios } from '../../../../utils/authAxios';
 import CustomeAlerts from '../../../../commonComponent/CustomeAlert/CustomeAlert';
+<<<<<<< HEAD
+import {TankDeleteapi, vessailBE_Detail_List, VesselDataBEapi, VesselEditTankapi ,ExbodDeleteapi,VesselEditExbodeapi } from '../../../../Config/Api';
+=======
 import {ExbodDeleteapi, TankDeleteapi, vessailBE_Detail_List, VesselDataBEapi, VesselEditTankapi } from '../../../../Config/Api';
+>>>>>>> 7632dcf77c95a5f916daa1315ed296ca8ae75333
 import formatDateToUS from '../../../../utils/DateFormate';
 // import formatDateToUS from '../../../../utils/DateFormate';
 
@@ -215,7 +219,7 @@ x_BE_ID,xbE_Qty,xbE_NO
    setBillEntry(xbE_NO)
      } 
      function handleSaveEdit(){
-                  authAxios.post(VesselEditTankapi,{
+                  authAxios.post(VesselEditExbodeapi,{
        user_id: userId,
        BE_No:dataInfo?.BlNo,
        XBE_NO: Billentry,
