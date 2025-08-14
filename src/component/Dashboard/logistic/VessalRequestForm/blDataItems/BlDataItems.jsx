@@ -200,9 +200,9 @@ const calculatePercentage = () => {
                 const newFields = [...fields];
                 const value = e.target.value;
 
-                if (value === "" || Number(value) === 0) {
+                if (value === "" || value === 0) {
                   newFields[index].BLNoError = "BL No is required";
-                } else if (Number(value) < 0) {
+                } else if (value < 0) {
                   newFields[index].BLNoError = "BL No cannot be negative";
                 } else {
                   newFields[index].BLNoError = "";

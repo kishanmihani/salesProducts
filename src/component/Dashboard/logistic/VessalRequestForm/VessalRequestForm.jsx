@@ -245,7 +245,7 @@ export default function VessalRequestForm() {
         if (field.BLNo === "" || Number(field.BLNo) === 0) {
           updatedField.BLNoError = "BL .No is required";
           hasError = true;
-        } else if (Number(field.BLNo) < 0) {
+        } else if (field.BLNo < 0) {
           updatedField.BLNoError = "BL .No cannot be negative";
           hasError = true;
         } else {
@@ -334,10 +334,10 @@ export default function VessalRequestForm() {
           updatedEditField.shippingNameError = "";
         }
 
-        if (field.BLNo === "" || Number(field.BLNo) === 0) {
+        if (field.BLNo === "" || field.BLNo === 0) {
           updatedEditField.BLNoError = "BL .No is required";
           hasError = true;
-        } else if (Number(field.BLNo) < 0) {
+        } else if (field.BLNo < 0) {
           updatedEditField.BLNoError = "BL .No cannot be negative";
           hasError = true;
         } else {
@@ -429,10 +429,10 @@ export default function VessalRequestForm() {
           updatedField.shippingNameError = "";
         }
 
-        if (field.BLNo === "" || Number(field.BLNo) === 0) {
+        if (field.BLNo === "" || field.BLNo === 0) {
           updatedField.BLNoError = "BL .No is required";
           hasError = true;
-        } else if (Number(field.BLNo) < 0) {
+        } else if (field.BLNo < 0) {
           updatedField.BLNoError = "BL .No cannot be negative";
           hasError = true;
         } else {
@@ -807,11 +807,11 @@ authAxios.post(Vessel_Edit_Data,JSON.stringify(data))
         }
   
         // BL No
-        if (!fieldItem.BLNo || Number(fieldItem.BLNo) <= 0) {
+        if (!fieldItem.BLNo || fieldItem.BLNo <= 0) {
           if (fieldItem.BLNo === "" || fieldItem.BLNo == null) {
   newFields[index].BLNoError = "BL No is required";
   isValid = false;
-} else if (Number(fieldItem.BLNo) < 0) {
+} else if (fieldItem.BLNo < 0) {
   newFields[index].BLNoError = "BL No cannot be negative";
   isValid = false;
 } else {
@@ -898,7 +898,7 @@ setEditFields([
   {
     shippingName: beData?.bl_Name,
     quantity: Number(beData?.bE_N_Qty),
-    BLNo: Number(beData?.bl_No),
+    BLNo:beData?.bl_No,
     blDate:beData?.bL_Date,
     billing:beData?.bE_Name,
     portName:beData?.port_Name,
@@ -913,7 +913,7 @@ setEditFields(() =>
   editVessal?.map(beData => ({
     shippingName: beData?.bl_Name,
     quantity: Number(beData?.bE_N_Qty),
-    BLNo: Number(beData?.bl_No),
+    BLNo: beData?.bl_No,
     blDate: beData?.bL_Date,
     billing: beData?.bE_Name,
     portName: beData?.port_Name,

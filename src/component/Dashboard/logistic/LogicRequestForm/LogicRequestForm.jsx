@@ -39,6 +39,7 @@ export default function LogicRequestForm() {
     wH_NAME: "Select",
     XBoeError: false,
     tank: "Select",
+    Xboe:"Select",
     tankError: false,
     bl_No: "8",
     bl_NoError: false,
@@ -115,7 +116,7 @@ export default function LogicRequestForm() {
         // setErrorsTank(true);
         hasError = true;
       }
-      if (vessalInfo.XBoe == "Select") {
+      if (vessalInfo.Xboe == "Select") {
         setVessalInfo((prev)=>({...prev,XBoeError:true }));
         // setErrorsWhereHouse(true);
         hasError = true;
@@ -178,7 +179,7 @@ export default function LogicRequestForm() {
           Produce_Name: selectedProduct,
           Teminal_NAME:vessalInfo?.tank.replaceAll("|", ",").split(",")?.[0],
           BE_No: vessalInfo.be_No,
-          Xboe:vessalInfo.XBoe,
+          Xboe:vessalInfo.Xboe,
           So_No: sodata?.sO_N0,
           BL_No: vessalInfo.be_No.replaceAll("|", ",").split(",")?.[0],
           Do_No:
@@ -238,6 +239,7 @@ export default function LogicRequestForm() {
       XBoeError: false,
       tank: "Select",
       tankError: false,
+      Xboe:"Select",
       bl_No: "Select",
       bl_NoError: false,
     });
@@ -287,6 +289,7 @@ export default function LogicRequestForm() {
           wH_NAME: "Select",
           XBoeError: false,
           tank: "Select",
+          Xboe:"Select",
           tankError: false,
           bl_No: "Select",
           bl_NoError: false,
@@ -538,7 +541,7 @@ export default function LogicRequestForm() {
                              <Select 
                              disabled={!vessalInfo.be_No}
                             label="Xboe name"
-                            value={vessalInfo.XBoe }
+                            value={vessalInfo.Xboe }
                             onChange={(e)=>{
                               let value=e.target.value;
                               if(value == "Select"){
@@ -547,7 +550,7 @@ export default function LogicRequestForm() {
                               else{
                                 setVessalInfo((prev)=>({...prev,XBoeError:false}))
                               }
-                              setVessalInfo((prev)=>({...prev,wH_NAME:value}))}}  >
+                              setVessalInfo((prev)=>({...prev,Xboe:value}))}}  >
                                 <MenuItem disabled value={"Select"}>Please Select</MenuItem>
                                 {/* <MenuItem value={"whare"}>whare</MenuItem> */}
  {vessalData[0]?.v_BE
