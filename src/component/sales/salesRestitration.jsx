@@ -43,6 +43,11 @@ export default function SalesRestitration() {
   const [selectedDelivery, setSelectedDelivery] = useState("Select");
   const [selectedRemark, setSelectedRemark] = useState("");
   const [selectedPayment, setSelectedPayment] = useState("Select");
+  const [advance, setAdvance] = useState({
+    percent: "",
+    value: "",
+  });
+  const [creditDays, setCreditDays] = useState("");
   const [selectedDiscountvalue, setSelectedDiscountvalue] = useState(0);
   const [selectedNetPrice, setSelectedNetPrice] = useState(0);
   const [selectedTransporter, setSelectedTransporter] = useState("Select");
@@ -50,9 +55,9 @@ export default function SalesRestitration() {
   const [selectTransporterName, setSelectTransporterName] = useState("");
   const [errors, setErrors] = useState({});
   const [userId] = useState(JSON.parse(sessionStorage.getItem("userInfo"))?.id);
-  const [submitDisabled,setSubmitDisabled] = useState(false);
+  const [submitDisabled, setSubmitDisabled] = useState(false);
   const [custAlert, setCustAlert] = useState(null);
-  const [loader,setLoader] = useState(false)
+  const [loader, setLoader] = useState(false);
   const navigate = useNavigate();
   const showSuccess = (data) => {
     setCustAlert({ type: "success", message: data });
@@ -64,8 +69,8 @@ export default function SalesRestitration() {
   useEffect(() => {
     const handler = setTimeout(() => {
       if (selectedBitumenPrice !== "" || selectedTransportation !== "") {
-        setSelectedBillingPrice(
-          () =>(( Number(selectedBitumenPrice) * 100 )/ 118).toFixed(2)
+        setSelectedBillingPrice(() =>
+          ((Number(selectedBitumenPrice) * 100) / 118).toFixed(2)
         );
       }
     }, 300);
@@ -77,9 +82,13 @@ export default function SalesRestitration() {
   useEffect(() => {
     const handler = setTimeout(() => {
       if (selectedBillingPrice !== "" || selectedBillingPrice !== 0) {
-        console.log(selectedBillingPrice , selectedTransportation)
+        console.log(selectedBillingPrice, selectedTransportation);
         setSelectedGST(
-          parseFloat(((Number(selectedBillingPrice) + Number(selectedTransportation)   )/100) * 18).toFixed(2)
+          parseFloat(
+            ((Number(selectedBillingPrice) + Number(selectedTransportation)) /
+              100) *
+              18
+          ).toFixed(2)
         );
       }
       if (
@@ -88,9 +97,11 @@ export default function SalesRestitration() {
         selectedGST !== 0 ||
         selectedGST !== ""
       ) {
-         setSelectedSellingPrice(() =>
+        setSelectedSellingPrice(() =>
           parseFloat(
-            Number(selectedBillingPrice) + Number(selectedGST) + Number(selectedTransportation)
+            Number(selectedBillingPrice) +
+              Number(selectedGST) +
+              Number(selectedTransportation)
           ).toFixed(2)
         );
       }
@@ -135,7 +146,7 @@ export default function SalesRestitration() {
       clearTimeout(handler);
     };
   }, [selectedSellingValue, selectedDiscountvalue]);
-  
+
   const resetForm = () => {
     setSelectedBilling("Select");
     setSelectOrderDate(null);
@@ -144,7 +155,7 @@ export default function SalesRestitration() {
     setSelectedProduct("Select");
     setSelectedCustomer("Select");
     setSelectedBitumenPrice(0);
-    setSelectedTransportation('');
+    setSelectedTransportation("");
     setSelectedBillingPrice(0);
     setSelectedGST(0);
     setSelectedSellingPrice(0);
@@ -160,17 +171,17 @@ export default function SalesRestitration() {
     setSelectTransporterName("");
   };
   async function formSubmithandler(event) {
-    setLoader(true)
+    setLoader(true);
     event.preventDefault();
-    setSubmitDisabled(true)
+    setSubmitDisabled(true);
     const formData = new FormData(event.currentTarget);
     const formJson = Object.fromEntries(formData.entries());
     let emptyFields = [];
     const newErrors = {};
-  
+
     for (let key in formJson) {
       const value = formJson[key];
-  
+
       if (key === "Remark") continue;
 
       if (value === "" || value === "Select") {
@@ -178,84 +189,129 @@ export default function SalesRestitration() {
         emptyFields.push(key);
         continue;
       }
-  
-      if (["Transportation", "Bitumen Price", "Discount", "Quntity"].includes(key)) {
+
+      if (
+        ["Transportation", "Bitumen Price", "Discount", "Quntity"].includes(key)
+      ) {
         if (parseFloat(value) < 0) {
           newErrors[key] = `${key} value must not be negative`;
         }
       }
-      if(["Bitumen Price","Quntity","Bitumen Price"].includes(key)){
+      if (["Bitumen Price", "Quntity", "Bitumen Price"].includes(key)) {
         if (parseFloat(value) == 0) {
           newErrors[key] = `${key} not be zero`;
         }
       }
-      if(['Transporter name'].includes(key)){
-        if(formJson?.['Transporter'] ==="Seller"){
-          if(key > 0 ){
+      if (["Transporter name"].includes(key)) {
+        if (formJson?.["Transporter"] === "Seller") {
+          if (key > 0) {
             newErrors[key] = `${key} name not be netative`;
           }
         }
       }
-    }
+       if (selectedPayment === "Advance Payment") {
+    // if (!formJson["Advance Value"] || parseFloat(formJson["Advance Value"]) <= 0) {
+    //   newErrors["Advance Value"] = "Advance Value must be greater than 0";
+    // }
     
+    // else if(parseFloat(formJson["Advance Value"]) === "" || parseFloat(formJson["Advance Value"]) === null || (formJson["Advance Value"]) === NaN ){
+    //   newErrors["Advance Value"] = "Advance Value is required";
+    // }
+    // debugger;
+    const advRaw = formJson["Advance Value"];
+const advVal = parseFloat(advRaw);
+
+if (!advRaw) {
+  // handles "", null, undefined
+  newErrors["Advance Value"] = "Advance payment value is required";
+} else if (isNaN(advVal)) {
+  newErrors["Advance Value"] = "Advance payment value must be a number";
+} else if (advVal < 0) {
+  newErrors["Advance Value"] = "Advance payment value cannot be less than 0";
+} else if (advVal === 0) {
+  newErrors["Advance Value"] = "Advance payment value cannot be 0";
+}
+
+  }
+
+  // ✅ Credit Payment validations
+  if (selectedPayment === "Credit Payment") {
+  const cdRaw = formJson["Credit Days"];
+  const cdVal = parseInt(cdRaw, 10);
+
+  if (!cdRaw) {
+    newErrors["Credit Days"] = "Credit Days is required";
+  } else if (isNaN(cdVal)) {
+    newErrors["Credit Days"] = "Credit Days must be a number";
+  } else if (cdVal < 0) {
+    newErrors["Credit Days"] = "Credit Days cannot be less than 0";
+  } else if (cdVal === 0) {
+    newErrors["Credit Days"] = "Credit Days cannot be 0";
+  }
+}
+    }
+
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
-        showError("Please fill required fields.")
-          
-         setSubmitDisabled(false)
-         setLoader(false)
-         return 
-    }
-  else if(emptyFields.length === 0){
-    const data = {
-      user_id: userId,
-      Company_Name: formJson["Billing name"],
-      Customer_Name: formJson["Customer name"],
-      Transport_Name: formJson["Transporter name"],
-      Transport_ON: formJson["Transporter"],
-      Port_Name: formJson["Port name"],
-      Delivery_Type: formJson["Delivery name"],
-      Payment_Type: formJson["Payment name"],
-      Product_Name: formJson["Product name"],
-      price: formJson["Bitumen Price"],
-      Transport: formJson["Transportation"],
-      Gst: formJson["GST 18%"],
-      Discount: formJson["Discount"],
-      Quantity: formJson["Quntity"],
-      Entry_Date: formJson["Order Date"],
-      Validity_Date: formJson["Validity Date"],
-      Remark: formJson["Remark"],
-    };
-  
-    try {
-      const res = await authAxios.post("BituRep/Api/Account/send_Sodata", data);
-  
-      if (res.data.message === "Email sent successfully") {
-        showSuccess("Email sent successfully")
-        setLoader(false);
-        resetForm();
-        setSubmitDisabled(false);
-        navigate("/dashboard/sales/PendingApprovalForm");
-        return 
-      } else {
-        showError(res.data.message)
-        setLoader(false);
-         setSubmitDisabled(false);
-         return
-      }
-    } catch (err) {
-      console.error(err);
-      setLoader(false);
-      showError("An error occurred while submitting the form.");
+      showError("Please fill required fields.");
+
       setSubmitDisabled(false);
+      setLoader(false);
+      return;
+    } else if (emptyFields.length === 0) {
+      const data = {
+        user_id: userId,
+        Company_Name: formJson["Billing name"],
+        Customer_Name: formJson["Customer name"],
+        Transport_Name: formJson["Transporter name"],
+        Transport_ON: formJson["Transporter"],
+        Port_Name: formJson["Port name"],
+        Delivery_Type: formJson["Delivery name"],
+        Payment_Type: formJson["Payment name"],
+        Product_Name: formJson["Product name"],
+        price: formJson["Bitumen Price"],
+        Transport: formJson["Transportation"],
+        Gst: formJson["GST 18%"],
+        Discount: formJson["Discount"],
+        Quantity: formJson["Quntity"],
+        Entry_Date: formJson["Order Date"],
+        Validity_Date: formJson["Validity Date"],
+        Remark: formJson["Remark"],
+        Adv_Value:selectedPayment === "Advance Payment" ? formJson["Advance Value"] : "",
+        Adv_Per:selectedPayment === "Advance Payment" ? formJson["Advance %"] : "",
+        c_Days:selectedPayment === "credit paysment" ? formJson["Credit Days"] : ""
+      };
+
+      try {
+        const res = await authAxios.post(
+          "BituRep/Api/Account/send_Sodata",
+          data
+        );
+
+        if (res.data.message === "Email sent successfully") {
+          showSuccess("Email sent successfully");
+          setLoader(false);
+          resetForm();
+          setSubmitDisabled(false);
+          navigate("/dashboard/sales/PendingApprovalForm");
+          return;
+        } else {
+          showError(res.data.message);
+          setLoader(false);
+          setSubmitDisabled(false);
+          return;
+        }
+      } catch (err) {
+        console.error(err);
+        setLoader(false);
+        showError("An error occurred while submitting the form.");
+        setSubmitDisabled(false);
+      }
     }
   }
-    
-  }
-  
 
   const handleClose = () => {
-   setCustAlert(null)
+    setCustAlert(null);
   };
   return (
     <React.Fragment>
@@ -344,9 +400,9 @@ export default function SalesRestitration() {
                 size="small"
                 placeholder="0"
                 value={selectedBitumenPrice}
-                 onChange={(e) => {
-                   setSelectedBitumenPrice(e.target.value);
-                 }}
+                onChange={(e) => {
+                  setSelectedBitumenPrice(e.target.value);
+                }}
                 error={!!errors?.["Bitumen Price"]}
                 helperText={errors?.["Bitumen Price"]}
               />
@@ -361,10 +417,10 @@ export default function SalesRestitration() {
                 onChange={(e) => {
                   let value = e.target.value;
                   setSelectedTransportation(value);
-                  if(value == 0){
-                    setSelectedTransporter("Buyer")
-                  }else if(value > 0){
-                    setSelectedTransporter("Seller")
+                  if (value == 0) {
+                    setSelectedTransporter("Buyer");
+                  } else if (value > 0) {
+                    setSelectedTransporter("Seller");
                   }
                   // setSelectedBitumenPrice(selectedBillingPrice - value)
                 }}
@@ -446,7 +502,7 @@ export default function SalesRestitration() {
                     label="Validity Date"
                     name="Validity Date"
                     value={selectedValidityDate}
-                    minDate={dayjs().startOf('day')}
+                    minDate={dayjs().startOf("day")}
                     onChange={(newValue) => setSelectedValidityDate(newValue)}
                     slotProps={{
                       textField: {
@@ -455,7 +511,6 @@ export default function SalesRestitration() {
                         fullWidth: true,
                         error: !!errors?.["Validity Date"],
                         helperText: errors?.["Validity Date"],
-                      
                       },
                     }}
                     renderInput={(params) => (
@@ -463,7 +518,6 @@ export default function SalesRestitration() {
                         {...params}
                         id="validity-date-picker"
                         size="small"
-                        
                       />
                     )}
                   />
@@ -472,11 +526,6 @@ export default function SalesRestitration() {
               <DeliveryDropDown
                 selectedDelivery={selectedDelivery}
                 setSelectedDelivery={setSelectedDelivery}
-                errors={errors}
-              />
-              <PaymentDropDown
-                selectedPayment={selectedPayment}
-                setSelectedPayment={setSelectedPayment}
                 errors={errors}
               />
               <FormControl fullWidth size="small" margin="normal">
@@ -507,21 +556,18 @@ export default function SalesRestitration() {
                 name="Transporter name"
                 margin="normal"
                 size="small"
-                 disabled={selectedTransporter === "Buyer"}
+                disabled={selectedTransporter === "Buyer"}
                 type="text"
                 error={!!errors?.["Transporter name"]}
                 helperText={errors?.["Transporter name"]}
                 value={selectTransporterName}
-                
-                onChange={(e) =>{ 
-                  if(selectedTransporter === "Seller"){
-                  setSelectTransporterName(e.target.value)
-                }else if(selectedTransporter === "Buyer"){
-                  setSelectTransporterName("")
-                }
+                onChange={(e) => {
+                  if (selectedTransporter === "Seller") {
+                    setSelectTransporterName(e.target.value);
+                  } else if (selectedTransporter === "Buyer") {
+                    setSelectTransporterName("");
                   }
-                  
-                }
+                }}
               />
               <TextField
                 fullWidth
@@ -549,14 +595,7 @@ export default function SalesRestitration() {
                 size="small"
                 value={selectedNetPrice}
               />
-            </Box>
-          </Stack>
-          <Stack
-            spacing={2}
-            direction={{ xs: "column", md: "row" }}
-            sx={{ p: 2, justifyContent: "start" }}
-          >
-            <TextField
+              <TextField
               fullWidth
               size="small"
               margin="normal"
@@ -564,13 +603,70 @@ export default function SalesRestitration() {
               name="Remark"
               label="Remark"
               multiline
-              rows={2}
+              rows={1}
               value={selectedRemark}
               error={!!errors?.["Remark"]}
               helperText={errors?.["Remark"]}
               onChange={(e) => setSelectedRemark(e.target.value)}
             />
+            
+            </Box>
+            
           </Stack>
+          <Stack
+  direction={{ xs: "column", md: "row" }}
+  spacing={2}
+  sx={{ p: 2, justifyContent: "flex-start" }}
+>
+  <PaymentDropDown
+    selectedPayment={selectedPayment}
+    setSelectedPayment={setSelectedPayment}
+    errors={errors}
+  />
+
+  {selectedPayment === "Advance Payment" && (
+    <React.Fragment>
+      <TextField
+        label="Advance Payment %"
+        size="small"
+        type="number"
+        name="Advance Payment %"
+        value={
+          selectedNetPrice && advance.value
+            ? ((advance.value / selectedNetPrice) * 100).toFixed(2)
+            : ""
+        }
+        InputProps={{ readOnly: true }}
+      />
+      <TextField
+        label="Advance Payment Value"
+        type="number"
+        size="small"
+        name="Advance Value"
+        value={advance.value}
+        onChange={(e) =>
+          setAdvance((prev) => ({ ...prev, value: Number(e.target.value) }))
+        }
+         error={!!errors["Advance Value"]}
+  helperText={errors["Advance Value"]}
+      />
+    </React.Fragment>
+  )}
+
+  {selectedPayment === "credit paysment" && (
+    <TextField
+      label="Credit Days"
+      type="number"
+      size="small"
+      name="Credit Days"
+      sx={{ width: { xs: "100%", md: "200px" } }}
+      onChange={(e) => setCreditDays(e.target.value)}
+      error={!!errors["Credit Days"]}
+  helperText={errors["Credit Days"]}
+    />
+  )}
+</Stack>
+
           <Box mr={2} align="right">
             <Button
               variant="contained"
@@ -579,14 +675,22 @@ export default function SalesRestitration() {
               type="submit"
               disabled={submitDisabled}
             >
-      { !loader   ?   "Submit" : <CircularProgress sx={{color:"white",fontSize:17}} />}
+              {!loader ? (
+                "Submit"
+              ) : (
+                <CircularProgress sx={{ color: "white", fontSize: 17 }} />
+              )}
             </Button>
           </Box>
         </form>
       </Paper>
 
       {custAlert && (
-        <CustomeAlerts type={custAlert.type} message={custAlert.message} onClose={handleClose} />
+        <CustomeAlerts
+          type={custAlert.type}
+          message={custAlert.message}
+          onClose={handleClose}
+        />
       )}
     </React.Fragment>
   );
