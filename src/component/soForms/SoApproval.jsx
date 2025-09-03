@@ -30,6 +30,7 @@ import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOu
 import { setObject } from '../features/sodetails';
 import { a11yProps, CustomTabPanel } from '../commonComponent/CustomTabPanel/CustomTabPanel';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import { toast, ToastContainer } from 'react-toastify';
 export default function SoApproval() {
   const [soTble_head] = useState([
     'Validety Date',
@@ -116,8 +117,22 @@ function SodataRow({ data }) {
   const [innerData, setInnerData] = useState([]);
 
   function AddVehicle(row) {
-    dispatch(setObject(row));
+    debugger;
+    // console.log(formatDateToUS(row.v_Date));
+    // console.log(formatDateToUS(new Date()));
+    if(row?.bal_Qty <= 0 ){
+      toast.info("balance qantity is Negative")
+    }else
+       if(formatDateToUS(row.v_Date) <= formatDateToUS(new Date()) ){
+      toast.info(
+      `⚠️ Validity date is finished!\nExpired on: ${formatDateToUS(row?.v_Date)}`
+    );
+    }
+      else{
+dispatch(setObject(row));
     navigate(`/dashboard/Logistic/logistic_Request_form`);
+      }
+    
   }
 
   const handleOpen = async (row) => {
@@ -157,7 +172,7 @@ function SodataRow({ data }) {
         {/* <TableCell>{formatDateToUS(data?.validity_date)}</TableCell> */}
         
         <TableCell>
-          <Button
+         <Button
             variant="outlined"
             sx={{
               p: 1,
@@ -172,7 +187,7 @@ function SodataRow({ data }) {
           >
             <AddCircleOutlineOutlinedIcon sx={{ mr: 1 }} />
             Add Vehicle data
-          </Button>
+          </Button>          
         </TableCell>
         <TableCell>
           <Button
@@ -236,6 +251,7 @@ function SodataRow({ data }) {
           </Collapse>
         </TableCell>
       </TableRow>
+      <ToastContainer />
     </React.Fragment>
   );
 }

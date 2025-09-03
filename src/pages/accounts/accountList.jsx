@@ -1,4 +1,4 @@
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography, Select, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TextField,  FormControl, MenuItem } from '@mui/material';
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography, Select, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TextField,  FormControl, MenuItem, Tabs, Tab, Badge } from '@mui/material';
 import React, { useEffect } from 'react';
 import EditSquareIcon from '@mui/icons-material/EditSquare';
 import { Link, useNavigate } from "react-router";
@@ -8,6 +8,8 @@ import CustomPageHeader from '../../component/commonComponent/CustomPageHeader/C
 import ReciptFrom  from '../reciptFrom/reciptFrom';
 import DeleteConfirmationDialog from '../../component/commonComponent/DeleteConfirmationDialog/DeleteConfirmationDialog'; 
 import CustomeAlerts from '../../component/commonComponent/CustomeAlert/CustomeAlert';
+import { a11yProps } from '../../component/commonComponent/CustomTabPanel/CustomTabPanel';
+import  { CustomTab } from '../../component/commonComponent/CustomTabs/CustomTabs';
 const tableHeaders = [
   "So No",
   "Customer Name",
@@ -34,6 +36,10 @@ export default function AccountList() {
   const [custAlert, setCustAlert] = React.useState(null);
   const [statuslist,setStatuslist] = React.useState([]);
   // const [open, setOpen] = React.useState(false);
+  const [tabs, setTabs] = React.useState(0);
+                const handleTabs = (event, newValue) => {
+                setTabs(newValue);
+              };
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -129,6 +135,79 @@ export default function AccountList() {
     <React.Fragment>
      <CustomPageHeader pageHeaderText="Account List"/>
       <Paper sx={{ p: 2 }} elevation={0}>
+        <Box sx={{ borderBottom: 1, borderColor: 'divider',width:"100%" }}>
+                        <Tabs value={tabs} onChange={handleTabs} aria-label="basic tabs example" sx={{width:"100%",justifyContent:"center"}}>
+                         {/* <Tab label="Advance Payment List 4"sx={{width:"33%"}}   {...a11yProps(0)}></Tab> */}
+                         {/* <CustomTabsWithCount
+          label={
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+              Advance Payment List
+              <Badge badgeContent={0} color="primary" />
+            </Box>
+          }
+        /> */}
+        <CustomTab
+                  label={
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 3 }}>
+                      Advance Payment List
+                      <Badge
+                        badgeContent={4} // count
+                        color="primary"
+                        sx={{
+                          "& .MuiBadge-badge": {
+                            fontSize: "12px",
+                            height: "20px",
+                            minWidth: "20px",
+                            borderRadius: "50%",
+                          },
+                        }}
+                      />
+                    </Box>
+                  }
+                  sx={{ width: "33%" }}
+                />
+                <CustomTab
+                  label={
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 3 }}>
+                       Cash Payment List
+                      <Badge
+                        badgeContent={4} // count
+                        color="primary"
+                        sx={{
+                          "& .MuiBadge-badge": {
+                            fontSize: "12px",
+                            height: "20px",
+                            minWidth: "20px",
+                            borderRadius: "50%",
+                          },
+                        }}
+                      />
+                    </Box>
+                  }
+                  sx={{ width: "33%" }}
+                />
+                <CustomTab
+                  label={
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 3 }}>
+                       Credit Payment List
+                      <Badge
+                        badgeContent={4} // count
+                        color="primary"
+                        sx={{
+                          "& .MuiBadge-badge": {
+                            fontSize: "12px",
+                            height: "20px",
+                            minWidth: "20px",
+                            borderRadius: "50%",
+                          },
+                        }}
+                      />
+                    </Box>
+                  }
+                  sx={{ width: "33%" }}
+                />
+                        </Tabs>
+                      </Box>
       <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
         <TableHead sx={{fontSize:14,fontWeight:600,bgcolor:"rgba(25, 118, 210, 0.08)"}}>

@@ -278,7 +278,7 @@ if (!advRaw) {
         Validity_Date: formJson["Validity Date"],
         Remark: formJson["Remark"],
         Adv_Value:selectedPayment === "Advance Payment" ? formJson["Advance Value"] : "",
-        Adv_Per:selectedPayment === "Advance Payment" ? formJson["Advance %"] : "",
+        Adv_Per:selectedPayment === "Advance Payment" ? formJson["Advance Payment %"] : "",
         c_Days:selectedPayment === "credit paysment" ? formJson["Credit Days"] : ""
       };
 
