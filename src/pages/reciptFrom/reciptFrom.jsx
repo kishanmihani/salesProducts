@@ -55,7 +55,8 @@ export default function ReceiptForm() {
       if (receiptDataCheck) {
         const data = {
           user_id: userId,
-          Customer_Name: receipt.customer
+          Customer_Name: receipt.customer,
+          // Payment_type:receipt?.Payment_Type
         };
 
         try {

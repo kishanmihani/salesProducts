@@ -10,7 +10,20 @@ import DeleteConfirmationDialog from '../../component/commonComponent/DeleteConf
 import CustomeAlerts from '../../component/commonComponent/CustomeAlert/CustomeAlert';
 import { a11yProps } from '../../component/commonComponent/CustomTabPanel/CustomTabPanel';
 import  { CustomTab } from '../../component/commonComponent/CustomTabs/CustomTabs';
-const tableHeaders = [
+// const tableHeaders = [
+//   "So No",
+//   "Customer Name",
+//   "Vehicle Name",
+//   "Actual Qty",
+//   "BOE No.",
+//   "Port Name",
+  
+  
+//   "Remark",
+//   "Status",
+//  "Reacipt",
+// ];
+const cashHeaders = [
   "So No",
   "Customer Name",
   "Vehicle Name",
@@ -18,17 +31,38 @@ const tableHeaders = [
   "BOE No.",
   "Port Name",
   
-  
-  "Remark",
-  "Status",
- "Reacipt",
+  "Receipt",
+];
+
+const advanceHeaders = [
+  "So No",
+  "Customer Name",
+   "Port Name",
+  "Company name",
+  "Advance Payment",
+  "Balance Advance",
+  // "Status",
+  "Recived Amount",
+  "Receipt",
+];
+
+const creditHeaders = [
+  "So No.",
+  "Customer Name",
+  "Port Name",
+  "Company Name",
+  "Amount",
+  "Balance Advance",
+  "Recived Amount",
+  "Credit Days",
+  "Recipt"
 ];
 
 export default function AccountList() {
   // const [deleteDialog, setDeleteDialog] = React.useState({ isOpen: false, itemToDelete: null });
   const [statusDialog,setStatusDialog] =  React.useState({ isOpen: false, itemToStatus: null });
   const navigate = useNavigate();
-  const [tableData,setTableData]=React.useState([])
+  const [tableData,setTableData]=React.useState({ api1: null, api2: null, api3: null });
   const [checkTableData,setCheckTableData]=React.useState(false)
   const [userId] = React.useState(JSON.parse(sessionStorage.getItem("userInfo"))?.id);
   const [page, setPage] = React.useState(0); 
@@ -36,10 +70,15 @@ export default function AccountList() {
   const [custAlert, setCustAlert] = React.useState(null);
   const [statuslist,setStatuslist] = React.useState([]);
   // const [open, setOpen] = React.useState(false);
+  
   const [tabs, setTabs] = React.useState(0);
                 const handleTabs = (event, newValue) => {
                 setTabs(newValue);
               };
+              const activeHeaders =
+  tabs === 0 ? advanceHeaders :
+  tabs === 1 ? cashHeaders :
+  creditHeaders;
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -57,17 +96,15 @@ export default function AccountList() {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
-  //  function popupOpen(){
-  //   setOpen(true)
-  //  }
-  //  function popupClose(){
-  //   setOpen(false)
-  //  }
-  // pagination slice
-  const paginatedData = tableData.slice(
-    page * rowsPerPage,
-    page * rowsPerPage + rowsPerPage
-  );
+  const activeData =
+  tabs === 0 ? tableData.api2 || [] :  // Advance tab
+  tabs === 1 ? tableData.api1 || [] :  // Cash tab
+  tableData.api3 || [];                // Credit tab
+
+const paginatedData = activeData.slice(
+  page * rowsPerPage,
+  page * rowsPerPage + rowsPerPage
+);
 
   useEffect(() => {
     
@@ -77,21 +114,43 @@ export default function AccountList() {
     }
   }, [checkTableData, tableData, userId]);
   const fetchTableData = async () => {
-      try {
-        const response = await authAxios.post(
-          "BituRep/Api/Account/logistic_data_list",
-          JSON.stringify({
-            user_id: userId,
-            Role: "entry",
-          })
-        );
-        setTableData(response.data);
-        setCheckTableData(true)
-      } catch (error) {
-        setCheckTableData(true)
-        showError(error);
-      } 
-    };
+  try {
+    const [resOne, resTwo, resThree] = await Promise.all([
+      authAxios.post(
+        "BituRep/Api/Account/logistic_data_list",
+        JSON.stringify({
+          user_id: userId,
+          Role: "entry",
+        })
+      ),
+      authAxios.post(
+        "BituRep/Api/Account/Account_Adv",
+        JSON.stringify({
+          user_id: userId,
+        })
+      ),
+      authAxios.post(
+        "BituRep/Api/Account/Account_Cr",
+        JSON.stringify({
+          user_id: userId,
+        })
+      ),
+    ]);
+
+    // store all 3 results separately
+    setTableData({
+      api1: resOne.data,  // cash
+      api2: resTwo.data,  // advance
+      api3: resThree.data // credit
+    });
+
+    setCheckTableData(true);
+  } catch (error) {
+    setCheckTableData(true);
+    showError(error);
+  }
+};
+
   function StatusChange(row,value){
     setTableData((prevState) => 
       prevState.map((tableData) => {
@@ -137,82 +196,78 @@ export default function AccountList() {
       <Paper sx={{ p: 2 }} elevation={0}>
         <Box sx={{ borderBottom: 1, borderColor: 'divider',width:"100%" }}>
                         <Tabs value={tabs} onChange={handleTabs} aria-label="basic tabs example" sx={{width:"100%",justifyContent:"center"}}>
-                         {/* <Tab label="Advance Payment List 4"sx={{width:"33%"}}   {...a11yProps(0)}></Tab> */}
-                         {/* <CustomTabsWithCount
-          label={
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              Advance Payment List
-              <Badge badgeContent={0} color="primary" />
-            </Box>
-          }
-        /> */}
+                     
         <CustomTab
-                  label={
-                    <Box sx={{ display: "flex", alignItems: "center", gap: 3 }}>
-                      Advance Payment List
-                      <Badge
-                        badgeContent={4} // count
-                        color="primary"
-                        sx={{
-                          "& .MuiBadge-badge": {
-                            fontSize: "12px",
-                            height: "20px",
-                            minWidth: "20px",
-                            borderRadius: "50%",
-                          },
-                        }}
-                      />
-                    </Box>
-                  }
-                  sx={{ width: "33%" }}
-                />
-                <CustomTab
-                  label={
-                    <Box sx={{ display: "flex", alignItems: "center", gap: 3 }}>
-                       Cash Payment List
-                      <Badge
-                        badgeContent={4} // count
-                        color="primary"
-                        sx={{
-                          "& .MuiBadge-badge": {
-                            fontSize: "12px",
-                            height: "20px",
-                            minWidth: "20px",
-                            borderRadius: "50%",
-                          },
-                        }}
-                      />
-                    </Box>
-                  }
-                  sx={{ width: "33%" }}
-                />
-                <CustomTab
-                  label={
-                    <Box sx={{ display: "flex", alignItems: "center", gap: 3 }}>
-                       Credit Payment List
-                      <Badge
-                        badgeContent={4} // count
-                        color="primary"
-                        sx={{
-                          "& .MuiBadge-badge": {
-                            fontSize: "12px",
-                            height: "20px",
-                            minWidth: "20px",
-                            borderRadius: "50%",
-                          },
-                        }}
-                      />
-                    </Box>
-                  }
-                  sx={{ width: "33%" }}
-                />
+  label={
+    <Box sx={{ display: "flex", alignItems: "center", gap: 3 }}>
+      Advance Payment List
+      <Badge
+        badgeContent={tableData.api2?.length || 0}
+        color="primary"
+        sx={{
+          "& .MuiBadge-badge": {
+            fontSize: "12px",
+            height: "20px",
+            minWidth: "20px",
+            borderRadius: "50%",
+          },
+        }}
+      />
+    </Box>
+  }
+  sx={{ width: "33%" }}
+/>
+
+<CustomTab
+  label={
+    <Box sx={{ display: "flex", alignItems: "center", gap: 3 }}>
+      Cash Payment List
+      <Badge
+        badgeContent={tableData.api1?.length || 0}
+        color="primary"
+        sx={{
+          "& .MuiBadge-badge": {
+            fontSize: "12px",
+            height: "20px",
+            minWidth: "20px",
+            borderRadius: "50%",
+          },
+        }}
+      />
+    </Box>
+  }
+  sx={{ width: "33%" }}
+/>
+
+<CustomTab
+  label={
+    <Box sx={{ display: "flex", alignItems: "center", gap: 3 }}>
+      Credit Payment List
+      <Badge
+        badgeContent={tableData.api3?.length || 0}
+        color="primary"
+        sx={{
+          "& .MuiBadge-badge": {
+            fontSize: "12px",
+            height: "20px",
+            minWidth: "20px",
+            borderRadius: "50%",
+          },
+        }}
+      />
+    </Box>
+  }
+  sx={{ width: "33%" }}
+/>
+
+   
                         </Tabs>
                       </Box>
       <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
         <TableHead sx={{fontSize:14,fontWeight:600,bgcolor:"rgba(25, 118, 210, 0.08)"}}>
           <TableRow>
-  {tableHeaders.map((header, index) => (
+  {activeHeaders.map((header, index) => (
     <TableCell
       key={index}
       align="left"
@@ -233,44 +288,19 @@ export default function AccountList() {
              backgroundColor: 'grey.200',
            },'&:last-child td, &:last-child th': { border: 0 } }}
             >
-              <TableCell align="left">{row?.so_No}</TableCell>
+              {tabs == 0 && <React.Fragment>
+                <TableCell align="left">{row?.so_No}</TableCell>
               <TableCell align="left">{row?.customer_Name}</TableCell>
-              <TableCell align="left">{row?.vehicle_Name}</TableCell>
-              {/* <TableCell align="left">{row?.quantity}</TableCell> */}
-              <TableCell>
-              {row?.a_Qty === ""? "No Actual quantity":row?.a_Qty}
-              </TableCell>
-              <TableCell>
-                {row?.bE_No}
-              </TableCell>
-                      {/* <TableCell>{row?.vessel_Name == ""? "No Vessel Name" : row?.vessel_Name} </TableCell><TableCell align="left">{row?.bE_No === ""? "No Be No.":row?.bE_No}</TableCell> */}
               <TableCell align="left">{row?.port_Name}</TableCell>
-              {/* <TableCell align="left">{row?.transporter_Name === ""? "No transporter":row?.transporter_Name}</TableCell> */}
-              
-              {/* <TableCell align="left">{row?.produce_Name === ""? "No Product":row?.produce_Name}</TableCell> */}
-              {/* <TableCell align="left">{row?.tank_name === ""? "No tank name":row?.tank_name}</TableCell> */}
-      
-              
-              <TableCell align="left">{row?.remark}</TableCell>
-              <TableCell>
-               <FormControl fullWidth size='small'>
-                <Select
-                value={row?.status_Name1 || "Select"}
-                onChange={(e)=>{let rowthis={"value":e.target.value,"row":row};StatusOpen(rowthis)}} >
-                  <MenuItem disabled value={"Select"}>Please Select</MenuItem>
-                {statuslist.map(data=>(
-                  <MenuItem key={data.status_id}  value={data.status_Name}>{data.status_Name}</MenuItem>
-                ))}
-                </Select>
-               </FormControl>
-              </TableCell>
-              
+              <TableCell align="left">{row?.company_Name}</TableCell>
+              <TableCell align="left">{row?.adv_Value}</TableCell>
+              <TableCell align="left">{row?.rec}</TableCell>
+              <TableCell align="left">{row?.bal_Adv}</TableCell>
               <TableCell>
                 <Button
                                   aria-label="Edit"
                                   color="primary"
-                                  onClick={() =>{let data={so_no:row?.so_No,customer:row.customer_Name};
-                                  // sessionStorage.setItem("ReciptFrom",JSON.stringify(data)); 
+                                  onClick={() =>{let data={so_no:row?.so_No,customer:row.customer_Name,Payment_Type:row?.payment_Type};
                                   const query = new URLSearchParams({ data: JSON.stringify(data) }).toString()
                                   navigate(`/dashboard/Account/ReciptFrom?${query}`)
                                 }}
@@ -279,11 +309,60 @@ export default function AccountList() {
             Recipt
                 </Button>
               </TableCell>
-              {/* <TableCell>
-                <IconButton aria-label='Delete' onClick={()=>handleDeleteClick(row)} >
-                  <DeleteIcon  color='error'/>
-                </IconButton>
-              </TableCell> */}
+                </React.Fragment>}
+              {tabs == 1 && 
+              <React.Fragment>
+              <TableCell align="left">{row?.so_No}</TableCell>
+              <TableCell align="left">{row?.customer_Name}</TableCell>
+              <TableCell align="left">{row?.vehicle_Name}</TableCell>
+              <TableCell>
+              {row?.a_Qty === ""? "No Actual quantity":row?.a_Qty}
+              </TableCell>
+              <TableCell>
+                {row?.bE_No}
+              </TableCell>
+              <TableCell align="left">{row?.port_Name}</TableCell>
+              
+              
+              <TableCell>
+                <Button
+                                  aria-label="Edit"
+                                  color="primary"
+                                  onClick={() =>{let data={so_no:row?.so_No,customer:row?.customer_Name,Payment_Type:row?.payment_Type};
+                                  const query = new URLSearchParams({ data: JSON.stringify(data) }).toString()
+                                  navigate(`/dashboard/Account/ReciptFrom?${query}`)
+                                }}
+                                 
+                                >
+            Recipt
+                </Button>
+              </TableCell>
+              </React.Fragment>}
+              {tabs == 2 && 
+              <React.Fragment>
+                <TableCell align="left">{row?.so_No}</TableCell>
+              <TableCell align="left">{row?.customer_Name}</TableCell>
+              <TableCell align="left">{row?.port_Name}</TableCell>
+              <TableCell align="left">{row?.company_Name}</TableCell>
+              <TableCell align="left">{row?.amount}</TableCell>
+              <TableCell align="left">{row?.bal_Adv}</TableCell>
+              <TableCell align="left">{row?.rec}</TableCell>
+              <TableCell align="left">{row?.c_Days}</TableCell>
+              <TableCell>
+                <Button
+                                  aria-label="Edit"
+                                  color="primary"
+                                  onClick={() =>{let data={so_no:row?.so_No,customer:row.customer_Name,Payment_Type:row?.payment_Type};
+                                  const query = new URLSearchParams({ data: JSON.stringify(data) }).toString()
+                                  navigate(`/dashboard/Account/ReciptFrom?${query}`)
+                                }}
+                                 
+                                >
+            Recipt
+                </Button>
+              </TableCell>
+              </React.Fragment>
+              }
             </TableRow>
             
           ))}
