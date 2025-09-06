@@ -118,7 +118,6 @@ export default function LogicRequestForm() {
       }
       if (vessalInfo.Xboe == "Select") {
         setVessalInfo((prev)=>({...prev,XBoeError:true }));
-        // setErrorsWhereHouse(true);
         hasError = true;
       }
     }
@@ -175,11 +174,11 @@ export default function LogicRequestForm() {
           Remark: remark,
           Vessel_Name: vessalName.replaceAll("|", ",").split(",")?.[0],
           Vessel_No: vessalName.replaceAll("|", ",").split(",")?.[1],
-          Tank_name:vessalInfo.tank.replaceAll("|", ",").split(",")?.[0],
+          Tank_name:vessalInfo.tank,
           Produce_Name: selectedProduct,
           Teminal_NAME:vessalInfo?.tank.replaceAll("|", ",").split(",")?.[0],
           BE_No: vessalInfo.be_No,
-          Xboe:vessalInfo.Xboe,
+          Exboe:vessalInfo.Xboe,
           So_No: sodata?.sO_N0,
           BL_No: vessalInfo.be_No.replaceAll("|", ",").split(",")?.[0],
           Do_No:
@@ -564,14 +563,7 @@ export default function LogicRequestForm() {
         {tank.exboe}
       </MenuItem>
     ))
-  )}
-
-
-                              {/* <MenuItem disabled value={"Select"}>Please Select</MenuItem>
-                             {(vessalData?.wH_NAME,"view_List").map((data,index)=>(
-                              <MenuItem key={`${data?.view_List}${index}`}  value={data?.view_List}>{data?.view_List}</MenuItem>
-                            ))}   */}
-                             </Select> 
+  )}</Select> 
                             {vessalInfo.XBoeError && <FormHelperText>Xboe name required</FormHelperText>}
                             </FormControl> } 
             {/* {vessalData.length !== 0 && (

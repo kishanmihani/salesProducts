@@ -120,10 +120,12 @@ function SodataRow({ data }) {
     debugger;
     // console.log(formatDateToUS(row.v_Date));
     // console.log(formatDateToUS(new Date()));
+    const previous = new Date().setDate((new Date()).getDate() - 2);
     if(row?.bal_Qty <= 0 ){
       toast.info("balance qantity is Negative")
     }else
-       if(formatDateToUS(row.v_Date) <= formatDateToUS(new Date()) ){
+       if(formatDateToUS(row.v_Date) < formatDateToUS(previous) ){
+        debugger;
       toast.info(
       `⚠️ Validity date is finished!\nExpired on: ${formatDateToUS(row?.v_Date)}`
     );

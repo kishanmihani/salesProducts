@@ -190,7 +190,7 @@ export default function Logisticlist() {
               
               <TableCell align="left">{row?.produce_Name === ""? "No Product":row?.produce_Name}</TableCell>
               <TableCell align="left">{row?.tank_name === ""? "No tank name":row?.tank_name}</TableCell>
-               <TableCell align="left">{row?.Xboe === ""? "No Xboe name":row?.Xboe}</TableCell>
+               <TableCell align="left">{row?.Xboe === ""? "No Xboe name":row?.exboe}</TableCell>
               
               <TableCell align="left">{row?.remark}</TableCell>
               <TableCell>

@@ -25,19 +25,21 @@ import { vehiclelistapi, VessalFormData } from "../../../Config/Api";
               const [selectedProduct,setSelectedProduct] = useState("Select")
     const [vessalData,setVessalData] = React.useState([])
     const [vessalInfo,setVessalInfo] = React.useState({
-      be_No:"Select",
-      be_NoError:false,
-      wH_NAME:"Select",wH_NAMEError:false,
-      tank:"Select",
-      tankError:false,
-      bl_No:"Select",
-      bl_NoError:false
-     })
+     be_No: "Select",
+    be_NoError: false,
+    wH_NAME: "Select",
+    XBoeError: false,
+    tank: "Select",
+    Xboe:"Select",
+    tankError: false,
+    bl_No: "8",
+    bl_NoError: false,
+  });
      const [editVslCheck,setEditVslCheck] = useState(true)
       const [vessalList,setVessalList] = React.useState([]);
     const [customerName, setCustomerName] = React.useState('Select');
     const [portName, setPortName] = React.useState('Select');
-    
+    const [vehicleLoad,setVehicleLoad] = React.useState(false);
     const [fields, setFields] = React.useState([{vehicleName: '',
       vehicleNameError: '',
       quantity: '',
@@ -73,42 +75,65 @@ import { vehiclelistapi, VessalFormData } from "../../../Config/Api";
       const tabledata = response.data.filter(data => data.table_id == tableId);
      
       console.log(tabledata);
-      if (tabledata.length > 0) {
-        const item = tabledata[0];
-        setTableData(item) // get the first match
-        VessalChange(item?.vessel_Name +"|"+item?.vessel_No)
-        setCustomerName(item?.customer_Name || '');
-        setPortName(item?.port_Name || '');
-        setRemark(item?.remark || '');
-        setActQuantity(item?.a_Qty );
-        setSoNo(item?.so_No);
-
-        setSelectedProduct(item?.produce_Name || '');
-        setFields([{
-          vehicleName: item?.vehicle_Name || '',
-          vehicleNameError: '',
-          quantity: item?.quantity || '',
-          quantityError: '',
-          transporter: item?.transporter_Name || '',
-          transporterError: ''
-        }]);
-        //  VessalChange(item?.vessel_Name +"|"+item?.vessel_No)
-        setTimeout(()=>{
-        setVessalInfo(
-        {
-      be_No:item?.bE_No,
-      be_NoError:false,
-      wH_NAME:item?.terminal_NAME,
-      wH_NAMEError:false,
-      tank:item?.tank_name,
-      tankError:false,
-      bl_No:item?.bL_No,
-      bl_NoError:false
-     })
-     },600)
+//       if (tabledata.length > 0) {
+//         const item = tabledata[0];
+//         setTableData(item) // get the first match
+//         VessalChange(item?.vessel_Name +"|"+item?.vessel_No)
+//         setCustomerName(item?.customer_Name || '');
+//         setPortName(item?.port_Name || '');
+//         setRemark(item?.remark || '');
+//         setActQuantity(item?.a_Qty );
+//         setSoNo(item?.so_No);
+// (item?.bE_No)//kishan
+//         setSelectedProduct(item?.produce_Name || '');
+//         setFields([{
+//           vehicleName: item?.vehicle_Name || '',
+//           vehicleNameError: '',
+//           quantity: item?.quantity || '',
+//           Xboe:item?.bE_No || '',
+//           XBoeError:"",
+//           quantityError: '',
+//           transporter: item?.transporter_Name || '',
+//           transporterError: ''
+//         }]);
+//         //  VessalChange(item?.vessel_Name +"|"+item?.vessel_No)
+//         setTimeout(()=>{
+//         setVessalInfo(
+//         {
+//       be_No:item?.bE_No,
+//       be_NoError:false,
+//       wH_NAME:item?.terminal_NAME,
+//       wH_NAMEError:false,
+//       tank:item?.tank_name,
+//       tankError:false,
+//       bl_No:item?.bL_No,
+//       bl_NoError:false
+//      })
+//      },600)
      
         
-      }
+//       }
+if (tabledata.length > 0) {
+  const item = tabledata[0];
+  setTableData(item);
+  setCustomerName(item?.customer_Name || "Select");
+  setPortName(item?.port_Name || "Select");
+  setRemark(item?.remark || "");
+  setActQuantity(item?.a_Qty || 0);
+  setSoNo(item?.so_No || 0);
+  setSelectedProduct(item?.produce_Name || "Select");
+VessalChange(item?.vessel_Name + "|" + item?.vessel_No);
+  setFields([{
+    vehicleName: item?.vehicle_Name || "",
+    vehicleNameError: "",
+    quantity: item?.quantity || "",
+    quantityError: "",
+    transporter: item?.transporter_Name || "",
+    transporterError: "",
+  }]);
+
+}
+
      
     } catch (error) {
       
@@ -124,6 +149,35 @@ import { vehiclelistapi, VessalFormData } from "../../../Config/Api";
 
   
 }, [VessalChange, checkTableData, tableData, tableId, userId]);
+React.useEffect(() => {
+  if (tableData) {
+    setVessalInfo((prev) => ({
+      ...prev,
+      be_No: tableData?.bE_No,
+      be_NoError: false,
+      bl_No: tableData?.bL_No,
+      bl_NoError: false,
+    }));
+    console.log(tableData);
+  }
+}, [tableData]);
+
+useEffect(() => {
+  if (tableData && vessalData) {
+    setVessalInfo((prev) => ({
+      ...prev,
+      wH_NAME: tableData?.terminal_NAME,
+      wH_NAMEError: false,
+      tank: tableData?.tank_name,
+      tankError: false,
+      Xboe: tableData?.exboe,
+      XBoeError: false,
+    }));
+  }
+}, [tableData, vessalData]);
+
+
+
     const handleSubmit = async (e) => {
       e.preventDefault();
       let hasError = false;
@@ -142,6 +196,10 @@ import { vehiclelistapi, VessalFormData } from "../../../Config/Api";
       }
       if(vessalName == "Select"){
         setVessalNameError(true)
+        hasError = true;
+      }
+      if (vessalInfo.Xboe == "Select") {
+        setVessalInfo((prev)=>({...prev,XBoeError:true }));
         hasError = true;
       }
       if(soNo == 0){
@@ -229,14 +287,15 @@ import { vehiclelistapi, VessalFormData } from "../../../Config/Api";
     "P_Qut": arr?.quantity,
     "Remark": remark,
     "Table_Id": tableData["table_id"],
-    "Transporter_Name": "u",
+    "Transporter_Name": arr?.transporter,
     "Produce_Name": selectedProduct,
     "Vessel_Name": vessalName.replaceAll("|", ",").split(",")?.[0],
     "Vessel_No": vessalName.replaceAll("|", ",").split(",")?.[1],
     "Tank_name": vessalInfo.tank,
-    "Terminal_NAME": vessalInfo?.wH_NAME,
+    "Terminal_NAME": vessalInfo?.tank.replaceAll("|", ",").split(",")?.[0],
     "BE_No": vessalInfo.be_No,
-    "BL_No": "8",
+    Exboe:vessalInfo.Xboe,
+    "BL_No": vessalInfo.be_No.replaceAll("|", ",").split(",")?.[0],
     "Do_No":  arr.quantity +
             "/" +
             arr.vehicleName +
@@ -248,8 +307,7 @@ import { vehiclelistapi, VessalFormData } from "../../../Config/Api";
     "A_Qty": actualQuantity,
     "So_No": soNo
 }
-console.log(data)
-          debugger;
+console.log(data);
           await authAxios.post('BituRep/Api/Account/logistic_data_Edit',JSON.stringify(data))
           .then((res)=>{
           if (res.data.massage == "Entry Done") {
@@ -273,17 +331,37 @@ console.log(data)
       }
     };
     const handleReset = () => {
-      setCustomerName("Select");
-      setPortName("Select");
-      setRemark("");
-      setFields([{vehicleName: '',
-        vehicleNameError: '',
-        quantity: '',
-        quantityError: '',transporter:"",transporterError:"" }]);
-      setErrorsCustomerName(false)
-      setErrorsPortName(false)
-      setVessalNameError(false);
-      setVessalNmae("Select")
+       setCustomerName("Select");
+    setPortName("Select");
+    setRemark("");
+    setFields([
+      {
+        vehicleName: "",
+        vehicleNameError: "",
+        quantity: "",
+        quantityError: "",
+        transporter: "",
+        transporterError: "",
+      },
+    ]);
+    setErrorsCustomerName(false);
+    setErrorsPortName(false);
+    setVessalNmae("");
+    setVessalInfo({
+      be_No: "Select",
+      be_NoError: false,
+      wH_NAME: "Select",
+      XBoeError: false,
+      tank: "Select",
+      tankError: false,
+      Xboe:"Select",
+      bl_No: "Select",
+      bl_NoError: false,
+    });
+    // setErrorsWhereHouse("Select");
+    // setErrorsWhereHouse(false);
+    setSelectedProduct("Select");
+    setProductError(false);
     };
     const handleClose = () => {
       setCustAlert(null)
@@ -297,37 +375,43 @@ console.log(data)
              .catch(err=> console.log(err.message))
            }
      },[vessalList,setVessalList,userId])
-     function VessalChange(value) {
-      if(value == "Select"){
-        setVessalNameError(true)
-      }
-      else{
-        setVessalNameError(false)
-      }
-      
-      setVessalNmae(value);
-      const data = {
-        "user_id": userId,
-        "Vessal_Name": value.replaceAll("|", ",").split(",")[0],
-        "Vessal_No": value.replaceAll("|", ",").split(",")[1]
-      }
-      authAxios.post(VessalFormData,data)
-      .then(res=>{setVessalData(res.data);
-       if(editVslCheck === true){
-        
-          setEditVslCheck(false);
-        }  
-        else{
-          setVessalInfo({be_No:"Select",
-          be_NoError:false,
-          wH_NAME:"Select",wH_NAMEError:false,
-          tank:"Select",
-          tankError:false,
-          bl_No:"Select",
-          bl_NoError:false});
-        }
-      })
-      .catch((err)=>err.message)
+    async function VessalChange(value) {
+       if (value == "Select") {
+           setVessalNameError(true);
+         } else {
+           setVessalNameError(false);
+         }
+         setVessalNmae(value);
+         const data = {
+           user_id: userId,
+           Vessal_Name: value.replaceAll("|", ",").split(",")?.[0],
+           Vessal_No: value.replaceAll("|", ",").split(",")?.[1],
+         };
+         await authAxios
+           .post(VessalFormData, data)
+           .then((res) => {
+             setVessalData(res.data);
+
+             if(vehicleLoad == true){
+             setVessalInfo((prev) => ({
+               ...prev,
+               be_No: "Select",
+               be_NoError: false,
+               wH_NAME: "Select",
+               XBoeError: false,
+               tank: "Select",
+               Xboe:"Select",
+               tankError: false,
+               bl_No: "Select",
+               bl_NoError: false,
+             }));
+            }
+             else{
+             setVehicleLoad(true)
+             
+            }
+           })
+           .catch((err) => showError(err.message));
 
     }
     return (
@@ -341,11 +425,11 @@ console.log(data)
               direction={{ xs: "column", md: "row" }}
               sx={{ p: 2, pb: 0 }}
             >
-                <CustomerDropDownTwo errorsCustomerName={errorsCustomerName} setErrorsCustomerName={setErrorsCustomerName} selectedCustomer={customerName} setSelectedCustomer={setCustomerName} />
-                <PortDropDownTwo errorsPortName={errorsPortName} setErrorsPortName={setErrorsPortName} selectedPort={portName} setSelectedPort={setPortName} />
+                <CustomerDropDownTwo disabled={true} errorsCustomerName={errorsCustomerName} setErrorsCustomerName={setErrorsCustomerName} selectedCustomer={customerName} setSelectedCustomer={setCustomerName} />
+                <PortDropDownTwo disabled={true} errorsPortName={errorsPortName} setErrorsPortName={setErrorsPortName} selectedPort={portName} setSelectedPort={setPortName} />
 
                
-              <ProductDropDownTwo variant="outlined" errorsProduct={productError} setErrorsProduct={setProductError} selectedProduct={selectedProduct} setSelectedProduct={setSelectedProduct} />
+              <ProductDropDownTwo disabled={true} variant="outlined" errorsProduct={productError} setErrorsProduct={setProductError} selectedProduct={selectedProduct} setSelectedProduct={setSelectedProduct} />
             </Stack>
   
             {/* <Box sx={{ p: 0 }}>
@@ -371,6 +455,7 @@ console.log(data)
                 type="number"
                 variant="standard"
                 name="SoNo"
+                disabled={true}
                 label="So No."
                 error={errorSoNo}
                 helperText={errorSoNo}
@@ -388,7 +473,7 @@ console.log(data)
                   setSoNo(e.target.value)}}
               />
               {/* </Box> */}
-              <FormControl variant="standard" fullWidth size='small' error={vessalNameError}>
+              <FormControl variant="standard" disabled={true} fullWidth size='small' error={vessalNameError}>
                  <InputLabel id="demo-simple-select-label">Voyage name</InputLabel>
                 <Select 
                 label="Voyage name"
@@ -396,12 +481,12 @@ console.log(data)
                 onChange={(e)=>VessalChange(e.target.value)}  >
                  <MenuItem disabled value={"Select"}>Please Select</MenuItem>
                 {vessalList.map(data=>(
-                  <MenuItem key={data.vesselName_List}  value={data.vesselName_List}>{data.vesselName_List.replaceAll("|", ",").split(",")[0]}</MenuItem>
+                  <MenuItem key={data.vesselName_List}  value={data.vesselName_List}>{data.vesselName_List}</MenuItem>
                 ))}
                 </Select>
                 {vessalNameError && <FormHelperText>Voyage name is required</FormHelperText>}
                 </FormControl>
-                 <FormControl variant="standard" fullWidth size='small' error={vessalInfo.be_NoError}>
+                 <FormControl variant="standard" disabled={true} fullWidth size='small' error={vessalInfo.be_NoError}>
                  <InputLabel id="demo-simple-select-label">IN -BOE</InputLabel>
                 <Select 
                 label="BOE No"
@@ -418,11 +503,11 @@ console.log(data)
                  <MenuItem disabled value={"Select"}>Please Select</MenuItem>
                 {vessalData[0]?.v_BE?.map((item, index) => (
                                     <MenuItem key={`${item.bl}${index}`} value={item?.bl}>
-                                      {item?.bl.replaceAll("|", ",").split(",")?.[1]}
+                                      {item?.bl}
                                     </MenuItem>
                                   ))}
                 </Select>
-                {vessalInfo.be_NoError && <FormHelperText>BOE No is required</FormHelperText>}
+                {vessalInfo.be_NoError && <FormHelperText>IN-BOE No is required</FormHelperText>}
                 </FormControl>
                  {/* <FormControl variant="standard" fullWidth size='small' error={vessalInfo.bl_NoError}>
                  <InputLabel id="demo-simple-select-label">Bl No</InputLabel>
@@ -460,6 +545,7 @@ console.log(data)
                 fullWidth
                 size="small"
                 variant="standard"
+                disabled={true}
                 margin="normal"
                 id="Remark"
                 name="Remark"
@@ -469,11 +555,11 @@ console.log(data)
                 value={remark}
                 onChange={(e) => setRemark(e.target.value)}
               />
-               <FormControl variant="standard" fullWidth size='small' error={vessalInfo.tankError}>
+               <FormControl disabled={true} variant="standard" fullWidth size='small' error={vessalInfo.tankError}>
                  <InputLabel id="demo-simple-select-label">tank Name</InputLabel>
                 <Select 
-                label="tank Name"
-                value={vessalInfo.tank.trim() }
+                label="tank | WareHouse Name"
+                value={vessalInfo.tank?.trim() }
                 onChange={(e)=>{
                   let value=e.target.value;
                   if(value == "Select"){
@@ -489,20 +575,16 @@ console.log(data)
                      (item.wH_Name_Tank_Name || []).map((tank, index) => (
                        <MenuItem
                          key={`${tank.wH_Name_Tank_Name}-${index}`}
-                         value={tank.wH_Name_Tank_Name
-                           ?.replaceAll("|", ",")
-                           ?.split(",")?.[1]}
+                         value={tank.wH_Name_Tank_Name}
                        >
-                         {tank.wH_Name_Tank_Name
-                           ?.replaceAll("|", ",")
-                           ?.split(",")?.[1]}
+                         {tank.wH_Name_Tank_Name}
                        </MenuItem>
                      ))
                    )}
                 </Select>
                 {vessalInfo.tankError && <FormHelperText>tank is required</FormHelperText>}
                 </FormControl>
-                {vessalData.length !== 0 && <FormControl variant="standard" fullWidth size='small' error={vessalInfo.wH_NAMEError}>
+                {/* {vessalData.length !== 0 && <FormControl variant="standard" fullWidth size='small' error={vessalInfo.wH_NAMEError}>
                  <InputLabel id="demo-simple-select-label">WareHouse Name</InputLabel>
                 <Select 
                 label="WareHouse Name"
@@ -517,7 +599,7 @@ console.log(data)
                   }
                   setVessalInfo((prev)=>({...prev,wH_NAME:value}))}}  >
                  <MenuItem disabled value={"Select"}>Please Select</MenuItem>
-                 {/* <MenuItem value={"whare"}>whare</MenuItem> */}
+               
                  {vessalData[0]?.v_BE
                    .filter(item => item.bl === vessalInfo.be_No)
                    .flatMap(item =>
@@ -534,12 +616,41 @@ console.log(data)
                        </MenuItem>
                      ))
                    )}
-                {/* {vessalData?.wH_NAME.map((data,index)=>(
-                  <MenuItem key={`${data?.view_List}${index}`}  value={data?.view_List}>{data?.view_List}</MenuItem>
-                ))} */}
+                
                 </Select>
                 {vessalInfo.wH_NAMEError && <FormHelperText>WareHouse is required</FormHelperText>}
-                </FormControl>}
+                </FormControl>} */}
+                {vessalData.length !== 0 && <FormControl variant="standard" disabled={true} fullWidth size='small' margin="normal" error={vessalInfo.XBoeError}>
+                                             <InputLabel id="demo-simple-select-label">Xboe name</InputLabel>
+                                             <Select 
+                                              disabled={true}
+                                            label="Xboe name"
+                                            value={vessalInfo.Xboe }
+                                            onChange={(e)=>{
+                                              let value=e.target.value;
+                                              if(value == "Select"){
+                                                setVessalInfo((prev)=>({...prev,XBoeError:true}))
+                                              }
+                                              else{
+                                                setVessalInfo((prev)=>({...prev,XBoeError:false}))
+                                              }
+                                              setVessalInfo((prev)=>({...prev,Xboe:value}))}}  >
+                                                <MenuItem disabled value={"Select"}>Please Select</MenuItem>
+                                                {/* <MenuItem value={"whare"}>whare</MenuItem> */}
+                 {vessalData[0]?.v_BE
+                  .filter(item => item.bl === vessalInfo.be_No)
+                  .flatMap(item =>
+                    (item.exboe || []).map((tank, index) => (
+                      <MenuItem
+                        key={`${tank.exboe}-${index}`}
+                        value={tank.exboe}
+                      >
+                        {tank.exboe}
+                      </MenuItem>
+                    ))
+                  )}</Select> 
+                                            {vessalInfo.XBoeError && <FormHelperText>Xboe name required</FormHelperText>}
+                                            </FormControl> } 
             </Stack>
             {fields.map((field, index) => (
               <Stack
@@ -557,6 +668,7 @@ console.log(data)
                 <Box sx={{ width: "50%" }}>
   <TextField
     fullWidth
+    disabled={true}
     size="small"
     variant="standard"
     label="Vehicle Name"
@@ -586,6 +698,7 @@ console.log(data)
     fullWidth
     size="small"
     label="Quantity"
+    disabled={true}
     variant="standard"
     id={`Quantity_${index}`}
     type="number"
@@ -638,6 +751,7 @@ console.log(data)
   <TextField
     fullWidth
     size="small"
+    disabled={true}
     label="Transporter Name"
     variant="standard"
     id={`Transporter_Name_${index}`}
