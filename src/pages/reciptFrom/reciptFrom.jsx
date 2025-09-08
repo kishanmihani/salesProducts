@@ -26,7 +26,7 @@ export default function ReceiptForm() {
 
   const [billing, setBilling] = useState("Select");
   const [billingError, setBillingError] = useState(false);
-  const [entryDate, setEntryDate] = useState(null);
+  const [entryDate, setEntryDate] = useState(new Date());
   const [errorDate, setErrorDate] = useState(null);
   const [receiptData, setReceiptData] = useState([]);
   const [receiptDataCheck, setReceiptDataCheck] = useState(true);
@@ -159,7 +159,7 @@ export default function ReceiptForm() {
         user_id: userId,
         Customer_Name: billing,
         Entry_Date: dayjs(entryDate).format("YYYY-MM-DD"),
-        So_No: formData.receiptType.toLowerCase() !== "advance" ? formData.so_no : "",
+        So_No: formData.so_no ,
         Tds: formData.receiptType.toLowerCase() !== "advance" ? formData.tds : "",
         Amount: formData.amount,
         Recipt_type: formData.receiptType
@@ -223,6 +223,7 @@ export default function ReceiptForm() {
           <FormControl sx={{ pt: 2 }} fullWidth size="small" error={!!errorDate}>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
+              disabled={true}
                 label="Entry Date"
                 value={entryDate ? dayjs(entryDate) : null}
                 onChange={(newValue) => {

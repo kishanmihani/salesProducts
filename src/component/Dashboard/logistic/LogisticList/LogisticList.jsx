@@ -206,14 +206,27 @@ export default function Logisticlist() {
                </FormControl>
               </TableCell>
               <TableCell>
-                <IconButton
-                                  aria-label="Edit"
-                                  color="primary"
-                                  onClick={() => navigate("/dashboard/Logistic/logistic_list_Edit_Form/"+row?.table_id)}
-                                 
-                                >
-                <EditSquareIcon color='primary' />
-                </IconButton>
+               <IconButton
+    disabled={row?.status_name === "No Reported" ||
+      row?.status_name === "Reported"
+        ? false
+        : true
+    }
+    aria-label="Edit"
+    onClick={() =>{
+      debugger;
+      navigate("/dashboard/Logistic/logistic_list_Edit_Form/" + row?.table_id)
+    }}
+  >
+    <EditSquareIcon
+      color={row?.status_name === "No Reported" ||
+      row?.status_name === "Reported"
+        ? "primary"
+        : "disabled"
+    }
+    />
+  </IconButton>
+
               </TableCell>
               <TableCell>
                 <IconButton aria-label='Delete' onClick={()=>handleDeleteClick(row)} >
