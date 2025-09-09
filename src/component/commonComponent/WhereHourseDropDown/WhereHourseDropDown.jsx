@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import AddlistDialogBox from "../AddlistDialogBox/AddlistDialogBox";
 import { alhabetelysort } from "../../utils/Sorted";
-import { wareHouseListapi, wareHouseListUpdateapi } from '../../Config/Api';
+import { wareHouseListapi, wareHouseListUpdateapi } from '../../Config/Api/Api';
 export default function WhereHourseDropDown(
     {selectedWhereHouse,
     setSelectedWhereHouse,

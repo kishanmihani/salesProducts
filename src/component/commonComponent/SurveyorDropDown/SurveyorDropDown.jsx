@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import AddlistDialogBox from "../AddlistDialogBox/AddlistDialogBox";
 import { alhabetelysort } from "../../utils/Sorted";
-import {  surveyorListapi, surveyorListUpdateapi } from '../../Config/Api';
+import { surveyorListapi ,surveyorListUpdateapi} from '../../Config/Api/Api';
 export default function SurveyorDropDown({selectedSurveyor,
     setSelectedSurveyor,
     errorsSurveyor,

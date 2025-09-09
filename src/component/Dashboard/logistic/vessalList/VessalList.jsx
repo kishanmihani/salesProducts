@@ -7,7 +7,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { authAxios } from '../../../utils/authAxios';
-import {  vessailBE_Detail_List, Vessel_Detail, Vessel_Detail_list } from '../../../Config/Api';
+import {  vessailBE_Detail_List, Vessel_Detail, Vessel_Detail_list } from '../../../Config/Api/Api';
 import formatDateToUS from '../../../utils/DateFormate';
 import dayjs from 'dayjs';
 import EditSquareIcon from '@mui/icons-material/EditSquare';

@@ -56,7 +56,7 @@ export default function ReceiptForm() {
         const data = {
           user_id: userId,
           Customer_Name: receipt.customer,
-          // Payment_type:receipt?.Payment_Type
+          Payment_type:receipt?.Payment_Type
         };
 
         try {
@@ -106,7 +106,7 @@ export default function ReceiptForm() {
 
   function handleSubmit() {
     let isValid = true;
-
+ console.log(queryParams)
     // Billing validation
     if (billing === "Select") {
       setBillingError(true);

@@ -11,7 +11,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditSquareIcon from '@mui/icons-material/EditSquare';
 import { authAxios } from '../../../../utils/authAxios';
 import CustomeAlerts from '../../../../commonComponent/CustomeAlert/CustomeAlert';
-import { TankDeleteapi, VesselDataTankapi, VesselEditTankapi,vessailBE_Detail_List } from '../../../../Config/Api';
+import { TankDeleteapi, VesselDataTankapi, VesselEditTankapi,vessailBE_Detail_List } from '../../../../Config/Api/Api';
 
 
 export default function TankForm({ open,

@@ -1,8 +1,9 @@
 import React,{useEffect, useState} from 'react'
 import CustomPageHeader from '../../component/commonComponent/CustomPageHeader/CustomPageHeader'
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormHelperText, InputLabel, MenuItem, Paper, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material'
-import { authAxios } from '../../component/utils/authAxios';
-import { SoApprovalapi } from '../../component/Config/Api';
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormHelperText, InputLabel, MenuItem, Paper, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material';
+import { closerFormApi, closerFormListApi, SoApprovalapi } from '../../component/Config/Api/Api'; 
+import api from '../../component/Config/Api';
+import { Api } from '@mui/icons-material';
 
 export default function CloserForm() {
    const [closerDataCheck,setCloserDataCheck] = useState(true);
@@ -51,14 +52,14 @@ const handleUpdateClick = (row) => {
 };
         useEffect(() => {
           if (closerDataCheck == true) {
-            authAxios
+            api
               .post(SoApprovalapi, JSON.stringify({ user_id: userId }))
               .then((res) =>{ setSodata(res.data);setCloserDataCheck(false)})
               .catch((err) =>{ console.log(err?.message);setCloserDataCheck(false)});
           }
         }, [sodata, userId,closerDataCheck]);
         function fetchData(){
-            authAxios
+            Api
               .post(SoApprovalapi, JSON.stringify({ user_id: userId }))
               .then((res) =>{ setSodata(res.data);setCloserDataCheck(false)})
               .catch((err) =>{ console.log(err?.message);setCloserDataCheck(false)});
@@ -66,7 +67,7 @@ const handleUpdateClick = (row) => {
         
          useEffect(()=>{
     if(statusListCheck == true ){
-    authAxios.post("/BituRep/Api/Account/Status_Closer_List",JSON.stringify({
+    api.post(closerFormListApi,JSON.stringify({
       "User_Id":userId
     }))
     .then(res=> {setStatuslist(res.data);setStatusListCheck(false)})
@@ -106,7 +107,7 @@ const handleSubmit = () => {
   console.log('Submitting:', payload);
 
   // Example API call
-  authAxios.post('/BituRep/Api/Account/Closer_Entry_insert', payload)
+  api.post(closerFormApi, payload)
     .then(res => {
       console.log("Update success:", res.data);
       setDialogOpen(false);

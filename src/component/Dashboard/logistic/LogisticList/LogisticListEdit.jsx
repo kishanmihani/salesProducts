@@ -12,7 +12,7 @@ import { authAxios } from "../../../utils/authAxios";
 import CustomeAlerts from "../../../commonComponent/CustomeAlert/CustomeAlert";
 import CustomPageHeader from "../../../commonComponent/CustomPageHeader/CustomPageHeader";
 import ProductDropDownTwo from "../../../commonComponent/ProductDropDown/ProductDropDownTwo";
-import { vehiclelistapi, VessalFormData } from "../../../Config/Api";
+import { vehiclelistapi, VessalFormData } from "../../../Config/Api/Api";
   export default function LogicticListEdit() {
     const tableId=useParams().id;
     // const {id} = useLocation;
@@ -455,7 +455,6 @@ console.log(data);
                 type="number"
                 variant="standard"
                 name="SoNo"
-                disabled={true}
                 label="So No."
                 error={errorSoNo}
                 helperText={errorSoNo}
@@ -473,20 +472,20 @@ console.log(data);
                   setSoNo(e.target.value)}}
               />
               {/* </Box> */}
-              <FormControl variant="standard" disabled={true} fullWidth size='small' error={vessalNameError}>
+              <FormControl variant="standard"  fullWidth size='small' error={vessalNameError}>
                  <InputLabel id="demo-simple-select-label">Voyage name</InputLabel>
                 <Select 
                 label="Voyage name"
                 value={vessalName }
                 onChange={(e)=>VessalChange(e.target.value)}  >
-                 <MenuItem disabled value={"Select"}>Please Select</MenuItem>
+                 <MenuItem  value={"Select"}>Please Select</MenuItem>
                 {vessalList.map(data=>(
                   <MenuItem key={data.vesselName_List}  value={data.vesselName_List}>{data.vesselName_List}</MenuItem>
                 ))}
                 </Select>
                 {vessalNameError && <FormHelperText>Voyage name is required</FormHelperText>}
                 </FormControl>
-                 <FormControl variant="standard" disabled={true} fullWidth size='small' error={vessalInfo.be_NoError}>
+                 <FormControl variant="standard"  fullWidth size='small' error={vessalInfo.be_NoError}>
                  <InputLabel id="demo-simple-select-label">IN -BOE</InputLabel>
                 <Select 
                 label="BOE No"
@@ -545,7 +544,6 @@ console.log(data);
                 fullWidth
                 size="small"
                 variant="standard"
-                disabled={true}
                 margin="normal"
                 id="Remark"
                 name="Remark"
@@ -555,7 +553,7 @@ console.log(data);
                 value={remark}
                 onChange={(e) => setRemark(e.target.value)}
               />
-               <FormControl disabled={true} variant="standard" fullWidth size='small' error={vessalInfo.tankError}>
+               <FormControl  variant="standard" fullWidth size='small' error={vessalInfo.tankError}>
                  <InputLabel id="demo-simple-select-label">tank Name</InputLabel>
                 <Select 
                 label="tank | WareHouse Name"
@@ -620,10 +618,9 @@ console.log(data);
                 </Select>
                 {vessalInfo.wH_NAMEError && <FormHelperText>WareHouse is required</FormHelperText>}
                 </FormControl>} */}
-                {vessalData.length !== 0 && <FormControl variant="standard" disabled={true} fullWidth size='small' margin="normal" error={vessalInfo.XBoeError}>
+                {vessalData.length !== 0 && <FormControl variant="standard" fullWidth size='small' margin="normal" error={vessalInfo.XBoeError}>
                                              <InputLabel id="demo-simple-select-label">Xboe name</InputLabel>
                                              <Select 
-                                              disabled={true}
                                             label="Xboe name"
                                             value={vessalInfo.Xboe }
                                             onChange={(e)=>{
@@ -668,7 +665,6 @@ console.log(data);
                 <Box sx={{ width: "50%" }}>
   <TextField
     fullWidth
-    disabled={true}
     size="small"
     variant="standard"
     label="Vehicle Name"
@@ -698,7 +694,6 @@ console.log(data);
     fullWidth
     size="small"
     label="Quantity"
-    disabled={true}
     variant="standard"
     id={`Quantity_${index}`}
     type="number"
@@ -751,7 +746,6 @@ console.log(data);
   <TextField
     fullWidth
     size="small"
-    disabled={true}
     label="Transporter Name"
     variant="standard"
     id={`Transporter_Name_${index}`}

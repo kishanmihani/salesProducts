@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import CustomPageHeader from '../commonComponent/CustomPageHeader/CustomPageHeader';
-import { SoApprovalapi, soVhicledetails } from '../Config/Api';
+import { SoApprovalapi, soVhicledetails } from '../Config/Api/Api';
 import { authAxios } from '../utils/authAxios';
 import formatDateToUS from '../utils/DateFormate';
 import {
@@ -51,15 +51,17 @@ export default function SoApproval() {
 
   const [sodata, setSodata] = useState([]);
   const [userId] = useState(JSON.parse(sessionStorage.getItem('userInfo'))?.id);
-
+  const [dataCheck,setDataCheck] = useState(true);
   useEffect(() => {
-    if (sodata.length === 0) {
+    if(dataCheck){
       authAxios
         .post(SoApprovalapi, JSON.stringify({ user_id: userId }))
         .then((res) => setSodata(res.data))
         .catch((err) => console.log(err?.message));
+        setDataCheck(false);
+    // }
     }
-  }, [sodata, userId]);
+  }, [sodata, userId,dataCheck]);
 
   return (
     <React.Fragment>

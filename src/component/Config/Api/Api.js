@@ -1,15 +1,12 @@
+export const loginApi="/BituRep/Api/Account/Login";
 export const surveyorListapi="BituRep/Api/Account/surveyor_List";
 export const surveyorListUpdateapi="BituRep/Api/Account/surveyor_List_Update";
-
 export const wareHouseListapi="BituRep/Api/Account/Warehouse_List";
 export const wareHouseListUpdateapi="BituRep/Api/Account/Warehouse_List_Update";
-
 export const VesselDataTankapi ="BituRep/Api/Account/Vessel_data_Tank";
 export const VesselEditTankapi="BituRep/Api/Account/Tank_Edit_Data";
-
 export const vessalDataListapi ="BituRep/Api/Account/Vessel_Data_List";
 export const VesselDataBLapi="BituRep/Api/Account/Vessel_data";
-
 export const vhicleInsert="BituRep/Api/Account/logistic_data_insert";
 export const Vessel_Detail="BituRep/Api/Account/Vessel_Detail";
 export const Vessel_Detail_list="BituRep/Api/Account/Vessel_Detail_list";
@@ -25,3 +22,7 @@ export const VessalFormData="BituRep/Api/Account/Vessel_From_Data";
 export const ExbodDeleteapi="BituRep/Api/Account/EXBOE_Delete";
 export const VesselEditExbodeapi="BituRep/Api/Account/BE_Edit_Data";
 export const VesselDataBEapi="BituRep/Api/Account/Vessel_data_BE";
+export const closerFormApi="/BituRep/Api/Account/Closer_Entry_insert";
+export const closerFormListApi="/BituRep/Api/Account/Status_Closer_List";
+export const AccountAdvance="BituRep/Api/Account/Account_Adv";
+export const AccountCreditApi="BituRep/Api/Account/Account_Cr";

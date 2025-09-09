@@ -1,6 +1,6 @@
 import './App.css';
 import React  from 'react'
-import LoginForm from './component/loginFrom/loginForm';
+// import LoginForm from './component/loginFrom/loginForm';
 import { Box } from '@mui/material';
 import { Navigate, Route, Routes } from 'react-router';
 import SalesRestitration from './component/sales/salesRestitration';
@@ -9,7 +9,6 @@ import Dashboard from './component/Dashboard/Dashboard';
 import Saleslist from './component/sales/Sales list/Saleslist';
 import ApprovalRequestForm from './component/sales/ApprovalRequestForm';
 import LogicRequestForm from './component/Dashboard/logistic/LogicRequestForm/LogicRequestForm';
-import LogicForm from './component/Dashboard/logistic/LogicForm';
 import LogisticList from './component/Dashboard/logistic/LogisticList/LogisticList';
 import VessalRequestForm from './component/Dashboard/logistic/VessalRequestForm/VessalRequestForm';
 import Pdfbilles from './component/sales/Pdfbilles/Pdfbilles';
@@ -23,6 +22,8 @@ import ApprovalList from './pages/ApprovalList/ApprovalList';
 import ReciptFrom from './pages/reciptFrom/reciptFrom';
 import CloserForm from './pages/closerForm/closerForm';
 import ApprovalPendingForm from './component/sales/Sales list/ApprovalPendingForm';
+import LoginForm from './pages/loginFrom/loginForm';
+import LogicForm from './component/Dashboard/logistic/LogicForm';
 function App() {
   // const navigate=useNavigate();
 //  window.addEventListener("beforeunload", function (e) {

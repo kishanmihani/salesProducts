@@ -2,7 +2,6 @@ import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Typogra
 import React, { useEffect } from 'react';
 import EditSquareIcon from '@mui/icons-material/EditSquare';
 import { useNavigate } from "react-router";
-import { authAxios } from '../../component/utils/authAxios';
 import DeleteIcon from "@mui/icons-material/Delete";
 import CustomPageHeader from '../../component/commonComponent/CustomPageHeader/CustomPageHeader';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
@@ -11,6 +10,8 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import CancelIcon from '@mui/icons-material/Cancel';
 // import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import CustomeAlerts from '../../component/commonComponent/CustomeAlert/CustomeAlert';
+import api from '../../component/Config/Api';
+import { vehiclelistapi } from '../../component/Config/Api/Api';
 const tableHeaders = [
   "So No",
   "Customer Name",
@@ -42,19 +43,21 @@ export default function ApprovalList() {
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [custAlert, setCustAlert] = React.useState(null);
   const [statuslist,setStatuslist] = React.useState([]);
+  const [checkStatusList,setCheckStatusList] = React.useState(true)
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
   useEffect(()=>{
-    if(statuslist?.length === 0){
-    authAxios.post("/BituRep/Api/Account/Status_List",JSON.stringify({
+    if(checkStatusList){
+      setCheckStatusList(false)
+    api?.post("/BituRep/Api/Account/Status_List",JSON.stringify({
       "User_Id":userId
     }))
     .then(res=> setStatuslist(res.data))
     .catch(err=> console.log(err.message))
   }
   
-  },[userId,statuslist])
+  },[userId,statuslist,checkStatusList])
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
@@ -80,8 +83,8 @@ export default function ApprovalList() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const fetchTableData = async () => {
       try {
-        const response = await authAxios.post(
-          "BituRep/Api/Account/logistic_data_list",
+        const response = await api.post(
+        vehiclelistapi,
           JSON.stringify({
             user_id: userId,
             Role: "entry",

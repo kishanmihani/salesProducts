@@ -21,7 +21,7 @@ import BlDataItems from "./blDataItems/BlDataItems";
 import { authAxios } from "../../../utils/authAxios";
 import dayjs from "dayjs";
 import CustomeAlerts from "../../../commonComponent/CustomeAlert/CustomeAlert";
-import { vessalDataListapi, Vessel_Edit_Data, VesselDataBLapi} from "../../../Config/Api";
+import { vessalDataListapi, Vessel_Edit_Data, VesselDataBLapi} from "../../../Config/Api/Api";
 import { useLocation, useNavigate, useParams } from "react-router";
 import { useSelector } from 'react-redux';
 import ChaDropDown from "../../../commonComponent/ChaDropDown/ChaDropDown";

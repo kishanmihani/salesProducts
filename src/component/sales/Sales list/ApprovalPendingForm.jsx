@@ -3,7 +3,7 @@ import React, { useEffect } from 'react'
 import { useNavigate } from "react-router";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { authAxios } from '../../utils/authAxios';
-import { salesListApi } from '../../Config/Api';
+import { salesListApi } from '../../Config/Api/Api';
 import { a11yProps } from '../../commonComponent/CustomTabPanel/CustomTabPanel';
 export default function ApprovalPendingForm() {
   const navigate = useNavigate();

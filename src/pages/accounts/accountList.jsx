@@ -10,6 +10,7 @@ import DeleteConfirmationDialog from '../../component/commonComponent/DeleteConf
 import CustomeAlerts from '../../component/commonComponent/CustomeAlert/CustomeAlert';
 import { a11yProps } from '../../component/commonComponent/CustomTabPanel/CustomTabPanel';
 import  { CustomTab } from '../../component/commonComponent/CustomTabs/CustomTabs';
+import { AccountAdvance, AccountCreditApi, vehiclelistapi } from '../../component/Config/Api/Api';
 // const tableHeaders = [
 //   "So No",
 //   "Customer Name",
@@ -69,6 +70,7 @@ export default function AccountList() {
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [custAlert, setCustAlert] = React.useState(null);
   const [statuslist,setStatuslist] = React.useState([]);
+  const [checkStatusList,setCheckStatusList]= React.useState(false);
   // const [open, setOpen] = React.useState(false);
   
   const [tabs, setTabs] = React.useState(0);
@@ -83,7 +85,8 @@ export default function AccountList() {
     setPage(newPage);
   };
   useEffect(()=>{
-    if(statuslist?.length === 0){
+    if(checkStatusList){
+      setCheckStatusList(false);
     authAxios.post("/BituRep/Api/Account/Status_Acc_List",JSON.stringify({
       "User_Id":userId
     }))
@@ -91,7 +94,7 @@ export default function AccountList() {
     .catch(err=> showError("Some thing went wrong:",err))
   }
   
-  },[userId,statuslist])
+  },[userId,statuslist,checkStatusList])
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
@@ -117,20 +120,20 @@ const paginatedData = activeData.slice(
   try {
     const [resOne, resTwo, resThree] = await Promise.all([
       authAxios.post(
-        "BituRep/Api/Account/logistic_data_list",
+        vehiclelistapi,
         JSON.stringify({
           user_id: userId,
           Role: "entry",
         })
       ),
       authAxios.post(
-        "BituRep/Api/Account/Account_Adv",
+      AccountAdvance,
         JSON.stringify({
           user_id: userId,
         })
       ),
       authAxios.post(
-        "BituRep/Api/Account/Account_Cr",
+        AccountCreditApi,
         JSON.stringify({
           user_id: userId,
         })

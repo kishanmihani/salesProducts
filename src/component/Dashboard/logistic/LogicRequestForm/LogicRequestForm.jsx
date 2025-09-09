@@ -21,7 +21,7 @@ import PortDropDownTwo from "../../../commonComponent/PortDropdown/ProtDropDownt
 import { authAxios } from "../../../utils/authAxios";
 import CustomeAlerts from "../../../commonComponent/CustomeAlert/CustomeAlert";
 import CustomPageHeader from "../../../commonComponent/CustomPageHeader/CustomPageHeader";
-import { VessalFormData, Vessel_Detail_list, vhicleInsert } from "../../../Config/Api";
+import { VessalFormData, Vessel_Detail_list, vhicleInsert } from "../../../Config/Api/Api";
 import ProductDropDownTwo from "../../../commonComponent/ProductDropDown/ProductDropDownTwo";
 import WhereHourseDropDown from "../../../commonComponent/WhereHourseDropDown/WhereHourseDropDown";
 import TankDropDownTwo from "../../../commonComponent/TankDropDown/TankDropDownTwo";

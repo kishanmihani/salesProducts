@@ -3,8 +3,9 @@ import React, { useEffect } from 'react'
 import { useNavigate } from "react-router";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { authAxios } from '../../utils/authAxios';
-import { salesListApi } from '../../Config/Api';
+import { salesListApi } from '../../Config/Api/Api'; 
 import { a11yProps } from '../../commonComponent/CustomTabPanel/CustomTabPanel';
+import api from '../../Config/Api';
 export default function Saleslist() {
   const navigate = useNavigate();
   const [tableData,setTableData]=React.useState([])
@@ -34,7 +35,7 @@ export default function Saleslist() {
   useEffect(() => {
   const fetchTableData = async () => {
     try {
-      const response = await authAxios.post(
+      const response = await api.post(
         salesListApi,
         JSON.stringify({
           user_id: userId,

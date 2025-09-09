@@ -15,7 +15,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditSquareIcon from '@mui/icons-material/EditSquare';
 import { authAxios } from '../../../../utils/authAxios';
 import CustomeAlerts from '../../../../commonComponent/CustomeAlert/CustomeAlert';
-import {ExbodDeleteapi, TankDeleteapi, vessailBE_Detail_List, VesselDataBEapi, VesselEditTankapi } from '../../../../Config/Api';
+import {ExbodDeleteapi, TankDeleteapi, vessailBE_Detail_List, VesselDataBEapi, VesselEditExbodeapi, VesselEditTankapi } from '../../../../Config/Api/Api';
 import formatDateToUS from '../../../../utils/DateFormate';
 // import formatDateToUS from '../../../../utils/DateFormate';
 
