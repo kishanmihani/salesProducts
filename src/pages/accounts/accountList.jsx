@@ -31,7 +31,7 @@ const cashHeaders = [
   "Actual Qty",
   "BOE No.",
   "Port Name",
-  
+  "transfer to credit",
   "Receipt",
 ];
 
@@ -44,6 +44,7 @@ const advanceHeaders = [
   "Balance Advance",
   // "Status",
   "Recived Amount",
+  "transfer to credit",
   "Receipt",
 ];
 
@@ -300,6 +301,11 @@ const paginatedData = activeData.slice(
               <TableCell align="left">{row?.rec}</TableCell>
               <TableCell align="left">{row?.bal_Adv}</TableCell>
               <TableCell>
+            <Button color="primary">
+  Transfer to Credit
+</Button>
+                                </TableCell>
+              <TableCell>
                 <Button
                                   aria-label="Edit"
                                   color="primary"
@@ -325,13 +331,17 @@ const paginatedData = activeData.slice(
                 {row?.bE_No}
               </TableCell>
               <TableCell align="left">{row?.port_Name}</TableCell>
-              
+              <TableCell><Button color="primary">
+  Transfer to Credit
+</Button>
+                                
+              </TableCell>
               
               <TableCell>
                 <Button
                                   aria-label="Edit"
                                   color="primary"
-                                  onClick={() =>{let data={so_no:row?.so_No,customer:row?.customer_Name,Payment_Type:row?.payment_Type};
+                                  onClick={() =>{let data={so_no:row?.so_No,customer:row?.customer_Name,Payment_Type:"cash Payments"};
                                   const query = new URLSearchParams({ data: JSON.stringify(data) }).toString()
                                   navigate(`/dashboard/Account/ReciptFrom?${query}`)
                                 }}

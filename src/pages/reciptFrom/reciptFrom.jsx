@@ -38,7 +38,7 @@ export default function ReceiptForm() {
 
   const [receipt] = useState(JSON.parse(queryParams.get("data")));
   const [userId] = useState(JSON.parse(sessionStorage.getItem("userInfo"))?.id);
-
+ console.log(receipt)
   const [formData, setFormData] = useState({
     so_no: 0,
     tds: 0,
@@ -75,7 +75,8 @@ export default function ReceiptForm() {
       setBilling(receipt.customer);
       setFormData((prev) => ({
         ...prev,
-        so_no: receipt.so_no
+        so_no: receipt.so_no,
+        receiptType:receipt.Payment_Type
       }));
     };
 
@@ -131,7 +132,7 @@ export default function ReceiptForm() {
       errorReceiptType: ''
     };
 
-    if (formData.receiptType?.toLowerCase() !== "advance") {
+    if (formData.receiptType?.includes("advance")) {
       if (!formData.so_no || Number(formData.so_no) <= 0) {
         newErrors.errorSo_no = "So no must be greater than 0";
         isValid = false;
@@ -160,7 +161,7 @@ export default function ReceiptForm() {
         Customer_Name: billing,
         Entry_Date: dayjs(entryDate).format("YYYY-MM-DD"),
         So_No: formData.so_no ,
-        Tds: formData.receiptType.toLowerCase() !== "advance" ? formData.tds : "",
+        Tds: formData.receiptType.toLowerCase().includes("advance") ? formData.tds : "",
         Amount: formData.amount,
         Recipt_type: formData.receiptType
       };
@@ -195,7 +196,14 @@ export default function ReceiptForm() {
     setEntryDate(null);
     setErrorDate(null);
   }
+useEffect(()=>{
+setFormData((prev) => ({
+                ...prev,
+                receiptType: receipt?.payment_Type,
+                tds: 0,
+}));
 
+},[]);
   async function handleDeleteClick(row) {
     const data = { user_id: userId, Table_Id: row.id };
     try {
@@ -267,7 +275,7 @@ export default function ReceiptForm() {
             helperText={formData.errorSo_no}
           />
 
-          <TextField
+         {/** <TextField
             label="TDS"
             name="tds"
             type="number"
@@ -286,7 +294,7 @@ export default function ReceiptForm() {
             }}
             error={!!formData.errorTds}
             helperText={formData.errorTds}
-          />
+          /> */}
         </Box>
 
         <Box sx={{ pt: 2, display: 'flex', gap: 4 }}>
@@ -309,7 +317,7 @@ export default function ReceiptForm() {
             error={!!formData.errorAmount}
             helperText={formData.errorAmount}
           />
-
+         {receipt ==null   && (
           <ReceiptTypeDropdown
             value={formData.receiptType}
             onChange={(e) => {
@@ -322,7 +330,7 @@ export default function ReceiptForm() {
             }}
             error={!!formData.errorReceiptType}
             helperText={formData.errorReceiptType}
-          />
+          />)}
         </Box>
 
         <Box sx={{ display: "flex", justifyContent: "end", gap: 2, pt: 2 }}>

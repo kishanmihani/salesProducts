@@ -165,7 +165,7 @@ export default function Logisticlist() {
                       </Select>
                     </FormControl>
                   </TableCell>
-
+                  
                   {/* Edit */}
                   <TableCell>
                     <IconButton
@@ -194,7 +194,12 @@ export default function Logisticlist() {
                       disabled={row?.a_Qty === 0 || row?.a_Qty === ""} 
                       onClick={() => handleDeleteClick(row)}
                     >
-                      <DeleteIcon color={row?.a_Qty === 0 || row?.a_Qty === "" ? "disabled" : "error"} />
+                      <DeleteIcon color={
+                          row?.a_Qty === 0 || row?.a_Qty === "" ||
+                          !["No Reported", "Reported"].includes(row?.status_name)
+                            ? "disabled"
+                            : "primary"
+                        } />
                     </IconButton>
                   </TableCell>
                 </TableRow>
