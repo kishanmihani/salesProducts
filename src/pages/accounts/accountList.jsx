@@ -27,10 +27,12 @@ import { AccountAdvance, AccountCreditApi, vehiclelistapi } from '../../componen
 const cashHeaders = [
   "So No",
   "Customer Name",
-  "Vehicle Name",
-  "Actual Qty",
-  "BOE No.",
-  "Port Name",
+   "Port Name",
+  "Company name",
+  "Advance Payment",
+  "Balance Advance",
+  // "Status",
+  "Recived Amount",
   "transfer to credit",
   "Receipt",
 ];
@@ -121,7 +123,7 @@ const paginatedData = activeData.slice(
   try {
     const [resOne, resTwo, resThree] = await Promise.all([
       authAxios.post(
-        vehiclelistapi,
+        "/BituRep/Api/Account/Account_CH",
         JSON.stringify({
           user_id: userId,
           Role: "entry",
@@ -301,7 +303,7 @@ const paginatedData = activeData.slice(
               <TableCell align="left">{row?.rec}</TableCell>
               <TableCell align="left">{row?.bal_Adv}</TableCell>
               <TableCell>
-            <Button color="primary">
+            <Button color="primary" variant="contained">
   Transfer to Credit
 </Button>
                                 </TableCell>
@@ -321,21 +323,18 @@ const paginatedData = activeData.slice(
                 </React.Fragment>}
               {tabs == 1 && 
               <React.Fragment>
-              <TableCell align="left">{row?.so_No}</TableCell>
+               <TableCell align="left">{row?.so_No}</TableCell>
               <TableCell align="left">{row?.customer_Name}</TableCell>
-              <TableCell align="left">{row?.vehicle_Name}</TableCell>
-              <TableCell>
-              {row?.a_Qty === ""? "No Actual quantity":row?.a_Qty}
-              </TableCell>
-              <TableCell>
-                {row?.bE_No}
-              </TableCell>
               <TableCell align="left">{row?.port_Name}</TableCell>
-              <TableCell><Button color="primary">
+              <TableCell align="left">{row?.company_Name}</TableCell>
+              <TableCell align="left">{row?.adv_Value}</TableCell>
+              <TableCell align="left">{row?.rec}</TableCell>
+              <TableCell align="left">{row?.bal_Adv}</TableCell>
+              <TableCell>
+            <Button color="primary" variant="contained">
   Transfer to Credit
 </Button>
-                                
-              </TableCell>
+                                </TableCell>
               
               <TableCell>
                 <Button
