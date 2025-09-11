@@ -29,7 +29,6 @@ const cashHeaders = [
   "Customer Name",
    "Port Name",
   "Company name",
-  "Advance Payment",
   "Balance Advance",
   // "Status",
   "Recived Amount",
@@ -327,7 +326,6 @@ const paginatedData = activeData.slice(
               <TableCell align="left">{row?.customer_Name}</TableCell>
               <TableCell align="left">{row?.port_Name}</TableCell>
               <TableCell align="left">{row?.company_Name}</TableCell>
-              <TableCell align="left">{row?.adv_Value}</TableCell>
               <TableCell align="left">{row?.rec}</TableCell>
               <TableCell align="left">{row?.bal_Adv}</TableCell>
               <TableCell>
