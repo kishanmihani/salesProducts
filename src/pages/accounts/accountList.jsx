@@ -303,7 +303,7 @@ const paginatedData = activeData.slice(
               <TableCell align="left">{row?.rec}</TableCell>
               <TableCell align="left">{row?.bal_Adv}</TableCell>
               <TableCell>
-            <Button color="primary" variant="contained">
+            <Button size='small' color="primary" variant="contained">
   Transfer to Credit
 </Button>
                                 </TableCell>
@@ -331,7 +331,7 @@ const paginatedData = activeData.slice(
               <TableCell align="left">{row?.rec}</TableCell>
               <TableCell align="left">{row?.bal_Adv}</TableCell>
               <TableCell>
-            <Button color="primary" variant="contained">
+            <Button color="primary" variant="contained" size='small'>
   Transfer to Credit
 </Button>
                                 </TableCell>
