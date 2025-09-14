@@ -23,6 +23,7 @@ import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
 import RadioButtonCheckedIcon from "@mui/icons-material/RadioButtonChecked";
 import { GrMoney } from "react-icons/gr";
 import ContactsIcon from '@mui/icons-material/Contacts';
+import { BsFillFileEarmarkSpreadsheetFill } from "react-icons/bs";
 import { RiMoneyDollarBoxFill } from "react-icons/ri";
 const Sidbar = ({ message}) => {
   let pagelist = [];
@@ -42,6 +43,7 @@ const Sidbar = ({ message}) => {
   sales: false,
   logistic: false,
   account: false,
+  mangement:false
 });
 const toggleModule = (key) => {
   setOpenModules((prev) => {
@@ -384,7 +386,7 @@ const toggleModule = (key) => {
             </ListItemButton> */}
           </List>
           </Collapse>
-           <ListItemButton
+        <ListItemButton
           component={NavLink}
           onClick={() => toggleModule("account")}
           to="/dashboard/Account"
@@ -468,33 +470,22 @@ const toggleModule = (key) => {
                 primary="Closer Form"
               />
             </ListItemButton>
-            {/* <ListItemButton
-              component={NavLink}
-              to="/dashboard/Account/Approval_list"
-              selected={location.pathname === "/dashboard/Account/Approval_list"}
-              sx={{ pl: 4 }} 
-            >
-              <ListItemIcon color="#756f6f">
-                {location.pathname === "/dashboard/Account/Approval_list" ? (
-                  <RadioButtonCheckedIcon
-                    style={{ height: 17, width: 17, mr: 2 }}
-                  ></RadioButtonCheckedIcon>
-                ) : (
-                  <RadioButtonUncheckedIcon
-                  
-                    style={{ height: 17, width: 17, mr: 2,color:"#756f6f" }}
-                  />
-                )}
-              </ListItemIcon>
-              <ListItemText
-                primaryTypographyProps={{ fontSize: "12px" }}
-                primary="Approval List"
-              />
-            </ListItemButton> */}
       </List>
       </Collapse>
-      </List>
-      
+       <ListItemButton
+          component={NavLink}
+          onClick={() => toggleModule("account")}
+          to="/dashboard/Account"
+          selected={location.pathname.includes("/dashboard/Account")}
+          sx={{display: pagelist.includes("Account_Modual") ? "flex" : "none"}}
+        >
+          <ListItemIcon sx={{ color: '#756f6f' ,fontSize:22}}>
+          <BsFillFileEarmarkSpreadsheetFill />
+            </ListItemIcon>
+          <ListItemText primary="Management" />
+        {openModules.account ?  <FaChevronDown /> : <FaChevronRight />}
+        </ListItemButton>
+      </List>      
      
       <Box sx={{ flexGrow: 1 }} />
 

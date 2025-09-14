@@ -66,16 +66,16 @@ const creditHeaders = [
 ];
 
 const vehicle_head = [
-  "id",
-  "customer Name",
-  "vehicle Name",
-  "a Qty",
-  "so No",
-  "entry Date",
-  "b Amount",
-  "b Bal Amount",
-  "b P Flag",
-  "recipt ID",
+  "S.N",
+  "Customer Name",
+  "Vehicle Name",
+  "Actual Qty",
+  "So No",
+  "Entry Date",
+  "Bill Amount",
+  "Bill Bal Amount",
+  "Bill P Flag",
+  "Recipt ID",
 ];
 
 export default function AccountList() {
@@ -159,9 +159,9 @@ export default function AccountList() {
       ]);
 
       setTableData({
-        api1: resOne.data, // cash
-        api2: resTwo.data, // advance
-        api3: resThree.data, // credit
+        api1: resOne.data,
+        api2: resTwo.data,
+        api3: resThree.data,
       });
 
       setCheckTableData(true);
@@ -187,7 +187,7 @@ export default function AccountList() {
         "BituRep/Api/Account/Credit_RE_insert",
         JSON.stringify({
           user_id: userId,
-          Customer_Name: row?.Customer_Name,
+          Customer_Name: row?.customer_Name,
           Entry_Date: dayjs(new Date()),
           Recipt_type: text,
           So_No: row?.so_No,
@@ -499,7 +499,7 @@ export default function AccountList() {
                                 <TableBody>
                                   {innerData?.map((vRow, idx) => (
                                     <TableRow key={idx}>
-                                      <TableCell>{vRow?.id}</TableCell>
+                                      <TableCell>{idx + 1}</TableCell>
                                       <TableCell>
                                         {vRow?.customer_Name}
                                       </TableCell>
