@@ -24,15 +24,8 @@ import CloserForm from './pages/closerForm/closerForm';
 import ApprovalPendingForm from './component/sales/Sales list/ApprovalPendingForm';
 import LoginForm from './pages/loginFrom/loginForm';
 import LogicForm from './component/Dashboard/logistic/LogicForm';
+import Report from './pages/management/report/Report';
 function App() {
-  // const navigate=useNavigate();
-//  window.addEventListener("beforeunload", function (e) {
-//   e.preventDefault();
-//   alert("Are you sure you want to leave?");
-// });
-// const RedirectComponent = () => {
-//   return <Navigate to="/Account/Account_list" replace />;
-// };
   return (
     <React.Fragment>
       <Box
@@ -46,7 +39,7 @@ function App() {
     >
       <Routes>
         
-         <Route  path='' element={
+         <Route  path='/' element={
           <LoginForm />
           } />
           <Route path="Dashboard" element={<Dashboard />} >
@@ -75,17 +68,18 @@ function App() {
             </Route>
 
             <Route path="Account" element={<LogicForm />}>
-  {/* <Route index element={<Navigate to="Account_list" replace />} /> */}
   <Route path="Account_list" element={<AccountList />} />
   <Route path="Approval_list" element={<ApprovalList />} />
   <Route path="CloserForm" element={<CloserForm />} />
   <Route path="ReciptFrom" element={<ReciptFrom />} />
-</Route>
+            </Route>
 
+            <Route path="management" element={<LogicForm />}>
+              <Route path="report" element={<Report />} />
+            </Route>
           </Route>
         </Routes>
       </Box>
-      {/* </DrawerProvider> */}
        
     </React.Fragment>
   )

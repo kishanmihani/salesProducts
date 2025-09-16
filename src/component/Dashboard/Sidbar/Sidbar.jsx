@@ -43,7 +43,7 @@ const Sidbar = ({ message}) => {
   sales: false,
   logistic: false,
   account: false,
-  mangement:false
+  mangement:true
 });
 const toggleModule = (key) => {
   setOpenModules((prev) => {
@@ -474,17 +474,44 @@ const toggleModule = (key) => {
       </Collapse>
        <ListItemButton
           component={NavLink}
-          onClick={() => toggleModule("account")}
-          to="/dashboard/Account"
-          selected={location.pathname.includes("/dashboard/Account")}
-          sx={{display: pagelist.includes("Account_Modual") ? "flex" : "none"}}
+          onClick={() => toggleModule("mangement")}
+          to="/dashboard/management"
+          selected={location.pathname.includes("/dashboard/management")}
+          // sx={{display: pagelist.includes("Account_Modual") ? "flex" : "none"}}
         >
           <ListItemIcon sx={{ color: '#756f6f' ,fontSize:22}}>
           <BsFillFileEarmarkSpreadsheetFill />
             </ListItemIcon>
           <ListItemText primary="Management" />
-        {openModules.account ?  <FaChevronDown /> : <FaChevronRight />}
+        {openModules.mangement ?  <FaChevronDown /> : <FaChevronRight />}
         </ListItemButton>
+        <Collapse  in={openModules.mangement} timeout="auto" unmountOnExit>
+        <List>
+           <ListItemButton
+              component={NavLink}
+              to="/dashboard/management/report"
+              selected={location.pathname === "/dashboard/management/report"}
+              // sx={{ pl: 4 ,display: pagelist.includes("Closer_Form") ? "flex" : "none"}} 
+            >
+              <ListItemIcon color="#756f6f">
+                {location.pathname === "/dashboard/management/report" ? (
+                  <RadioButtonCheckedIcon
+                    style={{ height: 17, width: 17, mr: 2 }}
+                  ></RadioButtonCheckedIcon>
+                ) : (
+                  <RadioButtonUncheckedIcon
+                  
+                    style={{ height: 17, width: 17, mr: 2,color:"#756f6f" }}
+                  />
+                )}
+              </ListItemIcon>
+              <ListItemText
+                primaryTypographyProps={{ fontSize: "12px" }}
+                primary="Report" 
+              />
+            </ListItemButton>          
+        </List>
+        </Collapse>
       </List>      
      
       <Box sx={{ flexGrow: 1 }} />
