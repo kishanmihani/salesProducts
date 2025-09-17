@@ -34,8 +34,10 @@ const cashHeaders = [
   "Customer Name",
   "Port Name",
   "Company name",
-  "Balance Advance",
-  "Recived Amount",
+  "Amount",
+  "Recived",
+  "Balance",
+  
   "Transfer to Credit",
   "Receipt Details",
   "Receipt",
@@ -46,9 +48,9 @@ const advanceHeaders = [
   "Customer Name",
   "Port Name",
   "Company name",
-  "Advance Payment",
-  "Balance Advance",
-  "Recived Amount",
+  "Advance",
+  "Recived",
+  "Balance",
   "Transfer to Credit",
   "Receipt",
 ];
@@ -59,8 +61,9 @@ const creditHeaders = [
   "Port Name",
   "Company Name",
   "Amount",
-  "Balance Advance",
-  "Recived Amount",
+  "Recived",
+  "Balance",
+  
   "Credit Days",
   "Recipt",
 ];
@@ -336,8 +339,9 @@ export default function AccountList() {
                         <TableCell>{row?.port_Name}</TableCell>
                         <TableCell>{row?.company_Name}</TableCell>
                         <TableCell>{row?.adv_Value}</TableCell>
-                        <TableCell>{row?.bal_Adv}</TableCell>
                         <TableCell>{row?.rec}</TableCell>
+                        <TableCell>{row?.bal_Adv}</TableCell>
+                        
                         <TableCell>
                           <Button
                             size="small"
@@ -377,8 +381,10 @@ export default function AccountList() {
                         <TableCell>{row?.customer_Name}</TableCell>
                         <TableCell>{row?.port_Name}</TableCell>
                         <TableCell>{row?.company_Name}</TableCell>
-                        <TableCell>{row?.bal_Adv}</TableCell>
+                        <TableCell>{row?.amount}</TableCell>
                         <TableCell>{row?.rec}</TableCell>
+                        <TableCell>{row?.bal_Adv}</TableCell>
+                        
                         <TableCell>
                           <Button
                             color="primary"
@@ -430,8 +436,9 @@ export default function AccountList() {
                         <TableCell>{row?.port_Name}</TableCell>
                         <TableCell>{row?.company_Name}</TableCell>
                         <TableCell>{row?.amount}</TableCell>
-                        <TableCell>{row?.bal_Adv}</TableCell>
                         <TableCell>{row?.rec}</TableCell>
+                        <TableCell>{row?.bal_Adv}</TableCell>
+                        
                         <TableCell>{row?.c_Days}</TableCell>
                         <TableCell>
                           <Button
