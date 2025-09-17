@@ -209,7 +209,7 @@ export default function SalesRestitration() {
           }
         }
       }
-       if (selectedPayment === "Advance Payment") {
+       if (selectedPayment === "Advance Payments") {
     // if (!formJson["Advance Value"] || parseFloat(formJson["Advance Value"]) <= 0) {
     //   newErrors["Advance Value"] = "Advance Value must be greater than 0";
     // }
@@ -235,7 +235,7 @@ if (!advRaw) {
   }
 
   // ✅ Credit Payment validations
-  if (selectedPayment === "Credit Payment") {
+  if (selectedPayment === "Credit Payments") {
   const cdRaw = formJson["Credit Days"];
   const cdVal = parseInt(cdRaw, 10);
 
@@ -277,9 +277,9 @@ if (!advRaw) {
         Entry_Date: formJson["Order Date"],
         Validity_Date: formJson["Validity Date"],
         Remark: formJson["Remark"],
-        Adv_Value:selectedPayment === "Advance Payment" ? formJson["Advance Value"] : "",
-        Adv_Per:selectedPayment === "Advance Payment" ? formJson["Advance Payment %"] : "",
-        c_Days:selectedPayment === "credit paysment" ? formJson["Credit Days"] : ""
+        Adv_Value:selectedPayment === "Advance Payments" ? formJson["Advance Value"] : "",
+        Adv_Per:selectedPayment === "Advance Payments" ? formJson["Advance Payment %"] : "",
+        c_Days:selectedPayment === "Credit Payments" ? formJson["Credit Days"] : ""
       };
 
       try {
@@ -624,7 +624,7 @@ if (!advRaw) {
     errors={errors}
   />
 
-  {selectedPayment === "Advance Payment" && (
+  {selectedPayment === "Advance Payments" && (
     <React.Fragment>
       <TextField
         label="Advance Payment %"
@@ -653,7 +653,7 @@ if (!advRaw) {
     </React.Fragment>
   )}
 
-  {selectedPayment === "credit paysment" && (
+  {selectedPayment === "Credit Payments" && (
     <TextField
       label="Credit Days"
       type="number"
