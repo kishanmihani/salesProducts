@@ -188,19 +188,28 @@ export default function Logisticlist() {
                   </TableCell>
 
                   {/* Delete */}
-                  <TableCell>
-                    <IconButton 
-                      aria-label='Delete' 
-                      disabled={row?.a_Qty === 0 || row?.a_Qty === ""} 
-                      onClick={() => handleDeleteClick(row)}
-                    >
-                      <DeleteIcon color={
-                          row?.a_Qty === 0 || row?.a_Qty === "" ||
-                          !["No Reported", "Reported"].includes(row?.status_name)
-                            ? "disabled"
-                            : "primary"
-                        } />
-                    </IconButton>
+                  <TableCell><IconButton 
+  aria-label="Delete" 
+  onClick={() => {  
+    debugger;
+    if (row?.a_Qty !== "") {
+      // alert("Cannot delete, quantity is 0");
+      // handleDeleteClick(row);
+      return;
+    }else{
+    handleDeleteClick(row);
+  }
+  }}
+>
+  <DeleteIcon 
+    color={
+      row?.a_Qty === 0 || row?.a_Qty === "" ||
+      !["No Reported", "Reported"].includes(row?.status_name)
+        ? "disabled"
+        : "primary"
+    } 
+  />
+</IconButton>
                   </TableCell>
                 </TableRow>
               ))}

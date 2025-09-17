@@ -18,6 +18,7 @@ import {
   Badge,
   Collapse,
   List,
+  Checkbox,
 } from "@mui/material";
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router";
@@ -66,6 +67,7 @@ const creditHeaders = [
   
   "Credit Days",
   "Payments Type",
+  "Receipt Details",
   "Recipt",
 ];
 
@@ -88,6 +90,8 @@ export default function AccountList() {
     itemToStatus: null,
   });
   const navigate = useNavigate();
+  const [selectedRows, setSelectedRows] = React.useState([]);
+
   const [tableData, setTableData] = React.useState({
     api1: null,
     api2: null,
@@ -196,13 +200,15 @@ export default function AccountList() {
           Recipt_type: text,
           So_No: row?.so_No,
           Tds: 0,
-          Amount: row?.bal_Adv,
+          Amount: totalAmount,
         })
       );
       showSuccess(res.data?.message || "Transferred successfully");
       fetchTableData();
+      setSelectedRows([]);
     } catch (err) {
       showError("Error transferring to credit");
+
     }
   }
 
@@ -225,7 +231,19 @@ export default function AccountList() {
       }
     }
   };
-
+const handleCheckboxChange = (row) => {
+  setSelectedRows((prev) => {
+    if (prev.find((r) => r.id === row.id)) {
+      return prev.filter((r) => r.id !== row.id);
+    } else {
+      return [...prev, row];
+    }
+  });
+};
+const totalAmount = selectedRows.reduce(
+  (sum, row) => Number(sum) + (Number(row?.b_Amount) || 0),
+  0
+);
   return (
     <React.Fragment>
       <CustomPageHeader pageHeaderText="Account List" />
@@ -378,6 +396,7 @@ export default function AccountList() {
 
                     {tabs === 1 && (
                       <>
+                      
                         <TableCell>{row?.so_No}</TableCell>
                         <TableCell>{row?.customer_Name}</TableCell>
                         <TableCell>{row?.port_Name}</TableCell>
@@ -444,6 +463,17 @@ export default function AccountList() {
                         <TableCell>{row?.payment_Type}</TableCell>
                         <TableCell>
                           <Button
+                            onClick={() => handleToggle(row)}
+                            color={
+                              openRow === row.so_No ? "error" : "primary"
+                            }
+                            variant="outlined"
+                          >
+                            {openRow === row.so_No ? "Close" : "Open"}
+                          </Button>
+                        </TableCell>
+                        <TableCell>
+                          <Button
                             color="primary"
                             onClick={() => {
                               let data = {
@@ -465,79 +495,79 @@ export default function AccountList() {
                   </TableRow>
 
                   {/* Inner Collapsible Table */}
-                  {tabs === 1 && (
-                    <TableRow>
-                      <TableCell
-                        style={{ paddingBottom: 0, paddingTop: 0 }}
-                        colSpan={16}
-                      >
-                        <Collapse
-                          in={openRow === row.so_No}
-                          timeout="auto"
-                          unmountOnExit
-                        >
-                          <List component="div" disablePadding>
-                            <TableContainer
-                              elevation={0}
-                              component={Paper}
-                              style={{ overflow: "auto", minWidth: 800 }}
-                            >
-                              <Table size="small">
-                                <TableHead
-                                  sx={{
-                                    fontWeight: 500,
-                                    bgcolor: "rgba(240, 114, 223, 0.08)",
-                                  }}
-                                >
-                                  <TableRow>
-                                    {vehicle_head.map((head, index) => (
-                                      <TableCell
-                                        key={index}
-                                        align="left"
-                                        sx={{
-                                          fontSize: 14,
-                                          fontWeight: 600,
-                                          whiteSpace: "nowrap",
-                                        }}
-                                      >
-                                        {head}
-                                      </TableCell>
-                                    ))}
-                                  </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                  {innerData?.map((vRow, idx) => (
-                                    <TableRow key={idx}>
-                                      <TableCell>{idx + 1}</TableCell>
-                                      <TableCell>
-                                        {vRow?.customer_Name}
-                                      </TableCell>
-                                      <TableCell>
-                                        {vRow?.vehicle_Name}
-                                      </TableCell>
-                                      <TableCell>{vRow?.a_Qty}</TableCell>
-                                      <TableCell>{vRow?.so_No}</TableCell>
-                                      <TableCell>
-                                        {dayjs(vRow?.entry_Date).format(
-                                          "DD-MM-YYYY"
-                                        )}
-                                      </TableCell>
-                                      <TableCell>{vRow?.b_Amount}</TableCell>
-                                      <TableCell>
-                                        {vRow?.b_Bal_Amount}
-                                      </TableCell>
-                                      <TableCell>{vRow?.b_P_Flag}</TableCell>
-                                      <TableCell>{vRow?.recipt_ID}</TableCell>
-                                    </TableRow>
-                                  ))}
-                                </TableBody>
-                              </Table>
-                            </TableContainer>
-                          </List>
-                        </Collapse>
-                      </TableCell>
-                    </TableRow>
-                  )}
+                  {(tabs === 1 || tabs === 2) && (
+  <TableRow>
+    <TableCell
+      style={{ paddingBottom: 0, paddingTop: 0 }}
+      colSpan={16}
+    >
+      <Collapse
+        in={openRow === row.so_No}
+        timeout="auto"
+        unmountOnExit
+      >
+        <List component="div" disablePadding>
+          <TableContainer
+            elevation={0}
+            component={Paper}
+            style={{ overflow: "auto", minWidth: 800 }}
+          >
+            <Table size="small">
+              <TableHead
+                sx={{
+                  fontWeight: 500,
+                  bgcolor: "rgba(240, 114, 223, 0.08)",
+                }}
+              >
+                <TableRow>
+             {tabs === 1    &&        ( <TableCell>Select</TableCell>)}
+                  {vehicle_head.map((head, index) => (
+                    <TableCell
+                      key={index}
+                      align="left"
+                      sx={{
+                        fontSize: 14,
+                        fontWeight: 600,
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      {head}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {innerData?.map((vRow, idx) => (
+                  <TableRow key={idx}>
+                {tabs === 1    &&        (  <TableCell>
+        <Checkbox
+          checked={selectedRows.some((r) => r.id === vRow.id)}
+          onChange={() =>{ handleCheckboxChange(vRow)}}
+        />
+      </TableCell>)}
+                    <TableCell>{idx + 1}</TableCell>
+                    <TableCell>{vRow?.customer_Name}</TableCell>
+                    <TableCell>{vRow?.vehicle_Name}</TableCell>
+                    <TableCell>{vRow?.a_Qty}</TableCell>
+                    <TableCell>{vRow?.so_No}</TableCell>
+                    <TableCell>
+                      {dayjs(vRow?.entry_Date).format("DD-MM-YYYY")}
+                    </TableCell>
+                    <TableCell>{vRow?.b_Amount}</TableCell>
+                    <TableCell>{vRow?.b_Bal_Amount}</TableCell>
+                    <TableCell>{vRow?.b_P_Flag}</TableCell>
+                    <TableCell>{vRow?.recipt_ID}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </List>
+      </Collapse>
+    </TableCell>
+  </TableRow>
+)}
+
                 </React.Fragment>
               ))}
             </TableBody>
