@@ -65,6 +65,7 @@ const creditHeaders = [
   "Balance",
   
   "Credit Days",
+  "Payments Type",
   "Recipt",
 ];
 
@@ -440,6 +441,7 @@ export default function AccountList() {
                         <TableCell>{row?.bal_Adv}</TableCell>
                         
                         <TableCell>{row?.c_Days}</TableCell>
+                        <TableCell>{row?.payment_Type}</TableCell>
                         <TableCell>
                           <Button
                             color="primary"
