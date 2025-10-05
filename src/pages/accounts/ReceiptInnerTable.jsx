@@ -9,6 +9,7 @@ const vehicle_head = [
 
 export default function ReceiptInnerTable({ tabs, innerData, selectedRows, setSelectedRows }) {
   const handleCheckboxChange = (row) => {
+    debugger;
     setSelectedRows((prev) => {
       if (prev.find((r) => r.id === row.id)) {
         return prev.filter((r) => r.id !== row.id);

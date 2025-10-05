@@ -62,24 +62,32 @@ export default function AccountList() {
 
   async function handleTransferCredit(row, text, totalAmount) {
     try {
-      const res = await api.post(
-        "BituRep/Api/Account/Credit_RE_insert",
-        JSON.stringify({
-          user_id: userId,
-          Customer_Name: row?.customer_Name,
-          Entry_Date: dayjs(new Date()),
-          Recipt_type: text,
-          So_No: row?.so_No,
-          Tds: 0,
-          Amount: totalAmount,
-        })
-      );
-      showSuccess(res.data?.message || "Transferred successfully");
-      fetchTableData();
-      setSelectedRows([]);
-    } catch {
-      showError("Error transferring to credit");
-    }
+  debugger;
+
+  for (const row of selectedRows) {
+    const res = await api.post(
+      "BituRep/Api/Account/Credit_RE_insert",
+      JSON.stringify({
+        user_id: userId,
+        Customer_Name: row?.customer_Name,
+        Entry_Date: row.entry_Date,
+        Recipt_type: row.recipt_ID,
+        So_No: row?.so_No,
+        Tds: 0,
+        Amount: row.b_Bal_Amount,
+      })
+    );
+    console.log(`Transferred for SO No: ${row?.so_No}`);
+  }
+
+  showSuccess("All records transferred successfully");
+  fetchTableData();
+  setSelectedRows([]);
+
+} catch (err) {
+  console.error(err);
+  showError("Error transferring to credit");
+}
   }
 
   return (
