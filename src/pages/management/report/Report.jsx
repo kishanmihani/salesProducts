@@ -1,14 +1,170 @@
-import React from 'react'
-import CustomPageHeader from '../../../component/commonComponent/CustomPageHeader/CustomPageHeader'
-import SalesReportDashboard from './graphs'
+import React, { useState, useEffect } from "react";
+import CustomPageHeader from "../../../component/commonComponent/CustomPageHeader/CustomPageHeader";
+import { Box, Card, CardContent, Typography, CircularProgress } from "@mui/material";
+import MonthlySalesChart from "./DailySalesChart";
+import YearlySalesLineChart from "./YearlySalesLineChart";
+import MonthlySalesGrowthChart from "./SalesGrowthChart";
+import SalesByRegionChart from "./SalesByRegionChart";
+import { authAxios } from "../../../component/utils/authAxios";
 
 export default function Report() {
+  const [fetchdata, setFetchData] = useState([]);
+  const [checkFetchData, setCheckFetchData] = useState(false);
+
+  useEffect(() => {
+    if (!checkFetchData) fetchList();
+  }, []);
+
+  const fetchList = async () => {
+    try {
+      const res = await authAxios.post("/BituRep/Api/Account/Report_Sale");
+      setFetchData(res.data);
+      setCheckFetchData(true);
+    } catch (e) {
+      console.error(e);
+      setFetchData([]);
+    }
+  };
+
+  const summaryData = [
+    { label: "Total Sales", value: fetchdata?.count_Container?.[0]?.t_Sale },
+    { label: "Sales Quantity", value: fetchdata?.count_Container?.[0]?.sale_Qty },
+    { label: "Max Selling Rate", value: fetchdata?.count_Container?.[0]?.max_Selling_Rate },
+    { label: "Min Selling Rate", value: fetchdata?.count_Container?.[0]?.min_Selling_Rate },
+    { label: "Avg Rate", value: fetchdata?.count_Container?.[0]?.avg_Selling_Rate },
+  ];
+
+  if (!checkFetchData)
+    return (
+      <Box sx={{ display: "flex", justifyContent: "center", mt: 5 }}>
+        <CircularProgress />
+      </Box>
+    );
+
   return (
-    <div>
-        <CustomPageHeader pageHeaderText='Report'></CustomPageHeader>
-                <div style={{ width: '96%', margin: 'auto', marginBlock: '5px' }}>
-                    <SalesReportDashboard />
-                </div>
-    </div>
-  )
+    <Box>
+      {/* Page Header */}
+      <CustomPageHeader pageHeaderText="Report" />
+
+      {/* Summary Cards */}
+      <Box
+        sx={{
+          backgroundColor: "rgba(25, 118, 210, 0.08)",
+          display: "flex",
+          flexWrap: "wrap",
+          justifyContent: "center",
+          gap: 2,
+          mt: 1,
+          px: { xs: 1, sm: 2, md: 3 },
+          py: 1,
+        }}
+      >
+        {summaryData.map((item, index) => (
+          <Card
+            key={index}
+            sx={{
+              width: 180,
+              borderRadius: 3,
+              boxShadow: 3,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              textAlign: "center",
+            }}
+          >
+            <CardContent>
+              <Typography variant="h5" fontWeight="bold">
+                {item.value}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {item.label}
+              </Typography>
+            </CardContent>
+          </Card>
+        ))}
+      </Box>
+
+      {/* Monthly & Yearly Sales Charts */}
+      <Box sx={{ pt: 3, backgroundColor: "rgba(25, 118, 210, 0.08)", p: 2 }}>
+        {/* Sales Performance */}
+        <Typography sx={{ fontSize: 20, fontWeight: 600, textAlign: "left", mb: 2 }}>
+          Monthly & Yearly Sales Performance
+        </Typography>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: { xs: "column", xl: "row" },
+            gap: 2,
+            width: "100%",
+            "& > *": { flex: 1, width: { xs: "100%", xl: "48%" },height: { xs: "100%", xl: 400 }, },
+          }}
+        >
+          <MonthlySalesChart data={fetchdata?.date_Month} selectedDataset="sales" />
+          <YearlySalesLineChart data={fetchdata?.date_Year} selectedDataset="sales" />
+        </Box>
+
+        {/* Avg Rate Info */}
+        
+      </Box>
+<Box sx={{ pt: 3, backgroundColor: "rgba(25, 118, 210, 0.08)", p: 2 }}>
+        <Typography sx={{ fontSize: 20, fontWeight: 600, textAlign: "left", mt: 3, mb: 2 }}>
+
+          Monthly & Yearly Avg Rate Info
+        </Typography>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: { xs: "column", xl: "row" },
+            gap: 2,
+            width: "100%",
+            "& > *": { flex: 1, width: { xs: "100%", xl: "48%" },height: { xs: "100%", xl: 400 }, },
+          }}
+        >
+          <MonthlySalesChart data={fetchdata?.date_Month} selectedDataset="avg" />
+          <YearlySalesLineChart
+            data={fetchdata?.date_Year}
+            selectedDataset="avg"
+            title="Yearly Avg Rate Changes"
+          />
+        </Box>
+        </Box>
+      {/* Sales By Region */}
+      <Box sx={{ pt: 3, backgroundColor: "rgba(25, 118, 210, 0.08)", p: 2 }}>
+        <Typography sx={{ fontSize: 20, fontWeight: 600, textAlign: "left", mb: 2 }}>
+          Sales by Region
+        </Typography>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: { xs: "column", xl: "row" },
+            gap: 2,
+            width: "100%",
+            "& > *": { flex: 1, width: { xs: "100%", xl: "48%" },height: { xs: "100%", xl: 400 }, },
+          }}
+        >
+          <SalesByRegionChart data={fetchdata?.date_port} selectedDataset="sales" />
+          <SalesByRegionChart data={fetchdata?.date_port} selectedDataset="avg" />
+        </Box>
+      </Box>
+
+      {/* Monthly Sales Growth */}
+      <Box sx={{ pt: 3, backgroundColor: "rgba(25, 118, 210, 0.08)", p: 2 }}>
+        <Typography sx={{ fontSize: 20, fontWeight: 600, textAlign: "left", mb: 2 }}>
+          Monthly Growth
+        </Typography>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: { xs: "column", xl: "row" },
+            gap: 2,
+            width: "100%",
+            "& > *": { flex: 1, width: { xs: "100%", xl: "48%" } ,height: { xs: "100%", xl: 400 },},
+          }}
+        >
+          <MonthlySalesGrowthChart data={fetchdata?.top10Customer} selectedDataset="sales" />
+          <MonthlySalesGrowthChart data={fetchdata?.top10Customer} selectedDataset="avg" />
+        </Box>
+      </Box>
+    </Box>
+  );
 }
