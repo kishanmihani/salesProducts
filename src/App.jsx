@@ -25,6 +25,7 @@ import ApprovalPendingForm from './component/sales/Sales list/ApprovalPendingFor
 import LoginForm from './pages/loginFrom/loginForm';
 import LogicForm from './component/Dashboard/logistic/LogicForm';
 import Report from './pages/management/report/Report';
+import GraphTable from './pages/management/report/Table/GraphTable';
 function App() {
   return (
     <React.Fragment>
@@ -76,6 +77,7 @@ function App() {
 
             <Route path="management" element={<LogicForm />}>
               <Route path="report" element={<Report />} />
+              <Route path="graphtable" element={<GraphTable />} />
             </Route>
           </Route>
         </Routes>

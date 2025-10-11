@@ -7,6 +7,7 @@ import {
   Title,
 } from "chart.js";
 import { Pie } from "react-chartjs-2";
+import { Button } from "@mui/material";
 
 // Register required components
 ChartJS.register(ArcElement, Tooltip, Legend, Title);
@@ -83,6 +84,7 @@ const SalesByChannelChart = () => {
         boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
       }}
     >
+      <Button variant="outlined">View Details</Button>
       <Pie data={data} options={options} />
     </div>
   );

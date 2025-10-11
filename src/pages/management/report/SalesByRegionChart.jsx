@@ -9,13 +9,16 @@ import {
   Legend,
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
+import { ResponsiveContainer } from "recharts";
+import { Button } from "@mui/material";
+import { Navigate, useNavigate } from "react-router";
 
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const SalesByRegionChart = ({ data = [], selectedDataset = "both" }) => {
   // console.log(data);
-
+ const naigate=useNavigate();
   // Conditional datasets
   const datasets =
     selectedDataset === "sales"
@@ -82,12 +85,13 @@ const SalesByRegionChart = ({ data = [], selectedDataset = "both" }) => {
         },
       },
       title: {
-        display: true,
+        display: false,
         text: selectedDataset ==="sales"? "Sales Amount by Region" : "Avg Rate by Region",
         font: {
           size: 16,
         },
       },
+      
     },
     scales: {
       x: {
@@ -110,7 +114,12 @@ const SalesByRegionChart = ({ data = [], selectedDataset = "both" }) => {
       },
     },
   };
-
+ const handleViewDetails = () => {
+  const pageTilte=selectedDataset ==="sales"? "Sales Amount by Region" : "Avg Rate by Region";
+    naigate("/Dashboard/management/graphtable", {
+      state: { data, pageTilte,varient:1 ,selectedDataset},
+    });
+  }
   return (
     <div
       style={{
@@ -118,14 +127,18 @@ const SalesByRegionChart = ({ data = [], selectedDataset = "both" }) => {
         borderRadius: 10,
         width: "100%",
         // maxWidth: 600,
-        height: 350,
+        height: 400,
         padding: 20,
         boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
         margin: "auto",
       }}
     >
-      <div style={{ width: "100%", height: "100%" }}>
+      <h3>{selectedDataset ==="sales"? "Sales Amount by Region" : "Avg Rate by Region"} <Button variant="outlined" onClick={handleViewDetails}>View Details</Button></h3>
+      
+      <div style={{ width: "100%", height: 350 }}>
+        {/* <ResponsiveContainer> */}
         <Bar data={chartData} options={options} />
+        {/* </ResponsiveContainer> */}
       </div>
     </div>
   );

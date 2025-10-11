@@ -9,6 +9,8 @@ import {
   Legend,
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
+import { Button } from "@mui/material";
+import { useNavigate } from "react-router";
 
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
@@ -16,7 +18,7 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 const MonthlySalesChart = (props) => {
   const [selectedWeek, setSelectedWeek] = useState(1); // Default: Week 1
   // const [props.selectedDataset, setprops.selectedDataset] = useState("both"); // both | sales | avg
-
+const naigate=useNavigate();
   // Function to get week number from date
   const getWeekOfMonth = (dateStr) => {
     const date = new Date(dateStr);
@@ -94,7 +96,16 @@ const MonthlySalesChart = (props) => {
       },
     },
   };
-
+const handleViewDetails = () => {
+    naigate("/Dashboard/management/graphtable", {
+      state: {
+        data: props.data,           // pass the full dataset or filteredData if needed
+        pageTilte: props.selectedDataset === "sales"? ` ${props.selectedDataset} Quantity `: `${props.selectedDataset} Rate   `,     // pass the chart title
+       selectedDataset : props.selectedDataset,
+        varient: 3,                 // optional flag to distinguish chart types
+      },
+    });
+  }
   return (
     <div
       style={{
@@ -125,7 +136,7 @@ const MonthlySalesChart = (props) => {
           <option value={3}>Week 3</option>
           <option value={4}>Week 4</option>
         </select>
-
+        <Button variant="outlined" onClick={handleViewDetails}>View Details</Button>
         {/* <label style={{ marginRight: "10px", fontWeight: 500 }}>
           Select Dataset:
         </label>

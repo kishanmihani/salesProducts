@@ -7,6 +7,7 @@ import {
   Title,
 } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
+import { Button } from "@mui/material";
 
 // Register Chart.js components
 ChartJS.register(ArcElement, Tooltip, Legend, Title);
@@ -72,7 +73,7 @@ const ReceivableOutsideDaysChart = () => {
         boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
         padding: 20,
       }}
-    >
+    ><Button variant="outlined">View Details</Button>
       <Doughnut data={data} options={options} />
       {/* Center total label */}
       <div

@@ -6,11 +6,12 @@ import YearlySalesLineChart from "./YearlySalesLineChart";
 import MonthlySalesGrowthChart from "./SalesGrowthChart";
 import SalesByRegionChart from "./SalesByRegionChart";
 import { authAxios } from "../../../component/utils/authAxios";
+import { Navigate, useNavigate } from "react-router";
 
 export default function Report() {
   const [fetchdata, setFetchData] = useState([]);
   const [checkFetchData, setCheckFetchData] = useState(false);
-
+const naigate=useNavigate();
   useEffect(() => {
     if (!checkFetchData) fetchList();
   }, []);
@@ -40,7 +41,13 @@ export default function Report() {
         <CircularProgress />
       </Box>
     );
-
+     
+const handleViewDetails = (data,pageTilte,varient) => {
+  // const pageTilte=selectedDataset ==="sales"? "Sales Amount by Region" : "Avg Rate by Region";
+    naigate("/Dashboard/management/graphtable", {
+      state: { data, pageTilte,varient },
+    });
+  }
   return (
     <Box>
       {/* Page Header */}
@@ -90,13 +97,14 @@ export default function Report() {
         <Typography sx={{ fontSize: 20, fontWeight: 600, textAlign: "left", mb: 2 }}>
           Monthly & Yearly Sales Performance
         </Typography>
+        
         <Box
           sx={{
             display: "flex",
             flexDirection: { xs: "column", xl: "row" },
             gap: 2,
             width: "100%",
-            "& > *": { flex: 1, width: { xs: "100%", xl: "48%" },height: { xs: "100%", xl: 400 }, },
+            "& > *": { flex: 1, width: { xs: "100%", xl: "48%" },height: { xs: "100%" }, },
           }}
         >
           <MonthlySalesChart data={fetchdata?.date_Month} selectedDataset="sales" />
@@ -133,6 +141,7 @@ export default function Report() {
         <Typography sx={{ fontSize: 20, fontWeight: 600, textAlign: "left", mb: 2 }}>
           Sales by Region
         </Typography>
+        {/* <Button variant="outlined" onClick={()=>handleViewDetails/()}>View Details</Button> */}
         <Box
           sx={{
             display: "flex",

@@ -7,6 +7,7 @@ import {
   Title,
 } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
+import { Button } from "@mui/material";
 
 // Register components
 ChartJS.register(ArcElement, Tooltip, Legend, Title);
@@ -37,7 +38,7 @@ const InventoryDaysChart = () => {
         },
       },
       title: {
-        display: true,
+        display: false,
         text: "Inventory Days Chart",
         font: { size: 18 },
       },
@@ -62,6 +63,11 @@ const InventoryDaysChart = () => {
         boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
       }}
     >
+      <div className="flex">
+        <h3>Inventory Days Chart</h3>
+        <Button variant="outlined">View Details</Button>
+      </div>
+      
       <Doughnut data={data} options={options} />
       {/* Optional center text */}
       <div

@@ -9,13 +9,15 @@ import {
   Legend,
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
+import { Button } from "@mui/material";
+import { useNavigate } from "react-router";
 
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const MonthlySalesGrowthChart = (props) => {
   const { data = [], selectedDataset = "both" } = props;
-
+  const naigate=useNavigate();
   // ✅ Conditional datasets
   const datasets =
     selectedDataset === "sales"
@@ -76,7 +78,7 @@ const MonthlySalesGrowthChart = (props) => {
         },
       },
       title: {
-        display: true,
+        display: false,
         text: selectedDataset ==="sales"?"Monthly Sales Growth (2025)":"Monthly Avg Rate Growth (2025)",
         font: {
           size: 16,
@@ -113,7 +115,12 @@ const MonthlySalesGrowthChart = (props) => {
       },
     },
   };
-
+const handleViewDetails = () => {
+  const pageTilte=selectedDataset ==="sales"?"Monthly Sales Growth (2025)":"Monthly Avg Rate Growth (2025)";
+    naigate("/Dashboard/management/graphtable", {
+      state: { data, pageTilte,varient:2 ,selectedDataset},
+    });
+  }
   return (
     <div
       style={{
@@ -124,9 +131,20 @@ const MonthlySalesGrowthChart = (props) => {
         padding: 20,
         boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
       }}
-    >
-      <Bar data={chartData} options={options} />
+
+    > 
+    <div sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center"}}><h3>{selectedDataset ==="sales"?"Monthly Sales Growth (2025)":"Monthly Avg Rate Growth (2025)"} <Button variant="outlined" onClick={handleViewDetails}>View Details</Button></h3>
     </div>
+
+  
+      <div style={{ width: "100%", height: "380px",padding:3 }}>
+    <Bar data={chartData} options={options} />
+  </div>
+    </div>
+    
   );
 };
 

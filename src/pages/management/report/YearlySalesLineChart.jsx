@@ -1,4 +1,6 @@
+import { Box, Button } from "@mui/material";
 import React, { useState, useMemo } from "react";
+import { useNavigate } from "react-router";
 import {
   LineChart,
   Line,
@@ -11,9 +13,10 @@ import {
 
 const YearlySalesLineChart = ({ data, title = "Yearly Sales Performance" ,selectedDataset}) => {
   // const [selectedDataset, setSelectedDataset] = useState("both"); // both | sales | avg
-
+const naigate=useNavigate();
   // ✅ Format and sort data
   const formattedData = useMemo(() => {
+    
     return (
       data
         ?.map((item) => ({
@@ -31,7 +34,16 @@ const YearlySalesLineChart = ({ data, title = "Yearly Sales Performance" ,select
         ) || []
     );
   }, [data]);
-
+const handleViewDetails = () => {
+    naigate("/Dashboard/management/graphtable", {
+      state: {
+        data,
+        pageTilte: title,
+        selectedDataset,
+        varient: 3, // optional: distinguish line chart vs bar chart
+      },
+    });
+  };
   return (
     <div
       style={{
@@ -53,7 +65,7 @@ const YearlySalesLineChart = ({ data, title = "Yearly Sales Performance" ,select
           fontWeight: 600,
         }}
       >
-        {title}
+        {title}  <Button variant="outlined" onClick={handleViewDetails}>View Details</Button>
       </h3>
 
       {/* Dataset selection dropdown */}
@@ -77,6 +89,7 @@ const YearlySalesLineChart = ({ data, title = "Yearly Sales Performance" ,select
       </div> */}
 
       {/* Line Chart */}
+     <Box sx={{ flex: 1,height:400 }}> 
       <ResponsiveContainer>
         <LineChart
           data={formattedData}
@@ -120,7 +133,7 @@ const YearlySalesLineChart = ({ data, title = "Yearly Sales Performance" ,select
           )}
         </LineChart>
       </ResponsiveContainer>
-    </div>
+</Box>    </div>
   );
 };
 
