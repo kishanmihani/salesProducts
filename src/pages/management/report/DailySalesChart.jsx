@@ -112,7 +112,7 @@ const handleViewDetails = () => {
         backgroundColor: "white",
         borderRadius: 10,
         width: "100%",
-        height: 450,
+        height: 550,
         padding: 20,
         boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
       }}
@@ -152,7 +152,8 @@ const handleViewDetails = () => {
       </div>
 
       {/* Chart */}
-      <Bar data={chartData} options={options} />
+      <div style={{ flex: 1, height: 400 }}>
+      <Bar data={chartData} options={options} /></div>
     </div>
   );
 };

@@ -127,7 +127,7 @@ const SalesByRegionChart = ({ data = [], selectedDataset = "both" }) => {
         borderRadius: 10,
         width: "100%",
         // maxWidth: 600,
-        height: 400,
+        height: 450,
         padding: 20,
         boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
         margin: "auto",

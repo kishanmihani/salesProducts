@@ -7,6 +7,10 @@ import MonthlySalesGrowthChart from "./SalesGrowthChart";
 import SalesByRegionChart from "./SalesByRegionChart";
 import { authAxios } from "../../../component/utils/authAxios";
 import { Navigate, useNavigate } from "react-router";
+import SoldQuantityTable from "./Table/SoldQuantityTable";
+import SoldQuantityTableYealy from "./Table/SoldQuantityTableYearly";
+import SalesTable from "./Table/SoldQuantityTableYearly";
+import GraphTable from "./Table/GraphTable";
 
 export default function Report() {
   const [fetchdata, setFetchData] = useState([]);
@@ -60,6 +64,7 @@ const handleViewDetails = (data,pageTilte,varient) => {
           display: "flex",
           flexWrap: "wrap",
           justifyContent: "center",
+          // boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
           gap: 2,
           mt: 1,
           px: { xs: 1, sm: 2, md: 3 },
@@ -92,10 +97,10 @@ const handleViewDetails = (data,pageTilte,varient) => {
       </Box>
 
       {/* Monthly & Yearly Sales Charts */}
-      <Box sx={{ pt: 3, backgroundColor: "rgba(25, 118, 210, 0.08)", p: 2 }}>
+      <Box sx={{ pt: 3, boxShadow: "0 2px 8px rgba(0,0,0,0.1)",backgroundColor: "rgba(25, 118, 210, 0.08)", p: 2 }}>
         {/* Sales Performance */}
         <Typography sx={{ fontSize: 20, fontWeight: 600, textAlign: "left", mb: 2 }}>
-          Monthly & Yearly Sales Performance
+           Sold Quantity During The Month
         </Typography>
         
         <Box
@@ -107,17 +112,37 @@ const handleViewDetails = (data,pageTilte,varient) => {
             "& > *": { flex: 1, width: { xs: "100%", xl: "48%" },height: { xs: "100%" }, },
           }}
         >
-          <MonthlySalesChart data={fetchdata?.date_Month} selectedDataset="sales" />
-          <YearlySalesLineChart data={fetchdata?.date_Year} selectedDataset="sales" />
+            <MonthlySalesChart data={fetchdata?.date_Month} selectedDataset="sales" /> 
+          <SoldQuantityTable data={fetchdata?.date_Month} selectedDataset="sales" />
+          {/* <SoldQuantityTableYealy data={fetchdata?.date_Year} selectedDataset="sales" /> */}
+          
+          {/* <YearlySalesLineChart data={fetchdata?.date_Year} selectedDataset="sales" /> */} 
         </Box>
 
         {/* Avg Rate Info */}
         
       </Box>
-<Box sx={{ pt: 3, backgroundColor: "rgba(25, 118, 210, 0.08)", p: 2 }}>
+      <Box sx={{ pt: 3,boxShadow: "0 2px 8px rgba(0,0,0,0.1)", backgroundColor: "rgba(25, 118, 210, 0.08)", p: 2 }}>
+        {/* Sales Performance */}
+        <Typography sx={{ fontSize: 20, fontWeight: 600, textAlign: "left", mb: 2 }}>
+           Avg Rate During The Month
+        </Typography>
+        
+        <Box
+        sx={{
+            display: "flex",
+            flexDirection: { xs: "column", xl: "row" },
+            gap: 2,
+            width: "100%",
+            "& > *": { flex: 1, width: { xs: "100%", xl: "48%" },height: { xs: "100%" }, },
+          }}>
+          <MonthlySalesChart data={fetchdata?.date_Month} selectedDataset="avg" /> 
+          <SoldQuantityTable data={fetchdata?.date_Month} selectedDataset="avg"/>
+          </Box></Box>
+          <Box sx={{ pt: 3,boxShadow: "0 2px 8px rgba(0,0,0,0.1)", backgroundColor: "rgba(25, 118, 210, 0.08)", p: 2 }}>
         <Typography sx={{ fontSize: 20, fontWeight: 600, textAlign: "left", mt: 3, mb: 2 }}>
 
-          Monthly & Yearly Avg Rate Info
+        Yearly Solid Quanttity
         </Typography>
         <Box
           sx={{
@@ -128,16 +153,40 @@ const handleViewDetails = (data,pageTilte,varient) => {
             "& > *": { flex: 1, width: { xs: "100%", xl: "48%" },height: { xs: "100%", xl: 400 }, },
           }}
         >
-          <MonthlySalesChart data={fetchdata?.date_Month} selectedDataset="avg" />
+          {/* <MonthlySalesChart data={fetchdata?.date_Month} selectedDataset="avg" /> */}
+          <YearlySalesLineChart
+            data={fetchdata?.date_Year}
+            selectedDataset="sales"
+            title="Yearly Solid Quanttity"
+          />
+          <SalesTable selectedDataset="sales"  dateYear={fetchdata?.date_Year} />
+        </Box>
+        </Box>
+<Box sx={{ pt: 3, boxShadow: "0 2px 8px rgba(0,0,0,0.1)",backgroundColor: "rgba(25, 118, 210, 0.08)", p: 2 }}>
+        <Typography sx={{ fontSize: 20, fontWeight: 600, textAlign: "left", mt: 3, mb: 2 }}>
+
+        Yearly Avg Rate Info
+        </Typography>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: { xs: "column", xl: "row" },
+            gap: 2,
+            width: "100%",
+            "& > *": { flex: 1, width: { xs: "100%", xl: "48%" },height: { xs: "100%", xl: 400 }, },
+          }}
+        >
+          {/* <MonthlySalesChart data={fetchdata?.date_Month} selectedDataset="avg" /> */}
           <YearlySalesLineChart
             data={fetchdata?.date_Year}
             selectedDataset="avg"
             title="Yearly Avg Rate Changes"
           />
+          <SalesTable selectedDataset="avg"  dateYear={fetchdata?.date_Year} />
         </Box>
         </Box>
       {/* Sales By Region */}
-      <Box sx={{ pt: 3, backgroundColor: "rgba(25, 118, 210, 0.08)", p: 2 }}>
+      <Box sx={{ pt: 3,boxShadow: "0 2px 8px rgba(0,0,0,0.1)", backgroundColor: "rgba(25, 118, 210, 0.08)", p: 2 }}>
         <Typography sx={{ fontSize: 20, fontWeight: 600, textAlign: "left", mb: 2 }}>
           Sales by Region
         </Typography>
@@ -152,14 +201,32 @@ const handleViewDetails = (data,pageTilte,varient) => {
           }}
         >
           <SalesByRegionChart data={fetchdata?.date_port} selectedDataset="sales" />
+          <GraphTable  data={fetchdata?.date_port} selectedprops={{ dataset: "sales" }} varient={1} />
+          </Box></Box>
+          <Box sx={{ pt: 3, boxShadow: "0 2px 8px rgba(0,0,0,0.1)",  backgroundColor: "rgba(25, 118, 210, 0.08)", p: 2 }}>
+        <Typography sx={{ fontSize: 20, fontWeight: 600, textAlign: "left", mb: 2 }}>
+          Avg by Region
+        </Typography>
+        {/* <Button variant="outlined" onClick={()=>handleViewDetails/()}>View Details</Button> */}
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: { xs: "column", xl: "row" },
+            gap: 2,
+           
+            width: "100%",
+            "& > *": { flex: 1, width: { xs: "100%", xl: "48%" },height: { xs: "100%", xl: 400 }, },
+          }}
+        >
           <SalesByRegionChart data={fetchdata?.date_port} selectedDataset="avg" />
+          <GraphTable  data={fetchdata?.date_port} selectedprops={{ dataset: "avg" }} varient={1} />
         </Box>
       </Box>
 
       {/* Monthly Sales Growth */}
-      <Box sx={{ pt: 3, backgroundColor: "rgba(25, 118, 210, 0.08)", p: 2 }}>
+      <Box sx={{ pt: 3, boxShadow: "0 2px 8px rgba(0,0,0,0.1)",backgroundColor: "rgba(25, 118, 210, 0.08)", p: 2 }}>
         <Typography sx={{ fontSize: 20, fontWeight: 600, textAlign: "left", mb: 2 }}>
-          Monthly Growth
+         Sales Monthly Growth
         </Typography>
         <Box
           sx={{
@@ -171,7 +238,24 @@ const handleViewDetails = (data,pageTilte,varient) => {
           }}
         >
           <MonthlySalesGrowthChart data={fetchdata?.top10Customer} selectedDataset="sales" />
+          <GraphTable  data={fetchdata?.top10Customer} selectedprops={{ dataset: "sales" }} varient={2} />
+        </Box>
+        </Box>
+        <Box sx={{ pt: 3,boxShadow: "0 2px 8px rgba(0,0,0,0.1)", backgroundColor: "rgba(25, 118, 210, 0.08)", p: 2 }}>
+        <Typography sx={{ fontSize: 20, fontWeight: 600, textAlign: "left", mb: 2 }}>
+         Avg Monthly Growth
+        </Typography>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: { xs: "column", xl: "row" },
+            gap: 2,
+            width: "100%",
+            "& > *": { flex: 1, width: { xs: "100%", xl: "48%" } ,height: { xs: "100%", xl: 400 },},
+          }}
+        >
           <MonthlySalesGrowthChart data={fetchdata?.top10Customer} selectedDataset="avg" />
+          <GraphTable  data={fetchdata?.top10Customer} selectedprops={{ dataset: "avg" }} varient={2} />
         </Box>
       </Box>
     </Box>
