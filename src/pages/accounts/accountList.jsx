@@ -15,6 +15,7 @@ export default function AccountList() {
   const [tabs, setTabs] = useState(0);
   const [tableData, setTableData] = useState({ api1: [], api2: [], api3: [] });
   const [checkTableData, setCheckTableData] = useState(false);
+  const [openRow, setOpenRow] = useState(null);
   const [custAlert, setCustAlert] = useState(null);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -49,7 +50,7 @@ export default function AccountList() {
     }
   };
 
-  const handleTabs = (e, newValue) => setTabs(newValue);
+  const handleTabs = (e, newValue) =>{ setTabs(newValue);setOpenRow(null);setPage(0);fetchTableData() };
 
   const showSuccess = (msg) => setCustAlert({ type: "success", message: msg });
   const showError = (msg) => setCustAlert({ type: "error", message: msg });
@@ -59,36 +60,55 @@ export default function AccountList() {
     tabs === 0 ? tableData.api2 || [] : tabs === 1 ? tableData.api1 || [] : tableData.api3 || [];
 
   const paginatedData = activeData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
-
+   console.log(paginatedData,tableData,activeData)
   async function handleTransferCredit(row, text, totalAmount) {
-    try {
-  debugger;
+  try {
+    let res;
 
-  for (const row of selectedRows) {
-    const res = await api.post(
-      "BituRep/Api/Account/Credit_RE_insert",
-      JSON.stringify({
-        user_id: userId,
-        Customer_Name: row?.customer_Name,
-        Entry_Date: row.entry_Date,
-        Recipt_type: row.recipt_ID,
-        So_No: row?.so_No,
-        Tds: 0,
-        Amount: row.b_Bal_Amount,
-      })
-    );
-    console.log(`Transferred for SO No: ${row?.so_No}`);
+    if (text === "Advance Payments") {
+      // Single insert
+      res = await api.post(
+        "BituRep/Api/Account/Credit_RE_insert",
+        JSON.stringify({
+          user_id: userId,
+          Customer_Name: row?.customer_Name,
+          Entry_Date: dayjs(new Date()),
+          Recipt_type: text,
+          So_No: row?.so_No,
+          Tds: 0,
+          Amount: row.bal_Adv,
+        })
+      );
+    } else if (text === "Cash Payments") {
+      // Multiple inserts (loop over selectedRows)
+      for (const item of selectedRows) {
+        res = await api.post(
+          "BituRep/Api/Account/Credit_RE_insert",
+          JSON.stringify({
+            user_id: userId,
+            Customer_Name: item?.customer_Name,
+            Entry_Date: item.entry_Date,
+            Recipt_type: item.recipt_ID,
+            So_No: item?.so_No,
+            Tds: 0,
+            payment_Type: "Cash Payments",
+            Amount: item.b_Bal_Amount,
+          })
+        );
+        console.log(`Transferred for SO No: ${item?.so_No}`);
+      }
+    }
+
+    showSuccess("All records transferred successfully");
+    await fetchTableData();
+    setSelectedRows([]);
+
+  } catch (err) {
+    console.error(err);
+    showError("Error transferring to credit");
   }
-
-  showSuccess("All records transferred successfully");
-  fetchTableData();
-  setSelectedRows([]);
-
-} catch (err) {
-  console.error(err);
-  showError("Error transferring to credit");
 }
-  }
+
 
   return (
     <>
@@ -106,6 +126,8 @@ export default function AccountList() {
           selectedRows={selectedRows}
           setSelectedRows={setSelectedRows}
           userId={userId}
+          setOpenRow={setOpenRow}
+          openRow={openRow}
         />
 
         {/* Pagination */}

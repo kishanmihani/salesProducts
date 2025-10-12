@@ -133,7 +133,7 @@ const SalesByRegionChart = ({ data = [], selectedDataset = "both" }) => {
         margin: "auto",
       }}
     >
-      <h3>{selectedDataset ==="sales"? "Sales Amount by Region" : "Avg Rate by Region"} <Button variant="outlined" onClick={handleViewDetails}>View Details</Button></h3>
+      <h3 style={{margin: "auto",width:"100%"}}>{selectedDataset ==="sales"? "Sales Amount by Region" : "Avg Rate by Region"} <Button variant="outlined" onClick={handleViewDetails}>View Details</Button></h3>
       
       <div style={{ width: "100%", height: 350 }}>
         {/* <ResponsiveContainer> */}

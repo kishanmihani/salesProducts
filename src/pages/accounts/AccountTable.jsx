@@ -25,9 +25,11 @@ export default function AccountTable({
   selectedRows,
   setSelectedRows,
   userId,
+  openRow,
+  setOpenRow,
 }) {
   const activeHeaders = tabs === 0 ? advanceHeaders : tabs === 1 ? cashHeaders : creditHeaders;
- const [openRow, setOpenRow] = useState(null);
+  console.log(paginatedData,"gjk")
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} size="small">
@@ -45,9 +47,10 @@ export default function AccountTable({
           </TableRow>
         </TableHead>
         <TableBody>
-          {paginatedData.map((row) => (
+          {paginatedData.map((row,index) => (
             <AccountTableRow
-              key={row?.so_No}
+              key={row?.so_No+index}
+              // id={row?.so_No+ tabs}
               row={row}
               tabs={tabs}
               navigate={navigate}

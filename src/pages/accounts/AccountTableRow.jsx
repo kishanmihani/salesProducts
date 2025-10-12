@@ -108,6 +108,7 @@ export default function AccountTableRow({
                 color="primary"
                 variant="contained"
                 size="small"
+                disabled={!(openRow === row.so_No)}
                 onClick={() => handleTransferCredit(row, "Cash Payments", totalAmount)}
               >
                 Transfer to Credit
@@ -125,6 +126,7 @@ export default function AccountTableRow({
             <TableCell>
               <Button
                 color="primary"
+                
                 onClick={() => {
                   let data = {
                     so_no: row?.so_No,
@@ -183,7 +185,7 @@ export default function AccountTableRow({
       </TableRow>
 
       {/* Collapsible inner table */}
-      {(tabs === 1 || tabs === 2) && (
+      {(tabs === 1 && openRow || tabs === 2 && openRow) && (
         <TableRow>
           <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={16}>
             <Collapse in={openRow === row.so_No} timeout="auto" unmountOnExit>
