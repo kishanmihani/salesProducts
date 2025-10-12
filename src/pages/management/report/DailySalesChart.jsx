@@ -12,13 +12,12 @@ import { Bar } from "react-chartjs-2";
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router";
 
-// Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const MonthlySalesChart = (props) => {
-  const [selectedWeek, setSelectedWeek] = useState(1); // Default: Week 1
-  // const [props.selectedDataset, setprops.selectedDataset] = useState("both"); // both | sales | avg
-const naigate=useNavigate();
+  const [selectedWeek, setSelectedWeek] = useState(1);
+  const navigate = useNavigate();
+
   // Function to get week number from date
   const getWeekOfMonth = (dateStr) => {
     const date = new Date(dateStr);
@@ -29,20 +28,24 @@ const naigate=useNavigate();
     return 4;
   };
 
-  // Filter data by selected week
+  // ✅ Filter + Sort data by selected week and date
   const filteredData = useMemo(() => {
-    return props.data?.filter(
+    const weekData = props.data?.filter(
       (item) => getWeekOfMonth(item.date) === selectedWeek
     );
-  }, [selectedWeek, props.date_Month, props.data]);
+    // Sort by actual date ascending
+    return weekData?.sort(
+      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+    );
+  }, [selectedWeek, props.data]);
 
-  // ✅ Conditionally set datasets
+  // ✅ Prepare datasets
   const datasets = [];
 
   if (props.selectedDataset === "sales" || props.selectedDataset === "both") {
     datasets.push({
       label: "Sales Quantity",
-      data: filteredData.map((item) => item.sale_Qty),
+      data: filteredData.map((item) => Number(item.sale_Qty) || 0),
       backgroundColor: "#36A2EB",
       borderRadius: 6,
       barThickness: 20,
@@ -54,7 +57,7 @@ const naigate=useNavigate();
   if (props.selectedDataset === "avg" || props.selectedDataset === "both") {
     datasets.push({
       label: "Avg Selling Rate",
-      data: filteredData.map((item) => item.avg_Selling_Rate),
+      data: filteredData.map((item) => Number(item.avg_Selling_Rate) || 0),
       backgroundColor: "gray",
       borderRadius: 6,
       barThickness: 20,
@@ -63,7 +66,7 @@ const naigate=useNavigate();
     });
   }
 
-  // Chart data
+  // ✅ Chart data
   const chartData = {
     labels: filteredData.map((item) =>
       new Date(item.date).toLocaleDateString("en-IN", {
@@ -74,14 +77,19 @@ const naigate=useNavigate();
     datasets,
   };
 
-  // Chart options
   const options = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: { position: "top" },
       title: {
         display: true,
-        text: `${props.selectedDataset === "sales"? ` ${props.selectedDataset} Quantity - Week ${selectedWeek}`: `${props.selectedDataset} Rate  - Week ${selectedWeek} `} `,
+        text:
+          props.selectedDataset === "sales"
+            ? `Sales Quantity - Week ${selectedWeek}`
+            : props.selectedDataset === "avg"
+            ? `Average Selling Rate - Week ${selectedWeek}`
+            : `Sales & Avg Rate - Week ${selectedWeek}`,
       },
     },
     scales: {
@@ -96,16 +104,23 @@ const naigate=useNavigate();
       },
     },
   };
-const handleViewDetails = () => {
-    naigate("/Dashboard/management/graphtable", {
+
+  const handleViewDetails = () => {
+    navigate("/Dashboard/management/graphtable", {
       state: {
-        data: props.data,           // pass the full dataset or filteredData if needed
-        pageTilte: props.selectedDataset === "sales"? ` ${props.selectedDataset} Quantity `: `${props.selectedDataset} Rate   `,     // pass the chart title
-       selectedDataset : props.selectedDataset,
-        varient: 3,                 // optional flag to distinguish chart types
+        data: props.data,
+        pageTilte:
+          props.selectedDataset === "sales"
+            ? "Sales Quantity"
+            : props.selectedDataset === "avg"
+            ? "Average Selling Rate"
+            : "Sales and Avg Rate",
+        selectedDataset: props.selectedDataset,
+        varient: 3,
       },
     });
-  }
+  };
+
   return (
     <div
       style={{
@@ -115,13 +130,13 @@ const handleViewDetails = () => {
         height: 550,
         padding: 20,
         boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
+        display: "flex",
+        flexDirection: "column",
       }}
     >
-      {/* Filter Controls */}
+      {/* Week Filter */}
       <div style={{ marginBottom: "1rem", textAlign: "center" }}>
-        <label style={{ marginRight: "10px", fontWeight: 500 }}>
-          Select Week:
-        </label>
+        <label style={{ marginRight: "10px", fontWeight: 500 }}>Select Week:</label>
         <select
           value={selectedWeek}
           onChange={(e) => setSelectedWeek(Number(e.target.value))}
@@ -136,24 +151,15 @@ const handleViewDetails = () => {
           <option value={3}>Week 3</option>
           <option value={4}>Week 4</option>
         </select>
-        <Button variant="outlined" onClick={handleViewDetails}>View Details</Button>
-        {/* <label style={{ marginRight: "10px", fontWeight: 500 }}>
-          Select Dataset:
-        </label>
-        <select
-          value={props.selectedDataset}
-          onChange={(e) => setprops.selectedDataset(e.target.value)}
-          style={{ padding: "6px 12px", borderRadius: 6 }}
-        >
-          <option value="both">Both</option>
-          <option value="sales">Sales Quantity</option>
-          <option value="avg">Avg Selling Rate</option>
-        </select> */}
+        <Button variant="outlined" onClick={handleViewDetails}>
+          View Details
+        </Button>
       </div>
 
       {/* Chart */}
-      <div style={{ flex: 1, height: 400 }}>
-      <Bar data={chartData} options={options} /></div>
+      <div style={{ flex: 1 }}>
+        <Bar data={chartData} options={options} />
+      </div>
     </div>
   );
 };
