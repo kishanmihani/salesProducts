@@ -783,7 +783,7 @@ authAxios.post(Vessel_Edit_Data,JSON.stringify(data))
 
     // const { error, isValids } = validateVesselNumber(vessalNumber);
     if(vessalNumber == null || vessalNumber == ""){
-      setVessalNumberError({error:"vessalNumber is required"})
+      setVessalNumberError({error:"vessel No is required"})
        isValid = false;
     }
     // setVessalNumberError({ error: error, valid: isValids });
@@ -929,7 +929,7 @@ id
 }, []);
   return (
     <React.Fragment>
-      <CustomPageHeader pageHeaderText="Vessal Form" />
+      <CustomPageHeader pageHeaderText="Vessel Form" />
       <form onSubmit={handleSubmit}>
         <Paper elevation={0}>
           <Box

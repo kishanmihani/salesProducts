@@ -18,7 +18,7 @@ import { LiaProductHunt } from "react-icons/lia";
 import { MdCancel, MdRadioButtonUnchecked } from "react-icons/md";
 import { FaChevronRight, FaChevronDown } from "react-icons/fa6";
 import logouticon from "../../../assets/logouticon.png";
-import logo from "../../../assets/sale.jpeg";
+import logo from "../../../assets/sale.jpg";
 import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
 import RadioButtonCheckedIcon from "@mui/icons-material/RadioButtonChecked";
 import { GrMoney } from "react-icons/gr";
@@ -312,7 +312,7 @@ const toggleModule = (key) => {
               </ListItemIcon>
               <ListItemText
                 primaryTypographyProps={{ fontSize: "12px" }}
-                primary="Vessal Form"
+                primary="Vessel Form"
               />
             </ListItemButton>
             <ListItemButton
@@ -335,7 +335,7 @@ const toggleModule = (key) => {
               </ListItemIcon>
               <ListItemText
                 primaryTypographyProps={{ fontSize: "12px" }}
-                primary="Vessal List"
+                primary="Vessel List"
               />
             </ListItemButton>
             {/* <ListItemButton

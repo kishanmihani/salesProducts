@@ -13,19 +13,21 @@ import {
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import React, { useEffect, useState } from "react";
-import BillingDropDown from "../commonComponent/billingDropDown/billingDropDown";
-import PortDropDown from "../commonComponent/PortDropdown/ProtDropDown";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { useNavigate } from "react-router";
+import dayjs from "dayjs";
+
+import BillingDropDown from "../commonComponent/billingDropDown/billingDropDown";
+import PortDropDown from "../commonComponent/PortDropdown/ProtDropDown";
 import CustomerDropDown from "../commonComponent/CustomerDropDown/CustomerDropDown";
 import DeliveryDropDown from "../commonComponent/DeliveryDropDown/DeliveryDropDown";
 import ProductDropDown from "../commonComponent/ProductDropDown/ProductDropDown";
 import PaymentDropDown from "../commonComponent/PaymentDropDown/PaymentDropDown";
-import { authAxios } from "../utils/authAxios";
-import { useNavigate } from "react-router";
 import CustomeAlerts from "../commonComponent/CustomeAlert/CustomeAlert";
-import dayjs from "dayjs";
+import { authAxios } from "../utils/authAxios";
+
 export default function SalesRestitration() {
   const [selectedBilling, setSelectedBilling] = useState("Select");
   const [selectedOrderDate, setSelectOrderDate] = useState(null);
@@ -38,15 +40,12 @@ export default function SalesRestitration() {
   const [selectedBillingPrice, setSelectedBillingPrice] = useState(0);
   const [selectedGST, setSelectedGST] = useState(0);
   const [selectedSellingPrice, setSelectedSellingPrice] = useState(0);
-  const [selectedDiscount, setSelectedDiscount] = useState(null);
-  const [selectedQuntity, setSelectedQuntity] = useState(null);
+  const [selectedDiscount, setSelectedDiscount] = useState(0);
+  const [selectedQuntity, setSelectedQuntity] = useState(0);
   const [selectedDelivery, setSelectedDelivery] = useState("Select");
   const [selectedRemark, setSelectedRemark] = useState("");
   const [selectedPayment, setSelectedPayment] = useState("Select");
-  const [advance, setAdvance] = useState({
-    percent: "",
-    value: "",
-  });
+  const [advance, setAdvance] = useState({ percent: "", value: "" });
   const [creditDays, setCreditDays] = useState("");
   const [selectedDiscountvalue, setSelectedDiscountvalue] = useState(0);
   const [selectedNetPrice, setSelectedNetPrice] = useState(0);
@@ -58,95 +57,68 @@ export default function SalesRestitration() {
   const [submitDisabled, setSubmitDisabled] = useState(false);
   const [custAlert, setCustAlert] = useState(null);
   const [loader, setLoader] = useState(false);
-  const navigate = useNavigate();
-  const showSuccess = (data) => {
-    setCustAlert({ type: "success", message: data });
-  };
-  const showError = (data) => {
-    setCustAlert({ type: "error", message: data });
-  };
 
+  const navigate = useNavigate();
+
+  const showSuccess = (data) => setCustAlert({ type: "success", message: data });
+  const showError = (data) => setCustAlert({ type: "error", message: data });
+
+  /** ------------------------- PRICE CALCULATIONS ------------------------- **/
   useEffect(() => {
     const handler = setTimeout(() => {
       if (selectedBitumenPrice !== "" || selectedTransportation !== "") {
-        setSelectedBillingPrice(() =>
+        setSelectedBillingPrice(
           ((Number(selectedBitumenPrice) * 100) / 118).toFixed(2)
         );
       }
     }, 300);
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [selectedTransportation, selectedBitumenPrice, selectedBillingPrice]);
+    return () => clearTimeout(handler);
+  }, [selectedTransportation, selectedBitumenPrice]);
 
   useEffect(() => {
     const handler = setTimeout(() => {
       if (selectedBillingPrice !== "" || selectedBillingPrice !== 0) {
-        console.log(selectedBillingPrice, selectedTransportation);
-        setSelectedGST(
-          parseFloat(
-            ((Number(selectedBillingPrice) + Number(selectedTransportation)) /
-              100) *
-              18
-          ).toFixed(2)
-        );
+        const gstValue = (
+          ((Number(selectedBillingPrice) + Number(selectedTransportation)) / 100) *
+          18
+        ).toFixed(2);
+        setSelectedGST(parseFloat(gstValue));
       }
-      if (
-        selectedBillingPrice !== "" ||
-        selectedBillingPrice !== 0 ||
-        selectedGST !== 0 ||
-        selectedGST !== ""
-      ) {
-        setSelectedSellingPrice(() =>
-          parseFloat(
-            Number(selectedBillingPrice) +
-              Number(selectedGST) +
-              Number(selectedTransportation)
-          ).toFixed(2)
-        );
-      }
-      if (selectedSellingPrice !== 0 || selectedQuntity !== 0) {
-        setSelectedSellingValue(() =>
-          parseFloat(selectedSellingPrice * selectedQuntity).toFixed(2)
-        );
-      }
+
+      const sellingPrice = (
+        Number(selectedBillingPrice) +
+        Number(selectedGST) +
+        Number(selectedTransportation)
+      ).toFixed(2);
+      setSelectedSellingPrice(parseFloat(sellingPrice));
+
+      const sellingValue = (selectedSellingPrice * selectedQuntity).toFixed(2);
+      setSelectedSellingValue(parseFloat(sellingValue));
     }, 300);
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [
-    selectedBillingPrice,
-    selectedBilling,
-    selectedGST,
-    selectedSellingPrice,
-    selectedQuntity,
-  ]);
+    return () => clearTimeout(handler);
+  }, [selectedBillingPrice, selectedGST, selectedSellingPrice, selectedQuntity]);
 
   useEffect(() => {
     const handler = setTimeout(() => {
       if (selectedDiscount !== 0 || selectedQuntity !== 0) {
-        setSelectedDiscountvalue(() => selectedDiscount * selectedQuntity);
+        setSelectedDiscountvalue(selectedDiscount * selectedQuntity);
       }
     }, 300);
-    return () => {
-      clearTimeout(handler);
-    };
+    return () => clearTimeout(handler);
   }, [selectedQuntity, selectedDiscount]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const handler = setTimeout(() => {
       if (selectedSellingValue !== 0 || selectedDiscountvalue !== 0) {
-        setSelectedNetPrice(() =>
+        setSelectedNetPrice(
           parseFloat(selectedSellingValue - selectedDiscountvalue).toFixed(2)
         );
       }
     }, 300);
-
-    return () => {
-      clearTimeout(handler);
-    };
+    return () => clearTimeout(handler);
   }, [selectedSellingValue, selectedDiscountvalue]);
 
+  /** ------------------------- FORM HANDLER ------------------------- **/
   const resetForm = () => {
     setSelectedBilling("Select");
     setSelectOrderDate(null);
@@ -170,157 +142,129 @@ export default function SalesRestitration() {
     setSelectedTransporter("Select");
     setSelectTransporterName("");
   };
+
+  const handleClose = () => setCustAlert(null);
+
   async function formSubmithandler(event) {
-    setLoader(true);
     event.preventDefault();
+    setLoader(true);
     setSubmitDisabled(true);
+
     const formData = new FormData(event.currentTarget);
     const formJson = Object.fromEntries(formData.entries());
-    let emptyFields = [];
     const newErrors = {};
 
+    // ✅ Validation
     for (let key in formJson) {
       const value = formJson[key];
-
       if (key === "Remark") continue;
 
       if (value === "" || value === "Select") {
         newErrors[key] = `${key} is required`;
-        emptyFields.push(key);
         continue;
       }
 
-      if (
-        ["Transportation", "Bitumen Price", "Discount", "Quntity"].includes(key)
-      ) {
+      if (["Transportation", "Bitumen Price", "Discount", "Quntity"].includes(key)) {
         if (parseFloat(value) < 0) {
-          newErrors[key] = `${key} value must not be negative`;
+          newErrors[key] = `${key} must not be negative`;
         }
       }
-      if (["Bitumen Price", "Quntity", "Bitumen Price"].includes(key)) {
-        if (parseFloat(value) == 0) {
-          newErrors[key] = `${key} not be zero`;
-        }
-      }
-      if (["Transporter name"].includes(key)) {
-        if (formJson?.["Transporter"] === "Seller") {
-          if (key > 0) {
-            newErrors[key] = `${key} name not be netative`;
-          }
-        }
-      }
-       if (selectedPayment === "Advance Payments") {
-    // if (!formJson["Advance Value"] || parseFloat(formJson["Advance Value"]) <= 0) {
-    //   newErrors["Advance Value"] = "Advance Value must be greater than 0";
-    // }
-    
-    // else if(parseFloat(formJson["Advance Value"]) === "" || parseFloat(formJson["Advance Value"]) === null || (formJson["Advance Value"]) === NaN ){
-    //   newErrors["Advance Value"] = "Advance Value is required";
-    // }
-    // debugger;
-    const advRaw = formJson["Advance Value"];
-const advVal = parseFloat(advRaw);
-
-if (!advRaw) {
-  // handles "", null, undefined
-  newErrors["Advance Value"] = "Advance payment value is required";
-} else if (isNaN(advVal)) {
-  newErrors["Advance Value"] = "Advance payment value must be a number";
-} else if (advVal < 0) {
-  newErrors["Advance Value"] = "Advance payment value cannot be less than 0";
-} else if (advVal === 0) {
-  newErrors["Advance Value"] = "Advance payment value cannot be 0";
-}
-
-  }
-
-  // ✅ Credit Payment validations
-  if (selectedPayment === "Credit Payments") {
-  const cdRaw = formJson["Credit Days"];
-  const cdVal = parseInt(cdRaw, 10);
-
-  if (!cdRaw) {
-    newErrors["Credit Days"] = "Credit Days is required";
-  } else if (isNaN(cdVal)) {
-    newErrors["Credit Days"] = "Credit Days must be a number";
-  } else if (cdVal < 0) {
-    newErrors["Credit Days"] = "Credit Days cannot be less than 0";
-  } else if (cdVal === 0) {
-    newErrors["Credit Days"] = "Credit Days cannot be 0";
-  }
-}
     }
 
+    // ✅ Advance payment validation
+    if (selectedPayment === "Advance Payments") {
+      const advRaw = formJson["Advance Value"];
+      const advVal = parseFloat(advRaw);
+
+      if (!advRaw) {
+        newErrors["Advance Value"] = "Advance payment value is required";
+      } else if (isNaN(advVal)) {
+        newErrors["Advance Value"] = "Advance payment value must be a number";
+      } else if (advVal <= 0) {
+        newErrors["Advance Value"] = "Advance payment value must be > 0";
+      }
+    }
+
+    // ✅ Credit payment validation
+    if (selectedPayment === "Credit Payments") {
+      const cdRaw = formJson["Credit Days"];
+      const cdVal = parseInt(cdRaw, 10);
+
+      if (!cdRaw) {
+        newErrors["Credit Days"] = "Credit Days is required";
+      } else if (isNaN(cdVal)) {
+        newErrors["Credit Days"] = "Credit Days must be a number";
+      } else if (cdVal <= 0) {
+        newErrors["Credit Days"] = "Credit Days must be > 0";
+      }
+    }
+
+    // ✅ Error handling
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       showError("Please fill required fields.");
-
       setSubmitDisabled(false);
       setLoader(false);
       return;
-    } else if (emptyFields.length === 0) {
-      const data = {
-        user_id: userId,
-        Company_Name: formJson["Billing name"],
-        Customer_Name: formJson["Customer name"],
-        Transport_Name: formJson["Transporter name"],
-        Transport_ON: formJson["Transporter"],
-        Port_Name: formJson["Port name"],
-        Delivery_Type: formJson["Delivery name"],
-        Payment_Type: formJson["Payment name"],
-        Product_Name: formJson["Product name"],
-        price: formJson["Bitumen Price"],
-        Transport: formJson["Transportation"],
-        Gst: formJson["GST 18%"],
-        Discount: formJson["Discount"],
-        Quantity: formJson["Quntity"],
-        Entry_Date: formJson["Order Date"],
-        Validity_Date: formJson["Validity Date"],
-        Remark: formJson["Remark"],
-        Adv_Value:selectedPayment === "Advance Payments" ? formJson["Advance Value"] : "",
-        Adv_Per:selectedPayment === "Advance Payments" ? formJson["Advance Payment %"] : "",
-        c_Days:selectedPayment === "Credit Payments" ? formJson["Credit Days"] : ""
-      };
+    }
 
-      try {
-        const res = await authAxios.post(
-          "BituRep/Api/Account/send_Sodata",
-          data
-        );
+    // ✅ Submit data
+    const data = {
+      user_id: userId,
+      Company_Name: formJson["Billing name"],
+      Customer_Name: formJson["Customer name"],
+      Transport_Name: formJson["Transporter name"],
+      Transport_ON: formJson["Transporter"],
+      Port_Name: formJson["Port name"],
+      Delivery_Type: formJson["Delivery name"],
+      Payment_Type: formJson["Payment name"],
+      Product_Name: formJson["Product name"],
+      price: formJson["Bitumen Price"],
+      Transport: formJson["Transportation"],
+      Gst: formJson["GST 18%"],
+      Discount: formJson["Discount"],
+      Quantity: formJson["Quntity"],
+      Entry_Date: formJson["Order Date"],
+      Validity_Date: formJson["Validity Date"],
+      Remark: formJson["Remark"],
+      Adv_Value:
+        selectedPayment === "Advance Payments" ? formJson["Advance Value"] : "",
+      Adv_Per:
+        selectedPayment === "Advance Payments"
+          ? formJson["Advance Payment %"]
+          : "",
+      c_Days:
+        selectedPayment === "Credit Payments" ? formJson["Credit Days"] : "",
+    };
 
-        if (res.data.message === "Email sent successfully") {
-          showSuccess("Email sent successfully");
-          setLoader(false);
-          resetForm();
-          setSubmitDisabled(false);
-          navigate("/dashboard/sales/PendingApprovalForm");
-          return;
-        } else {
-          showError(res.data.message);
-          setLoader(false);
-          setSubmitDisabled(false);
-          return;
-        }
-      } catch (err) {
-        console.error(err);
-        setLoader(false);
-        showError("An error occurred while submitting the form.");
-        setSubmitDisabled(false);
+    try {
+      const res = await authAxios.post("BituRep/Api/Account/send_Sodata", data);
+      if (res.data.message === "Email sent successfully") {
+        showSuccess("Email sent successfully");
+        resetForm();
+        navigate("/dashboard/sales/PendingApprovalForm");
+      } else {
+        showError(res.data.message);
       }
+    } catch (err) {
+      console.error(err);
+      showError("An error occurred while submitting the form.");
+    } finally {
+      setLoader(false);
+      setSubmitDisabled(false);
     }
   }
 
-  const handleClose = () => {
-    setCustAlert(null);
-  };
+  /** ------------------------- RENDER ------------------------- **/
   return (
     <React.Fragment>
+      {/* Header */}
       <Box
         sx={{
           p: 1,
           position: "sticky",
           top: 0,
-          bgcolor: "#ffff",
+          bgcolor: "#fff",
           borderBottom: 1,
           zIndex: 4,
           display: "flex",
@@ -333,169 +277,50 @@ if (!advRaw) {
             border: 1,
             borderColor: "#eee",
             width: 40,
-            position: "relative",
           }}
         >
-          <ArrowBackIcon width={90} color="#000" />
+          <ArrowBackIcon color="#000" />
         </button>
         <Typography variant="h5" align="center" width="100%">
           &nbsp;Sales Request Form
         </Typography>
       </Box>
+
+      {/* Form Body */}
       <Paper sx={{ p: 2 }} elevation={0}>
-        <form sx={{ p: 5 }} onSubmit={formSubmithandler}>
+        <form onSubmit={formSubmithandler}>
           <Stack
             spacing={2}
             direction={{ xs: "column", md: "row" }}
-            sx={{ p: 2, pb: 0, justifyContent: "start" }}
+            sx={{ p: 2, pb: 0 }}
           >
-            <Box sx={{ width: "100%" }} md={{ width: "50%" }}>
+            {/* Left Section */}
+            <Box sx={{ width: "100%" }}>
               <BillingDropDown
                 billing={selectedBilling}
                 setBilling={setSelectedBilling}
                 errors={errors}
               />
 
-              <FormControl fullWidth margin="normal" size="small">
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DatePicker
-                    size="small"
-                    label="Order Date"
-                    name="Order Date"
-                    value={selectedOrderDate}
-                    // minDate={dayjs().startOf('day')}
-                    onChange={(newValue) => setSelectOrderDate(newValue)}
-                    renderInput={(params) => (
-                      <TextField {...params} id="order-date-picker" />
-                    )}
-                    slotProps={{
-                      textField: {
-                        size: "small",
-                        fullWidth: true,
-                        id: "order-date-picker",
-                        error: !!errors?.["Order Date"],
-                        helperText: errors?.["Order Date"],
-                      },
-                    }}
-                  />
-                </LocalizationProvider>
-              </FormControl>
               <ProductDropDown
                 selectedProduct={selectedProduct}
                 setSelectedProduct={setSelectedProduct}
                 errors={errors}
               />
-              <CustomerDropDown
-                selectedCustomer={selectedCustomer}
-                setSelectedCustomer={setSelectedCustomer}
-                errors={errors}
-              />
 
-              <TextField
-                fullWidth
-                label="Price Before Trans (Incl GST)"
-                name="Bitumen Price"
-                margin="normal"
-                type="number"
-                size="small"
-                placeholder="0"
-                value={selectedBitumenPrice}
-                onChange={(e) => {
-                  setSelectedBitumenPrice(e.target.value);
-                }}
-                error={!!errors?.["Bitumen Price"]}
-                helperText={errors?.["Bitumen Price"]}
-              />
-              <TextField
-                fullWidth
-                label="Transportation (Excl GST)"
-                name="Transportation"
-                margin="normal"
-                type="number"
-                size="small"
-                value={selectedTransportation}
-                onChange={(e) => {
-                  let value = e.target.value;
-                  setSelectedTransportation(value);
-                  if (value == 0) {
-                    setSelectedTransporter("Buyer");
-                  } else if (value > 0) {
-                    setSelectedTransporter("Seller");
-                  }
-                  // setSelectedBitumenPrice(selectedBillingPrice - value)
-                }}
-                error={!!errors?.["Transportation"]}
-                helperText={errors?.["Transportation"]}
-              />
-
-              <TextField
-                fullWidth
-                label="Bitumen Basic Price (Excl GST)"
-                name="Billing_Price"
-                margin="normal"
-                type="number"
-                size="small"
-                value={selectedBillingPrice}
-              />
-              <TextField
-                fullWidth
-                label="GST 18%"
-                name="GST 18%"
-                margin="normal"
-                type="number"
-                size="small"
-                value={selectedGST}
-              />
-              <TextField
-                fullWidth
-                label="Selling Price (After GST)"
-                name="Selling Price"
-                margin="normal"
-                type="number"
-                size="small"
-                // onChange={(e) => {
-                //  let value = e.target.value;
-                //  setSelectedSellingPrice(value);
-                //   }}
-                value={selectedSellingPrice}
-              />
-              <TextField
-                fullWidth
-                label="Discount through CN (Incl GST)"
-                name="Discount"
-                type="number"
-                margin="normal"
-                size="small"
-                placeholder="0"
-                value={selectedDiscount}
-                error={!!errors?.["Discount"]}
-                helperText={errors?.["Discount"]}
-                onChange={(e) => {
-                  setSelectedDiscount(e.target.value);
-                }}
-              />
-            </Box>
-            <Box sx={{ width: "100%" }} md={{ width: "50%" }}>
               <TextField
                 fullWidth
                 label="Qty in MTS"
                 name="Quntity"
                 type="number"
                 size="small"
-                placeholder="0"
                 value={selectedQuntity}
+                onChange={(e) => setSelectedQuntity(e.target.value)}
                 error={!!errors?.["Quntity"]}
                 helperText={errors?.["Quntity"]}
-                onChange={(e) => {
-                  setSelectedQuntity(e.target.value);
-                }}
-              />
-              <PortDropDown
-                selectedPort={selectedPort}
-                setSelectedPort={setSelectedPort}
-                errors={errors}
               />
 
+              {/* Validity Date */}
               <FormControl fullWidth size="small" margin="normal">
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DatePicker
@@ -507,27 +332,166 @@ if (!advRaw) {
                     slotProps={{
                       textField: {
                         size: "small",
-                        id: "validity-date-picker",
                         fullWidth: true,
                         error: !!errors?.["Validity Date"],
                         helperText: errors?.["Validity Date"],
                       },
                     }}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        id="validity-date-picker"
-                        size="small"
-                      />
-                    )}
                   />
                 </LocalizationProvider>
               </FormControl>
+
+              {/* Pricing Fields */}
+              <TextField
+                fullWidth
+                label="Price Before Trans (Incl GST)"
+                name="Bitumen Price"
+                margin="normal"
+                type="number"
+                size="small"
+                value={selectedBitumenPrice}
+                onChange={(e) => setSelectedBitumenPrice(e.target.value)}
+                error={!!errors?.["Bitumen Price"]}
+                helperText={errors?.["Bitumen Price"]}
+              />
+
+              <TextField
+                fullWidth
+                label="Transportation (Excl GST)"
+                name="Transportation"
+                margin="normal"
+                type="number"
+                size="small"
+                value={selectedTransportation}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setSelectedTransportation(value);
+                  if (value == 0) setSelectedTransporter("Buyer");
+                  else if (value > 0) setSelectedTransporter("Seller");
+                }}
+                error={!!errors?.["Transportation"]}
+                helperText={errors?.["Transportation"]}
+              />
+
+              <TextField
+                fullWidth
+                label="Discount through CN (Incl GST)"
+                name="Discount"
+                type="number"
+                margin="normal"
+                size="small"
+                value={selectedDiscount}
+                onChange={(e) => setSelectedDiscount(e.target.value)}
+                error={!!errors?.["Discount"]}
+                helperText={errors?.["Discount"]}
+              />
+
+              <TextField
+                fullWidth
+                label="Bitumen Basic Price (Excl GST)"
+                name="Billing_Price"
+                margin="normal"
+                type="number"
+                size="small"
+                value={selectedBillingPrice}
+                 sx={{ 
+                    backgroundColor: "#e3f2fd", 
+                    borderRadius: 1,
+                    '& .MuiInputBase-input': { color: 'black', fontWeight: 'bold' }, // input text
+                    '& .MuiInputLabel-root': { color: 'black', fontWeight: 'bold' }  // label text
+                  }}
+              />
+
+              <TextField
+                fullWidth
+                label="GST 18%"
+                name="GST 18%"
+                margin="normal"
+                type="number"
+                size="small"
+                value={selectedGST}
+                 sx={{ 
+                  backgroundColor: "#e3f2fd", 
+                  borderRadius: 1,
+                  '& .MuiInputBase-input': { color: 'black', fontWeight: 'bold' }, // input text
+                  '& .MuiInputLabel-root': { color: 'black', fontWeight: 'bold' }  // label text
+                   }}
+              />
+
+              <TextField
+              fullWidth
+                  label="Selling Price (After GST)"
+                  name="Selling Price"
+                  margin="normal"
+                  type="number"
+                  size="small"
+                  value={selectedSellingPrice}
+                  sx={{ 
+                    backgroundColor: "#e3f2fd", 
+                    borderRadius: 1,
+                    '& .MuiInputBase-input': { color: 'black', fontWeight: 'bold' }, // input text
+                    '& .MuiInputLabel-root': { color: 'black', fontWeight: 'bold' }  // label text
+                  }}
+                />
+
+              <TextField
+                fullWidth
+                label="Remark"
+                name="Remark"
+                margin="normal"
+                size="small"
+                multiline
+                rows={1}
+                value={selectedRemark}
+                onChange={(e) => setSelectedRemark(e.target.value)}
+              />
+            </Box>
+
+            {/* Right Section */}
+            <Box sx={{ width: "100%" }}>
+
+
+             
+
+
+              <FormControl fullWidth margin="normal" size="small">
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DatePicker
+                    label="Order Date"
+                    name="Order Date"
+                    value={selectedOrderDate}
+                    onChange={(newValue) => setSelectOrderDate(newValue)}
+                    slotProps={{
+                      textField: {
+                        size: "small",
+                        fullWidth: true,
+                        error: !!errors?.["Order Date"],
+                        helperText: errors?.["Order Date"],
+                      },
+                    }}
+                  />
+                </LocalizationProvider>
+              </FormControl>
+
+              <CustomerDropDown
+                selectedCustomer={selectedCustomer}
+                setSelectedCustomer={setSelectedCustomer}
+                errors={errors}
+              />
+
+              <PortDropDown
+                selectedPort={selectedPort}
+                setSelectedPort={setSelectedPort}
+                errors={errors}
+              />
+
               <DeliveryDropDown
                 selectedDelivery={selectedDelivery}
                 setSelectedDelivery={setSelectedDelivery}
                 errors={errors}
               />
+
+              {/* Transporter */}
               <FormControl fullWidth size="small" margin="normal">
                 <InputLabel id="Transporter">Transporter</InputLabel>
                 <Select
@@ -536,20 +500,17 @@ if (!advRaw) {
                   value={selectedTransporter}
                   label="Transporter"
                   name="Transporter"
-                  defaultValue="Select"
                   onChange={(e) => setSelectedTransporter(e.target.value)}
-                  error={!!errors?.["Transporter"]}
-                  helperText={errors?.["Transporter"]}
-                  MenuProps={{ disableAutoFocusItem: true }}
                 >
-                  <MenuItem disabled value={"Select"}>
+                  <MenuItem disabled value="Select">
                     Please select
                   </MenuItem>
-                  <MenuItem value={"Buyer"}>Buyer</MenuItem>
-                  <MenuItem value={"Seller"}>Seller</MenuItem>
-                  <MenuItem value={"Other"}>Other</MenuItem>
+                  <MenuItem value="Buyer">Buyer</MenuItem>
+                  <MenuItem value="Seller">Seller</MenuItem>
+                  <MenuItem value="Other">Other</MenuItem>
                 </Select>
               </FormControl>
+
               <TextField
                 fullWidth
                 label="Transporter name"
@@ -558,17 +519,16 @@ if (!advRaw) {
                 size="small"
                 disabled={selectedTransporter === "Buyer"}
                 type="text"
+                value={selectTransporterName}
+                onChange={(e) =>
+                  setSelectTransporterName(
+                    selectedTransporter === "Seller" ? e.target.value : ""
+                  )
+                }
                 error={!!errors?.["Transporter name"]}
                 helperText={errors?.["Transporter name"]}
-                value={selectTransporterName}
-                onChange={(e) => {
-                  if (selectedTransporter === "Seller") {
-                    setSelectTransporterName(e.target.value);
-                  } else if (selectedTransporter === "Buyer") {
-                    setSelectTransporterName("");
-                  }
-                }}
               />
+
               <TextField
                 fullWidth
                 label="Selling Value (After GST)"
@@ -577,7 +537,14 @@ if (!advRaw) {
                 size="small"
                 type="number"
                 value={selectedSellingValue}
+                sx={{ 
+                    backgroundColor: "#e3f2fd", 
+                    borderRadius: 1,
+                    '& .MuiInputBase-input': { color: 'black', fontWeight: 'bold' }, // input text
+                    '& .MuiInputLabel-root': { color: 'black', fontWeight: 'bold' }  // label text
+                  }}
               />
+
               <TextField
                 fullWidth
                 label="Discount value"
@@ -585,87 +552,104 @@ if (!advRaw) {
                 margin="normal"
                 size="small"
                 value={selectedDiscountvalue}
+                sx={{ 
+                    backgroundColor: "#e3f2fd", 
+                    borderRadius: 1,
+                    '& .MuiInputBase-input': { color: 'black', fontWeight: 'bold' }, // input text
+                    '& .MuiInputLabel-root': { color: 'black', fontWeight: 'bold' }  // label text
+                  }}
               />
+
               <TextField
                 fullWidth
-                label="Net Amount Recivable"
+                label="Net Amount Receivable"
                 name="Net Price"
                 type="number"
                 margin="normal"
                 size="small"
                 value={selectedNetPrice}
+                sx={{ 
+                    backgroundColor: "#e3f2fd", 
+                    borderRadius: 1,
+                    '& .MuiInputBase-input': { color: 'black', fontWeight: 'bold' }, // input text
+                    '& .MuiInputLabel-root': { color: 'black', fontWeight: 'bold' }  // label text
+                  }}
               />
-              <TextField
-              fullWidth
-              size="small"
-              margin="normal"
-              id="Remark"
-              name="Remark"
-              label="Remark"
-              multiline
-              rows={1}
-              value={selectedRemark}
-              error={!!errors?.["Remark"]}
-              helperText={errors?.["Remark"]}
-              onChange={(e) => setSelectedRemark(e.target.value)}
-            />
-            
+
+                <TextField
+                fullWidth
+                label="PO Number"
+                name="Remark"
+                margin="normal"
+                size="small"
+                multiline
+                rows={1}
+                value={selectedRemark}
+                onChange={(e) => setSelectedRemark(e.target.value)}
+              />
+
+             
             </Box>
-            
           </Stack>
+
+          {/* Payment Conditional Fields */}
           <Stack
-  direction={{ xs: "column", md: "row" }}
-  spacing={2}
-  sx={{ p: 2, justifyContent: "flex-start" }}
->
-  <PaymentDropDown
-    selectedPayment={selectedPayment}
-    setSelectedPayment={setSelectedPayment}
-    errors={errors}
-  />
+            direction={{ xs: "column", md: "row" }}
+            spacing={2}
+            sx={{ p: 2, justifyContent: "flex-start" }}
+          >
 
-  {selectedPayment === "Advance Payments" && (
-    <React.Fragment>
-      <TextField
-        label="Advance Payment %"
-        size="small"
-        type="number"
-        name="Advance Payment %"
-        value={
-          selectedNetPrice && advance.value
-            ? ((advance.value / selectedNetPrice) * 100).toFixed(2)
-            : ""
-        }
-        InputProps={{ readOnly: true }}
-      />
-      <TextField
-        label="Advance Payment Value"
-        type="number"
-        size="small"
-        name="Advance Value"
-        value={advance.value}
-        onChange={(e) =>
-          setAdvance((prev) => ({ ...prev, value: Number(e.target.value) }))
-        }
-         error={!!errors["Advance Value"]}
-  helperText={errors["Advance Value"]}
-      />
-    </React.Fragment>
-  )}
+             <PaymentDropDown
+                selectedPayment={selectedPayment}
+                setSelectedPayment={setSelectedPayment}
+                errors={errors}
+              />
+            {selectedPayment === "Advance Payments" && (
+              <>
+                <TextField
+                  label="Advance Payment %"
+                  size="small"
+                  type="number"
+                  name="Advance Payment %"
+                  value={
+                    selectedNetPrice && advance.value
+                      ? ((advance.value / selectedNetPrice) * 100).toFixed(2)
+                      : ""
+                  }
+                  InputProps={{ readOnly: true }}
+                />
 
-  {selectedPayment === "Credit Payments" && (
-    <TextField
-      label="Credit Days"
-      type="number"
-      size="small"
-      name="Credit Days"
-      sx={{ width: { xs: "100%", md: "200px" } }}
-      onChange={(e) => setCreditDays(e.target.value)}
-      error={!!errors["Credit Days"]}
-  helperText={errors["Credit Days"]}
-    />
-  )}
-</Stack>
+                <TextField
+                  label="Advance Payment Value"
+                  type="number"
+                  size="small"
+                  name="Advance Value"
+                  value={advance.value}
+                  onChange={(e) =>
+                    setAdvance((prev) => ({
+                      ...prev,
+                      value: Number(e.target.value),
+                    }))
+                  }
+                  error={!!errors["Advance Value"]}
+                  helperText={errors["Advance Value"]}
+                />
+              </>
+            )}
+
+            {selectedPayment === "Credit Payments" && (
+              <TextField
+                label="Credit Days"
+                type="number"
+                size="small"
+                name="Credit Days"
+                sx={{ width: { xs: "100%", md: "200px" } }}
+                onChange={(e) => setCreditDays(e.target.value)}
+                error={!!errors["Credit Days"]}
+                helperText={errors["Credit Days"]}
+              />
+            )}
+          </Stack>
 
           <Box mr={2} align="right">
             <Button
@@ -675,11 +659,7 @@ if (!advRaw) {
               type="submit"
               disabled={submitDisabled}
             >
-              {!loader ? (
-                "Submit"
-              ) : (
-                <CircularProgress sx={{ color: "white", fontSize: 17 }} />
-              )}
+              {!loader ? "Submit" : <CircularProgress sx={{ color: "white" }} />}
             </Button>
           </Box>
         </form>

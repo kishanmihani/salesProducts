@@ -76,6 +76,7 @@ export default function AccountList() {
           Recipt_type: text,
           So_No: row?.so_No,
           Tds: 0,
+          Log_id: 0,
           Amount: row.bal_Adv,
         })
       );
@@ -88,11 +89,12 @@ export default function AccountList() {
             user_id: userId,
             Customer_Name: item?.customer_Name,
             Entry_Date: item.entry_Date,
-            Recipt_type: item.recipt_ID,
+            Recipt_type: "Cash Payments",
             So_No: item?.so_No,
             Tds: 0,
-            payment_Type: "Cash Payments",
+            Log_id: item.id,
             Amount: item.b_Bal_Amount,
+            
           })
         );
         console.log(`Transferred for SO No: ${item?.so_No}`);

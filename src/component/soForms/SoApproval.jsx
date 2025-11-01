@@ -34,34 +34,33 @@ import { toast, ToastContainer } from 'react-toastify';
 
 export default function SoApproval() {
   const [openRow, setOpenRow] = useState(null);
-
   const [soTble_head] = useState([
-    'Validety Date',
     'So Date',
+    'Name',
+    'V_Date',
     'So No',
     'So Qty',
-    'A_Qty/count',
-    'P_Qty/P Count',
+    'A/C_Qty',
     'B_Qty',
-    'R PMT',
-    'Port Name',
+    'PMT',
+    'Port',
+    'Type',
     'Add Vehicle',
     'Actions',
   ]);
-
   const [sodata, setSodata] = useState([]);
   const [userId] = useState(JSON.parse(sessionStorage.getItem('userInfo'))?.id);
-  const [dataCheck,setDataCheck] = useState(true);
+  const [dataCheck, setDataCheck] = useState(true);
+
   useEffect(() => {
-    if(dataCheck){
+    if (dataCheck) {
       authAxios
         .post(SoApprovalapi, JSON.stringify({ user_id: userId }))
         .then((res) => setSodata(res.data))
         .catch((err) => console.log(err?.message));
-        setDataCheck(false);
-    // }
+      setDataCheck(false);
     }
-  }, [sodata, userId,dataCheck]);
+  }, [sodata, userId, dataCheck]);
 
   return (
     <React.Fragment>
@@ -95,7 +94,7 @@ export default function SoApproval() {
                   <SodataRow
                     key={index}
                     data={data}
-                    isOpen={openRow === data.sO_N0} // check if current row is open
+                    isOpen={openRow === data.sO_N0}
                     setOpenRow={setOpenRow}
                   />
                 ))}
@@ -124,7 +123,6 @@ function SodataRow({ data, isOpen, setOpenRow }) {
     'Remark',
   ]);
   const [innerData, setInnerData] = useState([]);
-
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [userId] = useState(JSON.parse(sessionStorage.getItem('userInfo'))?.id);
@@ -147,10 +145,8 @@ function SodataRow({ data, isOpen, setOpenRow }) {
 
   const handleToggle = async () => {
     if (isOpen) {
-      // close row
       setOpenRow(null);
     } else {
-      // open this row
       setOpenRow(data.sO_N0);
       try {
         const res = await authAxios.post(soVhicledetails, {
@@ -164,22 +160,56 @@ function SodataRow({ data, isOpen, setOpenRow }) {
     }
   };
 
+const today = new Date();
+const vDate = new Date(data?.v_Date);
+const isGreen = vDate.getTime() >= today.getTime();
+const isRed = vDate.getTime() < today.getTime();
   return (
     <React.Fragment>
-      <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
-        <TableCell>{formatDateToUS(data?.v_Date)}</TableCell>
-        <TableCell>{formatDateToUS(data?.sO_Date)}</TableCell>
+          <TableRow
+          sx={{
+            '& > *': { borderBottom: 'unset' },
+            backgroundColor: isRed
+              ? 'rgba(245, 143, 103, 0.1)' // reddish
+              : isGreen
+              ? 'rgba(114, 227, 131, 0.1)' // greenish
+              : 'inherit',
+          }}
+        >
+        <TableCell
+          sx={{
+
+             
+           // color: isRed ? 'red' : 'inherit',
+           // fontWeight: isRed ? 'bold' : 'normal',
+          }}
+        >
+          {data?.sO_Date
+            ? new Date(data.sO_Date).toLocaleDateString('en-GB', {
+                day: '2-digit',
+                month: '2-digit',
+              })
+            : ''}
+        </TableCell>
+
+        <TableCell>{data?.c_Name}</TableCell>
+
+        <TableCell>
+          {data?.v_Date
+            ? new Date(data.v_Date).toLocaleDateString('en-GB', {
+                day: '2-digit',
+                month: '2-digit',
+              })
+            : ''}
+        </TableCell>
+
         <TableCell>{data?.sO_N0}</TableCell>
         <TableCell>{data?.so_Qty}</TableCell>
-        <TableCell>
-          {data?.a_Out_Qty}/{data?.a_Count}
-        </TableCell>
-        <TableCell>
-          {data?.p_Out_Qty}/{data?.p_Count}
-        </TableCell>
+        <TableCell>{data?.a_Out_Qty}/{data?.a_Count}</TableCell>
         <TableCell>{data?.bal_Qty}</TableCell>
         <TableCell>{data?.r_PMT}</TableCell>
         <TableCell>{data?.port}</TableCell>
+        <TableCell>{data?.payment_Type}</TableCell>
 
         <TableCell>
           <Button
@@ -199,6 +229,7 @@ function SodataRow({ data, isOpen, setOpenRow }) {
             Add Vehicle data
           </Button>
         </TableCell>
+
         <TableCell>
           <Button
             onClick={handleToggle}
@@ -247,10 +278,7 @@ function SodataRow({ data, isOpen, setOpenRow }) {
                   </TableHead>
                   <TableBody>
                     {innerData?.map((row, idx) => (
-                      <TableRow
-                        key={idx}
-                        sx={{ '& > *': { borderBottom: 'unset' } }}
-                      >
+                      <TableRow key={idx} sx={{ '& > *': { borderBottom: 'unset' } }}>
                         <TableCell>{row?.vehicle_Name}</TableCell>
                         <TableCell>{row?.p_Qty}</TableCell>
                         <TableCell>{row?.a_Qty}</TableCell>
