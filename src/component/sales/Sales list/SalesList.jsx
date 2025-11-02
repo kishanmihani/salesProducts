@@ -1,11 +1,16 @@
-import { Box, Paper, Tab, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Tabs, Tooltip, Typography } from '@mui/material';
+import { Box, Button, IconButton, Paper, Tab, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Tabs, Tooltip, Typography } from '@mui/material';
 import React, { useEffect } from 'react'
 import { useNavigate } from "react-router";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { authAxios } from '../../utils/authAxios';
+import EditSquareIcon from '@mui/icons-material/EditSquare';
 import { salesListApi } from '../../Config/Api/Api'; 
 import { a11yProps } from '../../commonComponent/CustomTabPanel/CustomTabPanel';
 import api from '../../Config/Api';
+import { FaFileExport } from 'react-icons/fa6';
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
+import ExportButton from '../../commonComponent/ExportButton/ExportButton';
 export default function Saleslist() {
   const navigate = useNavigate();
   const [tableData,setTableData]=React.useState([])
@@ -14,6 +19,7 @@ export default function Saleslist() {
   const [userName] = React.useState(JSON.parse(sessionStorage.getItem("userInfo"))?.login);
   const [page, setPage] = React.useState(0); // current page
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const [exporting, setExporting] = React.useState(false);
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -137,6 +143,45 @@ const handleProdMouseEnter = (e,details) =>{
     setProdPopup(false);
     setShowPopupDetails();
   };
+  const handleExportExcel = async () => {
+  
+     if (!tableData.length) {
+      alert("No data available to export!");
+      return;
+    }
+  
+    setExporting(true);
+    try {
+      let tabLabel = "";
+      if (tabs === 0) tabLabel = "Pending_List";
+      else if (tabs === 1) tabLabel = "Approved_List";
+      else if (tabs === 2) tabLabel = "Rejected_List";
+  
+      const formattedData = tableData.map((row) => ({
+        "Order Date": new Date(row.entry_Date).toLocaleDateString(),
+        "Validity Days": row.validity_Days,
+        "Billing": row.company_Name,
+        "Customer": row.customer_Name,
+        "Quantity": row.quantity,
+        "Product": row.product_Name,
+        "Price": row.price,
+        "Port Name": row.port_Name,
+      }));
+  
+      const worksheet = XLSX.utils.json_to_sheet(formattedData);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, tabLabel);
+  
+      const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+      const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
+      saveAs(blob, `${tabLabel}_${new Date().toLocaleDateString()}.xlsx`);
+    } catch (error) {
+      console.error("Export error:", error);
+      alert("Failed to export data!");
+    } finally {
+      setTimeout(() => setExporting(false), 800);
+    }
+  };
   return (
     <React.Fragment>
       <Box
@@ -175,8 +220,9 @@ const handleProdMouseEnter = (e,details) =>{
                       </Box>
       <Paper sx={{ p: 2 }} elevation={0}>
 
-        
+          <ExportButton onExport={handleExportExcel} exporting={exporting} />
       <TableContainer component={Paper}>
+
                       {/* <CustomTabPanel value={tabs} index={0}></CustomTabPanel> */}
       <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
         <TableHead sx={{fontSize:14,fontWeight:600,bgcolor:"rgba(25, 118, 210, 0.08)"}}>
@@ -190,7 +236,7 @@ const handleProdMouseEnter = (e,details) =>{
 
             <TableCell align="left"className="table-th">Price</TableCell>
             <TableCell align="left"className="table-th">Port Name</TableCell>
-          
+         {tabs !==2 && <TableCell align="left"className="table-th">Edit </TableCell>}
             
             
             
@@ -220,7 +266,18 @@ const handleProdMouseEnter = (e,details) =>{
               <TableCell align="left" color="primary"  onMouseEnter={(e)=>handleMouseEnter(e,row)}
               onMouseLeave={handleMouseLeave}><Typography color="primary">{row?.price}</Typography></TableCell>
               <TableCell align="left">{row.port_Name}</TableCell>
-    
+               {tabs !==2 &&<TableCell>
+          <IconButton
+             onClick={() => {
+    navigate("/dashboard/sales/Sale_Edit_Form", {
+      state: { rowData: row }, // 👈 send selected row data here
+    });}}
+          >
+            <EditSquareIcon
+              sx={{ color:  "black" }} // black icon if active, gray if disabled
+            />
+          </IconButton>
+        </TableCell>}
               {/* <TableCell align="left">{row.Gst}</TableCell> */}
             {/* <TableCell align="left">{row.payment_Type}</TableCell> */}
             
@@ -261,43 +318,50 @@ const handleProdMouseEnter = (e,details) =>{
           }}
         >
         <Box>
-          <Typography variant='h5' sx={{textAlign:"center",py:1}}>Bill Info</Typography>
-          <Typography variant='p' sx={{display:"flex",width:"100%" }}>
-            <Typography  variant='subtitle1'sx={{width:"100%",fontSize:13}}>Selling Price</Typography>
-            <Typography  variant='subtitle1' sx={{width:"100%",fontSize:13}}>: {Math.ceil(
-  Number(showPopupDetails.transport) +
-  Number(showPopupDetails.gst) +
-  (Number(showPopupDetails.price) * 100) / 118
-)}</Typography>
-          </Typography>
-          <Typography variant='p' sx={{display:"flex",width:"100%"}}>
-            <Typography  variant='subtitle1'sx={{width:"100%",fontSize:13}}>Transportation Price</Typography>
-            <Typography  variant='subtitle1' sx={{width:"100%",fontSize:13}}>: {showPopupDetails?.transport}</Typography>
-          </Typography>
-          <Typography variant='p' sx={{display:"flex",width:"100%"}}>
-            <Typography  variant='subtitle1'sx={{width:"100%",fontSize:13}}>Billing Price</Typography>
-            <Typography  variant='subtitle1' sx={{width:"100%",fontSize:13}}>: {(((Number(showPopupDetails.price)*100)/118).toFixed(2))}</Typography>
-          </Typography>
-          <Typography variant='p' sx={{display:"flex",width:"100%"}}>
-            <Typography  variant='subtitle1'sx={{width:"100%",fontSize:13}}>Gst 18%</Typography>
-            <Typography  variant='subtitle1' sx={{width:"100%",fontSize:13}}>: {showPopupDetails?.gst}</Typography>
-          </Typography>
-          <Typography variant='p' sx={{display:"flex",width:"100%"}}>
-            <Typography  variant='subtitle1'sx={{width:"100%",fontSize:13}}>Bitumen Price</Typography>
-            <Typography  variant='subtitle1' sx={{width:"100%",fontSize:13}}>: {showPopupDetails?.price}</Typography>
-          </Typography>
-          <Typography variant='p' sx={{display:"flex",width:"100%"}}>
-            <Typography  variant='subtitle1'sx={{width:"100%",fontSize:13}}>Discount </Typography>
-            <Typography  variant='subtitle1' sx={{width:"100%",fontSize:13}}>: {showPopupDetails?.discount }</Typography>
-          </Typography>
-          <Typography variant='p' sx={{display:"flex",width:"100%"}}>
-            <Typography  variant='subtitle1'sx={{width:"100%",fontSize:13}}>Net Price </Typography>
-            <Typography  variant='2' sx={{width:"100%",fontSize:13,}}>: {Math.ceil(
-  Number(showPopupDetails.transport) +
-  Number(showPopupDetails.gst) +
-  (Number(showPopupDetails.price) * 100) / 118
-) - Number(showPopupDetails?.discount)}</Typography>
-          </Typography>
+          
+        <Typography variant="h6" textAlign="center" py={1}>
+  Bill Information
+</Typography>
+
+<Typography fontSize={13}>
+  Selling Price:{" "}
+  {(
+    Number(showPopupDetails.transport || 0) +
+    Number(showPopupDetails.gst || 0) +
+    (Number(showPopupDetails.price || 0) * 100) / 118
+  ).toFixed(2)}
+</Typography>
+
+<Typography fontSize={13}>
+  Transportation: {Number(showPopupDetails.transport || 0).toFixed(2)}
+</Typography>
+
+<Typography fontSize={13}>
+  Billing Price: {((Number(showPopupDetails.price || 0) * 100) / 118).toFixed(2)}
+</Typography>
+
+<Typography fontSize={13}>
+  GST 18%: {Number(showPopupDetails.gst || 0).toFixed(2)}
+</Typography>
+
+<Typography fontSize={13}>
+  Bitumen Price: {Number(showPopupDetails.price || 0).toFixed(2)}
+</Typography>
+
+<Typography fontSize={13}>
+  Discount: {Number(showPopupDetails.discount || 0).toFixed(2)}
+</Typography>
+
+<Typography fontSize={13} fontWeight={600}>
+  Net Price:{" "}
+  {(
+    Number(showPopupDetails.transport || 0) +
+    Number(showPopupDetails.gst || 0) +
+    (Number(showPopupDetails.price || 0) * 100) / 118 -
+    Number(showPopupDetails.discount || 0)
+  ).toFixed(2)}
+</Typography>
+
         </Box>
         </Paper>)}
 {prodPopup && (

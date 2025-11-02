@@ -128,16 +128,18 @@ function SodataRow({ data, isOpen, setOpenRow }) {
   const [userId] = useState(JSON.parse(sessionStorage.getItem('userInfo'))?.id);
 
   function AddVehicle(row) {
-    const previous = new Date().setDate(new Date().getDate() - 2);
+    const previous = new Date().setDate(new Date().getDate() - 0);
     if (row?.bal_Qty <= 0) {
+      console.log("kishan 123",row?.bal_Qty)
       toast.info('⚠️ Balance quantity is Negative');
-    } else if (formatDateToUS(row.v_Date) < formatDateToUS(previous)) {
+    } else if (formatDateToUS(row.v_Date) <= formatDateToUS(previous)) {
       toast.info(
         `⚠️ Validity date is finished!\nExpired on: ${formatDateToUS(
           row?.v_Date
         )}`
       );
-    } else {
+    } else if(formatDateToUS(row.v_Date) >= formatDateToUS(previous)){
+      console.log(formatDateToUS(previous))
       dispatch(setObject(row));
       navigate(`/dashboard/Logistic/logistic_Request_form`);
     }
@@ -188,6 +190,7 @@ const isRed = vDate.getTime() < today.getTime();
             ? new Date(data.sO_Date).toLocaleDateString('en-GB', {
                 day: '2-digit',
                 month: '2-digit',
+                year:'numeric',
               })
             : ''}
         </TableCell>
@@ -199,6 +202,7 @@ const isRed = vDate.getTime() < today.getTime();
             ? new Date(data.v_Date).toLocaleDateString('en-GB', {
                 day: '2-digit',
                 month: '2-digit',
+                year:'numeric',
               })
             : ''}
         </TableCell>

@@ -25,6 +25,7 @@ import CustomeAlerts from "../commonComponent/CustomeAlert/CustomeAlert";
 import { a11yProps, CustomTabPanel } from "../commonComponent/CustomTabPanel/CustomTabPanel";
 import formatDateToUS from "../utils/DateFormate";
 import ReceiptInnerTable from "../../pages/accounts/ReceiptInnerTable";
+import { FaFileExport } from "react-icons/fa6";
 //import { authAxios } from "../component/utils/authAxios";
 
 // ✅ Table Headers
@@ -224,7 +225,7 @@ export default function ApprovalRequestForm() {
           &nbsp;Approval Request Form
         </Typography>
       </Box>
-
+     
       {/* Tabs */}
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
         <Tabs value={tabs} onChange={(e, v) => setTabs(v)}>
@@ -236,6 +237,7 @@ export default function ApprovalRequestForm() {
       {/* Main Content */}
       <Paper sx={{ p: 2 }} elevation={0}>
         {/* SO Approval */}
+       
         <CustomTabPanel value={tabs} index={0}>
           <TableContainer component={Paper}>
             <Table size="small">
@@ -345,6 +347,7 @@ export default function ApprovalRequestForm() {
                             <List disablePadding>
                               <TableContainer component={Paper} sx={{ overflow: "auto", minWidth: 800 }}>
                                 <ReceiptInnerTable
+                                  hideRow={true}
                                   tabs={tabs}
                                   innerData={innerData}
                                   selectedRows={selectedRows}
@@ -399,7 +402,7 @@ export default function ApprovalRequestForm() {
         </Paper>
       )}
 
-      {/* ✅ Bill Info Popup */}
+      {/* ✅ Bill Informations Popup */}
       {showPopup && (
         <Paper
           elevation={3}
@@ -413,30 +416,49 @@ export default function ApprovalRequestForm() {
             zIndex: 10,
           }}
         >
-          <Typography variant="h6" textAlign="center" py={1}>Bill Info</Typography>
-          <Typography fontSize={13}>
-            Selling Price:{" "}
-            {Math.ceil(
-              Number(showPopupDetails.transport) +
-                Number(showPopupDetails.gst) +
-                (Number(showPopupDetails.price) * 100) / 118
-            )}
-          </Typography>
-          <Typography fontSize={13}>Transportation: {showPopupDetails?.transport}</Typography>
-          <Typography fontSize={13}>
-            Billing Price: {((Number(showPopupDetails.price) * 100) / 118).toFixed(2)}
-          </Typography>
-          <Typography fontSize={13}>GST 18%: {showPopupDetails?.gst}</Typography>
-          <Typography fontSize={13}>Bitumen Price: {showPopupDetails?.price}</Typography>
-          <Typography fontSize={13}>Discount: {showPopupDetails?.discount}</Typography>
-          <Typography fontSize={13}>
-            Net Price:{" "}
-            {Math.ceil(
-              Number(showPopupDetails.transport) +
-                Number(showPopupDetails.gst) +
-                (Number(showPopupDetails.price) * 100) / 118
-            ) - Number(showPopupDetails?.discount)}
-          </Typography>
+          <Typography variant="h6" textAlign="center" py={1}>
+  Bill Information
+</Typography>
+
+<Typography fontSize={13}>
+  Selling Price:{" "}
+  {(
+    Number(showPopupDetails.transport || 0) +
+    Number(showPopupDetails.gst || 0) +
+    (Number(showPopupDetails.price || 0) * 100) / 118
+  ).toFixed(2)}
+</Typography>
+
+<Typography fontSize={13}>
+  Transportation: {Number(showPopupDetails.transport || 0).toFixed(2)}
+</Typography>
+
+<Typography fontSize={13}>
+  Billing Price: {((Number(showPopupDetails.price || 0) * 100) / 118).toFixed(2)}
+</Typography>
+
+<Typography fontSize={13}>
+  GST 18%: {Number(showPopupDetails.gst || 0).toFixed(2)}
+</Typography>
+
+<Typography fontSize={13}>
+  Bitumen Price: {Number(showPopupDetails.price || 0).toFixed(2)}
+</Typography>
+
+<Typography fontSize={13}>
+  Discount: {Number(showPopupDetails.discount || 0).toFixed(2)}
+</Typography>
+
+<Typography fontSize={13} fontWeight={600}>
+  Net Price:{" "}
+  {(
+    Number(showPopupDetails.transport || 0) +
+    Number(showPopupDetails.gst || 0) +
+    (Number(showPopupDetails.price || 0) * 100) / 118 -
+    Number(showPopupDetails.discount || 0)
+  ).toFixed(2)}
+</Typography>
+
         </Paper>
       )}
     </React.Fragment>

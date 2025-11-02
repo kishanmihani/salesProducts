@@ -11,12 +11,13 @@ import {
   ListItemIcon,
   ListItemText,
   Collapse,
+  Tooltip,
 } from "@mui/material";
 import { useNavigate, useLocation, NavLink } from "react-router";
 import { TbSettings2 } from "react-icons/tb";
 import { LiaProductHunt } from "react-icons/lia";
 import { MdCancel, MdRadioButtonUnchecked } from "react-icons/md";
-import { FaChevronRight, FaChevronDown } from "react-icons/fa6";
+import { FaChevronRight, FaChevronDown, FaFileExport } from "react-icons/fa6";
 import logouticon from "../../../assets/logouticon.png";
 import logo from "../../../assets/sale.jpg";
 import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
@@ -157,6 +158,7 @@ const toggleModule = (key) => {
                 primary="Pending Approval Form"
               />
             </ListItemButton>
+            
             <ListItemButton
               component={NavLink}
               to="/dashboard/sales/ApprovalPendingForm"
@@ -468,6 +470,29 @@ const toggleModule = (key) => {
               <ListItemText
                 primaryTypographyProps={{ fontSize: "12px" }}
                 primary="Closer Form"
+              />
+            </ListItemButton>
+            <ListItemButton
+              component={NavLink}
+              to="/dashboard/Account/BillDetails"
+              selected={location.pathname === "/dashboard/Account/BillDetails"}
+              sx={{ pl: 4 ,display: pagelist.includes("Closer_Form") ? "flex" : "none"}} 
+            >
+              <ListItemIcon color="#756f6f">
+                {location.pathname === "/dashboard/Account/BillDetails" ? (
+                  <RadioButtonCheckedIcon
+                    style={{ height: 17, width: 17, mr: 2 }}
+                  ></RadioButtonCheckedIcon>
+                ) : (
+                  <RadioButtonUncheckedIcon
+                  
+                    style={{ height: 17, width: 17, mr: 2,color:"#756f6f" }}
+                  />
+                )}
+              </ListItemIcon>
+              <ListItemText
+                primaryTypographyProps={{ fontSize: "12px" }}
+                primary="Bill Details"
               />
             </ListItemButton>
       </List>

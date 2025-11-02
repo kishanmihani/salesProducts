@@ -26,6 +26,8 @@ import LoginForm from './pages/loginFrom/loginForm';
 import LogicForm from './component/Dashboard/logistic/LogicForm';
 import Report from './pages/management/report/Report';
 import GraphTable from './pages/management/report/Table/GraphTable';
+import SalesEditForm from './component/sales/SalesEditForm';
+import BillDetails from './pages/BillDetails/BillDetails';
 function App() {
   return (
     <React.Fragment>
@@ -46,6 +48,7 @@ function App() {
           <Route path="Dashboard" element={<Dashboard />} >
             <Route path="sales" element={<SalesForm />} >
             <Route path='Sale_Registeration_Form'  element={<SalesRestitration />} />
+            <Route path='Sale_Edit_Form'  element={<SalesEditForm />} />
             <Route path='PendingApprovalForm' element={<Saleslist  />} />
             <Route path='ApprovalPendingForm' element={<ApprovalPendingForm />} />
             <Route path='Approval_Request_form' element={<ApprovalRequestForm  />} />
@@ -72,6 +75,7 @@ function App() {
   <Route path="Account_list" element={<AccountList />} />
   <Route path="Approval_list" element={<ApprovalList />} />
   <Route path="CloserForm" element={<CloserForm />} />
+  <Route path="BillDetails" element={<BillDetails />} />
   <Route path="ReciptFrom" element={<ReciptFrom />} />
             </Route>
 

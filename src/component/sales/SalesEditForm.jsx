@@ -16,7 +16,7 @@ import React, { useEffect, useState } from "react";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import dayjs from "dayjs";
 
 import BillingDropDown from "../commonComponent/billingDropDown/billingDropDown";
@@ -28,7 +28,11 @@ import PaymentDropDown from "../commonComponent/PaymentDropDown/PaymentDropDown"
 import CustomeAlerts from "../commonComponent/CustomeAlert/CustomeAlert";
 import { authAxios } from "../utils/authAxios";
 
-export default function SalesRestitration() {
+export default function SalesEditForm() {
+      const [tableId, setTableId] = useState(null);
+    const { state } = useLocation();
+    const rowData = state?.rowData || null;
+
   const [selectedBilling, setSelectedBilling] = useState("Select");
   const [selectedOrderDate, setSelectOrderDate] = useState(null);
   const [selectedValidityDate, setSelectedValidityDate] = useState(null);
@@ -54,6 +58,7 @@ export default function SalesRestitration() {
   const [selectTransporterName, setSelectTransporterName] = useState("");
   const [errors, setErrors] = useState({});
   const [userId] = useState(JSON.parse(sessionStorage.getItem("userInfo"))?.id);
+
   const [submitDisabled, setSubmitDisabled] = useState(false);
   const [custAlert, setCustAlert] = useState(null);
   const [loader, setLoader] = useState(false);
@@ -258,11 +263,11 @@ export default function SalesRestitration() {
     };
 
     try {
-      const res = await authAxios.post("BituRep/Api/Account/send_Sodata", data);
-      if (res.data.message === "Email sent successfully") {
-        showSuccess("Email sent successfully");
+      const res = await authAxios.post("/BituRep/Api/Account/update_Sodata", data);
+      if (res.data.message === "Data updated successfully") {
+        showSuccess("Data updated successfully");
         resetForm();
-        navigate("/dashboard/sales/PendingApprovalForm");
+        navigate(-1);
       } else {
         showError(res.data.message);
       }
@@ -274,7 +279,46 @@ export default function SalesRestitration() {
       setSubmitDisabled(false);
     }
   }
+useEffect(() => {
+  console.log(rowData);
+  if (rowData) {
+    setSelectedBilling(rowData.company_Name || "");
+    setSelectedCustomer(rowData.customer_Name || "");
+    setSelectTransporterName(rowData.transport_Name || "");
+    setSelectedPort(rowData.port_Name || "");
+    setSelectedDelivery(rowData.delivery_Type || "");
+    setSelectedPayment(rowData.payment_Type || "");
+    setSelectedProduct(rowData.product_Name || "");
+    setSelectedBitumenPrice(rowData.price || "");
+    setSelectedTransportation(rowData.transport || "");
+    setSelectedGST(rowData.Gst || "");
+    setSelectedDiscount(rowData.discount || "");
+    setSelectedQuntity(rowData.quantity || "");
+    setSelectOrderDate(rowData.entry_Date ? dayjs(rowData.entry_Date) : null);
+    setSelectedValidityDate(rowData.validity_Date ? dayjs(rowData.validity_Date) : null);
+    setSelectedRemark(rowData.remark || "");
+    setTableId(rowData.Table_Id || null);
 
+    // ✅ Transporter logic
+    if (Number(rowData.transport) === 0) {
+      setSelectedTransporter("Buyer");
+    } else if (Number(rowData.transport) > 0) {
+      setSelectedTransporter("Seller");
+    } else {
+      setSelectedTransporter("Other");
+    }
+
+    // ✅ Advance / Credit specific setup (optional if API supports it)
+    if (rowData.payment_Type === "Advance Payments") {
+      setAdvance({
+        percent: rowData.Adv_Per || "",
+        value: rowData.Adv_Value || "",
+      });
+    } else if (rowData.payment_Type === "Credit Payments") {
+      setCreditDays(rowData.c_Days || "");
+    }
+  }
+}, [rowData]);
   /** ------------------------- RENDER ------------------------- **/
   return (
     <React.Fragment>
@@ -302,7 +346,7 @@ export default function SalesRestitration() {
           <ArrowBackIcon color="#000" />
         </button>
         <Typography variant="h5" align="center" width="100%">
-          &nbsp;Sales Request Form
+          &nbsp;Sales Edit Form
         </Typography>
       </Box>
 

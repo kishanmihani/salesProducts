@@ -182,12 +182,11 @@ useEffect(() => {
       e.preventDefault();
       let hasError = false;
       if(selectedProduct == "Select"){
-        setProductError(false)
-        // setVessalInfo((prev)=>({...prev,product_NameError:true}))
+        setProductError(false);
         hasError = true;
       }
       if (customerName == "Select") {
-        setErrorsCustomerName(true)
+        setErrorsCustomerName(true);
         hasError = true;
       }
       if (portName == "Select") {
@@ -212,8 +211,8 @@ useEffect(() => {
         seterrorSoNo("");
       }
       if(actualQuantity == 0){
-        hasError = true;
-                    seterrorActQut("Actual Quantity value is required")
+        // hasError = true;
+                    // seterrorActQut("Actual Quantity value is required")
                   }else if(actualQuantity < 0){
                     hasError = true;
                     seterrorActQut("Actual Quantity value can not be negative")
@@ -358,10 +357,12 @@ console.log(data);
       bl_No: "Select",
       bl_NoError: false,
     });
+
     // setErrorsWhereHouse("Select");
     // setErrorsWhereHouse(false);
     setSelectedProduct("Select");
     setProductError(false);
+    navigate(-1)
     };
     const handleClose = () => {
       setCustAlert(null)

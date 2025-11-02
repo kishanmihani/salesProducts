@@ -27,6 +27,7 @@ export default function ReceiptInnerTable({
   innerData,
   selectedRows,
   setSelectedRows,
+  hideRow=false
 }) {
   const handleCheckboxChange = (row) => {
     setSelectedRows((prev) => {
@@ -69,7 +70,8 @@ export default function ReceiptInnerTable({
                 transition: "background-color 0.3s ease",
               }}
             >
-              {tabs === 1 && (
+
+              {tabs === 1 && hideRow == false && (
                 <TableCell>
                   <Checkbox
                     checked={selectedRows.some((r) => r.id === vRow.id)}
