@@ -29,7 +29,7 @@ import { vehiclelistapi, VessalFormData } from "../../../Config/Api/Api";
     be_NoError: false,
     wH_NAME: "Select",
     // XBoeError: false,
-    // tank: "Select",
+    tank: "Select",
     // Xboe:"Select",
     tankError: false,
     bl_No: "8",
@@ -121,6 +121,7 @@ if (tabledata.length > 0) {
   setRemark(item?.remark || "");
   setActQuantity(item?.a_Qty || 0);
   setSoNo(item?.so_No || 0);
+  
   setSelectedProduct(item?.produce_Name || "Select");
 VessalChange(item?.vessel_Name + "|" + item?.vessel_No);
   setFields([{
@@ -174,6 +175,7 @@ useEffect(() => {
       // XBoeError: false,
     }));
   }
+  console.log(tableData)
 }, [tableData, vessalData]);
 
 
@@ -352,8 +354,8 @@ console.log(data);
       be_NoError: false,
       wH_NAME: "Select",
       // XBoeError: false,
-      // tank: "Select",
-      // tankError: false,
+      tank: "Select",
+      tankError: false,
       // Xboe:"Select",
       bl_No: "Select",
       bl_NoError: false,
@@ -400,7 +402,7 @@ console.log(data);
                be_NoError: false,
                wH_NAME: "Select",
               //  XBoeError: false,
-              //  tank: "Select",
+               tank: "Select",
               //  Xboe:"Select",
                tankError: false,
                bl_No: "Select",

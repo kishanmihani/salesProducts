@@ -107,46 +107,60 @@ const LoginForm = () => {
 
       <form onSubmit={formik.handleSubmit}>
         <TextField
-          fullWidth
-          label="User name"
-          name="user_name"
-          margin="normal"
-          size="small"
-          className="userFeild"
-          value={formik.values.user_name}
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          error={formik.touched.user_name && Boolean(formik.errors.user_name)}
-          helperText={formik.touched.user_name && formik.errors.user_name}
-        />
+  fullWidth
+  label="User name"
+  name="user_name"
+  margin="normal"
+  size="small"
+  className="userFeild"
+  value={formik.values.user_name}
+  onChange={formik.handleChange}
+  onBlur={formik.handleBlur}
+  error={formik.touched.user_name && Boolean(formik.errors.user_name)}
+  helperText={formik.touched.user_name && formik.errors.user_name}
+  autoComplete="username"
+  sx={{
+    "& input:-webkit-autofill": {
+      WebkitBoxShadow: "0 0 0 100px #e8f0fe inset", // light blue background
+      WebkitTextFillColor: "#000", // black text
+      transition: "background-color 5000s ease-in-out 0s",
+    },
+  }}
+/>
+
 
         <TextField
-          fullWidth
-          label="Password"
-          name="password"
-          type={showPassword ? "text" : "password"}
-          size="small"
-          margin="normal"
-          className="userFeild"
-          value={formik.values.password}
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          error={formik.touched.password && Boolean(formik.errors.password)}
-          helperText={formik.touched.password && formik.errors.password}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton
-                  onClick={togglePasswordVisibility}
-                  edge="end"
-                  size="small"
-                >
-                  {showPassword ? <VisibilityOff /> : <Visibility />}
-                </IconButton>
-              </InputAdornment>
-            ),
-          }}
-        />
+  fullWidth
+  label="Password"
+  name="password"
+  type={showPassword ? "text" : "password"}
+  size="small"
+  margin="normal"
+  className="userFeild"
+  value={formik.values.password}
+  onChange={formik.handleChange}
+  onBlur={formik.handleBlur}
+  error={formik.touched.password && Boolean(formik.errors.password)}
+  helperText={formik.touched.password && formik.errors.password}
+  InputProps={{
+    endAdornment: (
+      <InputAdornment position="end">
+        <IconButton onClick={togglePasswordVisibility} edge="end" size="small">
+          {showPassword ? <VisibilityOff /> : <Visibility />}
+        </IconButton>
+      </InputAdornment>
+    ),
+  }}
+  autoComplete="current-password"
+  sx={{
+    "& input:-webkit-autofill": {
+      WebkitBoxShadow: "0 0 0 100px #e8f0fe inset", // light blue background
+      WebkitTextFillColor: "#000", // black text
+      transition: "background-color 5000s ease-in-out 0s",
+    },
+  }}
+/>
+
 
         <Button
           type="submit"
