@@ -260,6 +260,7 @@ export default function SalesEditForm() {
           : "",
       c_Days:
         selectedPayment === "Credit Payments" ? formJson["Credit Days"] : "",
+      Table_Id: rowData.table_Id,
     };
 
     try {

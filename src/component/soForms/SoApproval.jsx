@@ -45,6 +45,7 @@ export default function SoApproval() {
     'PMT',
     'Port',
     'Type',
+    'Remark',
     'Add Vehicle',
     'Actions',
   ]);
@@ -132,7 +133,7 @@ function SodataRow({ data, isOpen, setOpenRow }) {
     if (row?.bal_Qty <= 0) {
       console.log("kishan 123",row?.bal_Qty)
       toast.info('⚠️ Balance quantity is Negative');
-    } else if (formatDateToUS(row.v_Date) <= formatDateToUS(previous)) {
+    } else if (formatDateToUS(row.v_Date) < formatDateToUS(previous)) {
       toast.info(
         `⚠️ Validity date is finished!\nExpired on: ${formatDateToUS(
           row?.v_Date
@@ -164,8 +165,9 @@ function SodataRow({ data, isOpen, setOpenRow }) {
 
 const today = new Date();
 const vDate = new Date(data?.v_Date);
-const isGreen = vDate.getTime() >= today.getTime();
-const isRed = vDate.getTime() < today.getTime();
+const isRed = vDate.getDate() < today.getDate();
+const isGreen = vDate.getDate() >= today.getDate();
+
   return (
     <React.Fragment>
           <TableRow
@@ -214,7 +216,7 @@ const isRed = vDate.getTime() < today.getTime();
         <TableCell>{data?.r_PMT}</TableCell>
         <TableCell>{data?.port}</TableCell>
         <TableCell>{data?.payment_Type}</TableCell>
-
+        <TableCell>{data?.remark}</TableCell>
         <TableCell>
           <Button
             variant="outlined"
