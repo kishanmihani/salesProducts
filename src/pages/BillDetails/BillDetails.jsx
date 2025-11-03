@@ -24,6 +24,7 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 import CustomPageHeader from "../../component/commonComponent/CustomPageHeader/CustomPageHeader";
 import { authAxios } from "../../component/utils/authAxios";
+import formatDateToUS from "../../component/utils/DateFormate";
 
 export default function BillDetails() {
   const [billList, setBillList] = useState([]);
@@ -187,7 +188,9 @@ export default function BillDetails() {
                   <TableCell><b>Vehicle Name</b></TableCell>
                   <TableCell><b>Transporter Name</b></TableCell>
                   <TableCell><b>Tank Name</b></TableCell>
-                  <TableCell><b>Table ID</b></TableCell>
+                  {/* <TableCell><b>Table ID</b></TableCell> */}
+                  <TableCell><b>Entry Date</b></TableCell>
+                  <TableCell>So No</TableCell>
                   <TableCell><b>Bill Number</b></TableCell>
                   <TableCell><b>Status</b></TableCell>
                   <TableCell align="center"><b>Action</b></TableCell>
@@ -202,7 +205,9 @@ export default function BillDetails() {
                     <TableCell>{row.vehicle_Name}</TableCell>
                     <TableCell>{row.transporter_Name}</TableCell>
                     <TableCell>{row.tank_name}</TableCell>
-                    <TableCell>{row.table_id}</TableCell>
+                    {/* <TableCell>{row.table_id}</TableCell> */}
+                    <TableCell>{formatDateToUS( row.entry_Date)}</TableCell>
+                    <TableCell>{row.so_No}</TableCell>
                     <TableCell>{row.bill || "-"}</TableCell>
                     <TableCell>{getStatusChip(row.status_name)}</TableCell>
                     <TableCell align="center">

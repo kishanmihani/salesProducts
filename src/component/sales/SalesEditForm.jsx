@@ -253,9 +253,9 @@ export default function SalesEditForm() {
       Validity_Date: formJson["Validity Date"],
       Remark: formJson["Remark"],
       Adv_Value:
-        selectedPayment === "Advance Payments" ? formJson["Advance Value"] : "",
+        selectedPayment === "Advance" ? formJson["Advance Value"] : "",
       Adv_Per:
-        selectedPayment === "Advance Payments"
+        selectedPayment === "Advance"
           ? formJson["Advance Payment %"]
           : "",
       c_Days:
@@ -309,13 +309,15 @@ useEffect(() => {
     }
 
     // ✅ Advance / Credit specific setup (optional if API supports it)
-    if (rowData.payment_Type === "Advance Payments") {
+    debugger;
+    if (rowData.payment_Type == "Advance") {
+      setSelectedPayment("Advance Payments")
       setAdvance({
-        percent: rowData.Adv_Per || "",
-        value: rowData.Adv_Value || "",
+        percent: rowData.adv_Per || "",
+        value: rowData.adv_Value || "",
       });
     } else if (rowData.payment_Type === "Credit Payments") {
-      setCreditDays(rowData.c_Days || "");
+      setCreditDays(Number(rowData.c_Days) || "");
     }
   }
 }, [rowData]);
@@ -711,6 +713,7 @@ useEffect(() => {
                 name="Credit Days"
                 sx={{ width: { xs: "100%", md: "200px" } }}
                 onChange={(e) => setCreditDays(e.target.value)}
+                value={creditDays}
                 error={!!errors["Credit Days"]}
                 helperText={errors["Credit Days"]}
               />
