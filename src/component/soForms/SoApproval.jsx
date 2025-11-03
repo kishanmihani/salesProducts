@@ -131,7 +131,7 @@ function SodataRow({ data, isOpen, setOpenRow }) {
   function AddVehicle(row) {
     const previous = new Date().setDate(new Date().getDate() - 0);
     if (row?.bal_Qty <= 0) {
-      console.log("kishan 123",row?.bal_Qty)
+      // console.log("kishan 123",row?.bal_Qty)
       toast.info('⚠️ Balance quantity is Negative');
     } else if (formatDateToUS(row.v_Date) < formatDateToUS(previous)) {
       toast.info(

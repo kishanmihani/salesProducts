@@ -40,6 +40,7 @@ export default function SalesRestitration() {
   const [selectedBillingPrice, setSelectedBillingPrice] = useState(0);
   const [selectedGST, setSelectedGST] = useState(0);
   const [selectedSellingPrice, setSelectedSellingPrice] = useState(0);
+  const [finalPrice, setFinalPrice] = useState(0);
   const [selectedDiscount, setSelectedDiscount] = useState(0);
   const [selectedQuntity, setSelectedQuntity] = useState(0);
   const [selectedDelivery, setSelectedDelivery] = useState("Select");
@@ -56,6 +57,7 @@ export default function SalesRestitration() {
   const [userId] = useState(JSON.parse(sessionStorage.getItem("userInfo"))?.id);
   const [submitDisabled, setSubmitDisabled] = useState(false);
   const [custAlert, setCustAlert] = useState(null);
+  const [poNumber, setPoNumber] = useState(0);
   const [loader, setLoader] = useState(false);
 
   const navigate = useNavigate();
@@ -111,9 +113,11 @@ export default function SalesRestitration() {
         Number(selectedTransportation)
       ).toFixed(2);
       setSelectedSellingPrice(parseFloat(sellingPrice));
-
+       setFinalPrice(Number(selectedSellingPrice) - Number(selectedDiscount));
       const sellingValue = (selectedSellingPrice * selectedQuntity).toFixed(2);
       setSelectedSellingValue(parseFloat(sellingValue));
+      console.log(Number(sellingValue) - Number(selectedDiscount));
+      
     }, 300);
     return () => clearTimeout(handler);
   }, [selectedBillingPrice, selectedGST, selectedSellingPrice, selectedQuntity]);
@@ -247,6 +251,7 @@ export default function SalesRestitration() {
       Entry_Date: formJson["Order Date"],
       Validity_Date: formJson["Validity Date"],
       Remark: formJson["Remark"],
+      poNumber:poNumber,
       Adv_Value:
         selectedPayment === "Advance Payments" ? formJson["Advance Value"] : "",
       Adv_Per:
@@ -455,8 +460,22 @@ export default function SalesRestitration() {
                     '& .MuiInputLabel-root': { color: 'black', fontWeight: 'bold' }  // label text
                   }}
                 />
-
               <TextField
+              fullWidth
+                  label="Final pirce after discount"
+                  name="Selling Price"
+                  margin="normal"
+                  type="number"
+                  size="small"
+                  value={finalPrice}
+                  sx={{ 
+                    backgroundColor: "#e3f2fd", 
+                    borderRadius: 1,
+                    '& .MuiInputBase-input': { color: 'black', fontWeight: 'bold' }, // input text
+                    '& .MuiInputLabel-root': { color: 'black', fontWeight: 'bold' }  // label text
+                  }}
+                />
+              {/* <TextField
                 fullWidth
                 label="Remark"
                 name="Remark"
@@ -466,7 +485,7 @@ export default function SalesRestitration() {
                 rows={1}
                 value={selectedRemark}
                 onChange={(e) => setSelectedRemark(e.target.value)}
-              />
+              /> */}
             </Box>
 
             {/* Right Section */}
@@ -601,6 +620,17 @@ export default function SalesRestitration() {
                 <TextField
                 fullWidth
                 label="PO Number"
+                name="Remark"
+                margin="normal"
+                size="small"
+                multiline
+                rows={1}
+                value={poNumber}
+                onChange={(e) => setPoNumber(e.target.value)}
+              />
+              <TextField
+                fullWidth
+                label="Remark"
                 name="Remark"
                 margin="normal"
                 size="small"

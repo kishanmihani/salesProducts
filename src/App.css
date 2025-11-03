@@ -12,6 +12,14 @@
 .custom-scrollbar-css {
   overflow-y: scroll;
 }
+.userFeild:-webkit-autofill{
+  background-color: white !important;
+  color: black !important;
+}
+ input:-webkit-autofill {
+  WebkitBoxShadow: 0 0 0 100px #e8f0fe inset; /* light blue background */
+  WebkitTextFillColor: #000;
+}
 .logicproduct div section.toastify{
 margin: unset;
 }

@@ -4,6 +4,7 @@ import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormCon
 import { closerFormApi, closerFormListApi, SoApprovalapi } from '../../component/Config/Api/Api'; 
 import api from '../../component/Config/Api';
 import { Api } from '@mui/icons-material';
+import formatDateToUS from '../../component/utils/DateFormate';
 
 export default function CloserForm() {
    const [closerDataCheck,setCloserDataCheck] = useState(true);
@@ -146,7 +147,7 @@ const handleSubmit = () => {
                         return(
                             <TableRow key={index}>
                                <TableCell>{row?.c_Name}</TableCell>
-                               <TableCell>{row?.sO_Date}</TableCell>
+                               <TableCell>{formatDateToUS(row?.sO_Date)}</TableCell>
                                <TableCell>{row?.sO_N0}</TableCell>
                                <TableCell>{row?.so_Qty}</TableCell>
                                <TableCell>{row?.a_Out_Qty}</TableCell>

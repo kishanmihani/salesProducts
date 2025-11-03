@@ -208,7 +208,7 @@ const handleProdMouseEnter = (e,details) =>{
           <ArrowBackIcon width={90} color="#000" />
         </button>
         <Typography variant="h5" align="center" width="100%">
-          &nbsp; Pending Approval Form
+          &nbsp; Sales Order Pending Form
         </Typography>
       </Box>
       <Box sx={{ borderBottom: 1, borderColor: 'divider',width:"100%" }}>
@@ -236,7 +236,7 @@ const handleProdMouseEnter = (e,details) =>{
 
             <TableCell align="left"className="table-th">Price</TableCell>
             <TableCell align="left"className="table-th">Port Name</TableCell>
-         {tabs !==2 && <TableCell align="left"className="table-th">Edit </TableCell>}
+         {tabs ==0 && <TableCell align="left"className="table-th">Edit </TableCell>}
             
             
             
@@ -266,7 +266,7 @@ const handleProdMouseEnter = (e,details) =>{
               <TableCell align="left" color="primary"  onMouseEnter={(e)=>handleMouseEnter(e,row)}
               onMouseLeave={handleMouseLeave}><Typography color="primary">{row?.price}</Typography></TableCell>
               <TableCell align="left">{row.port_Name}</TableCell>
-               {tabs !==2 &&<TableCell>
+               {tabs ==0 &&<TableCell>
           <IconButton
              onClick={() => {
     navigate("/dashboard/sales/Sale_Edit_Form", {

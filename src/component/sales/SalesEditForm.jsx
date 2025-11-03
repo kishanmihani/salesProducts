@@ -30,9 +30,10 @@ import { authAxios } from "../utils/authAxios";
 
 export default function SalesEditForm() {
       const [tableId, setTableId] = useState(null);
+      const [finalPrice, setFinalPrice] = useState(0);
     const { state } = useLocation();
     const rowData = state?.rowData || null;
-
+const [poNumber, setPoNumber] = useState(0);
   const [selectedBilling, setSelectedBilling] = useState("Select");
   const [selectedOrderDate, setSelectOrderDate] = useState(null);
   const [selectedValidityDate, setSelectedValidityDate] = useState(null);
@@ -116,7 +117,7 @@ export default function SalesEditForm() {
         Number(selectedTransportation)
       ).toFixed(2);
       setSelectedSellingPrice(parseFloat(sellingPrice));
-
+      setFinalPrice(Number(selectedSellingPrice) - Number(selectedDiscount));
       const sellingValue = (selectedSellingPrice * selectedQuntity).toFixed(2);
       setSelectedSellingValue(parseFloat(sellingValue));
     }, 300);
@@ -252,6 +253,7 @@ export default function SalesEditForm() {
       Entry_Date: formJson["Order Date"],
       Validity_Date: formJson["Validity Date"],
       Remark: formJson["Remark"],
+      poNumber:poNumber,
       Adv_Value:
         selectedPayment === "Advance" ? formJson["Advance Value"] : "",
       Adv_Per:
@@ -261,6 +263,7 @@ export default function SalesEditForm() {
       c_Days:
         selectedPayment === "Credit Payments" ? formJson["Credit Days"] : "",
       Table_Id: rowData.table_Id,
+
     };
 
     try {
@@ -299,6 +302,7 @@ useEffect(() => {
     setSelectedValidityDate(rowData.validity_Date ? dayjs(rowData.validity_Date) : null);
     setSelectedRemark(rowData.remark || "");
     setTableId(rowData.Table_Id || null);
+    setPoNumber(rowData?.poNumber)
 
     // ✅ Transporter logic
     if (Number(rowData.transport) === 0) {
@@ -504,16 +508,20 @@ useEffect(() => {
                 />
 
               <TextField
-                fullWidth
-                label="Remark"
-                name="Remark"
-                margin="normal"
-                size="small"
-                multiline
-                rows={1}
-                value={selectedRemark}
-                onChange={(e) => setSelectedRemark(e.target.value)}
-              />
+                            fullWidth
+                                label="Final pirce after discount"
+                                name="Selling Price"
+                                margin="normal"
+                                type="number"
+                                size="small"
+                                value={finalPrice}
+                                sx={{ 
+                                  backgroundColor: "#e3f2fd", 
+                                  borderRadius: 1,
+                                  '& .MuiInputBase-input': { color: 'black', fontWeight: 'bold' }, // input text
+                                  '& .MuiInputLabel-root': { color: 'black', fontWeight: 'bold' }  // label text
+                                }}
+                              />
             </Box>
 
             {/* Right Section */}
@@ -653,11 +661,21 @@ useEffect(() => {
                 size="small"
                 multiline
                 rows={1}
+                value={poNumber}
+                onChange={(e) => setPoNumber(e.target.value)}
+              />
+
+             <TextField
+                fullWidth
+                label="Remark"
+                name="Remark"
+                margin="normal"
+                size="small"
+                multiline
+                rows={1}
                 value={selectedRemark}
                 onChange={(e) => setSelectedRemark(e.target.value)}
               />
-
-             
             </Box>
           </Stack>
 

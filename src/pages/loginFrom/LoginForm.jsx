@@ -112,6 +112,7 @@ const LoginForm = () => {
           name="user_name"
           margin="normal"
           size="small"
+          className="userFeild"
           value={formik.values.user_name}
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
@@ -126,6 +127,7 @@ const LoginForm = () => {
           type={showPassword ? "text" : "password"}
           size="small"
           margin="normal"
+          className="userFeild"
           value={formik.values.password}
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}

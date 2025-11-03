@@ -45,7 +45,7 @@ export default function ReceiptInnerTable({
         sx={{ fontWeight: 500, bgcolor: "rgba(240, 114, 223, 0.08)" }}
       >
         <TableRow>
-          {tabs === 1 && <TableCell>Select</TableCell>}
+          {tabs === 1 && hideRow==false && <TableCell>Select</TableCell>}
           {vehicle_head.map((head, index) => (
             <TableCell
               key={index}

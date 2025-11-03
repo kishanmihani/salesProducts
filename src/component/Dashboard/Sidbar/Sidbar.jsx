@@ -155,7 +155,7 @@ const toggleModule = (key) => {
               </ListItemIcon>
               <ListItemText
                 primaryTypographyProps={{ fontSize: "12px" }}
-                primary="Pending Approval Form"
+                primary="Sales Order Pending Form"
               />
             </ListItemButton>
             
