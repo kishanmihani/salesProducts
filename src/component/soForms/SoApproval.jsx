@@ -1,15 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import CustomPageHeader from '../commonComponent/CustomPageHeader/CustomPageHeader';
-import { SoApprovalapi, soVhicledetails } from '../Config/Api/Api';
-import { authAxios } from '../utils/authAxios';
-import formatDateToUS from '../utils/DateFormate';
+import React, { useState, useEffect } from "react";
+import CustomPageHeader from "../commonComponent/CustomPageHeader/CustomPageHeader";
+import { SoApprovalapi, soVhicledetails } from "../Config/Api/Api";
+import { authAxios } from "../utils/authAxios";
+import formatDateToUS from "../utils/DateFormate";
 import {
   Box,
   Button,
   Collapse,
-  Dialog,
-  DialogContent,
-  DialogTitle,
   List,
   Paper,
   Table,
@@ -18,133 +15,256 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Tabs,
-  Tab,
-  Tooltip,
+  TableSortLabel,
+  CircularProgress,
+  TextField,
   Typography,
-} from '@mui/material';
-import CancelIcon from '@mui/icons-material/Cancel';
-import { useNavigate } from 'react-router';
-import { useDispatch } from 'react-redux';
-import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
-import { setObject } from '../features/sodetails';
-import { a11yProps, CustomTabPanel } from '../commonComponent/CustomTabPanel/CustomTabPanel';
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-import { toast, ToastContainer } from 'react-toastify';
+} from "@mui/material";
+import { visuallyHidden } from "@mui/utils";
+import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOutlined";
+import { useNavigate } from "react-router";
+import { useDispatch } from "react-redux";
+import { setObject } from "../features/sodetails";
+import { toast, ToastContainer } from "react-toastify";
+import { parseISO, isWithinInterval } from "date-fns";
 
 export default function SoApproval() {
   const [openRow, setOpenRow] = useState(null);
-  const [soTble_head] = useState([
-    'So Date',
-    'Name',
-    'V_Date',
-    'So No',
-    'So Qty',
-    'A/C_Qty',
-    'B_Qty',
-    'PMT',
-    'Port',
-    'Type',
-    'Remark',
-    'Add Vehicle',
-    'Actions',
-  ]);
   const [sodata, setSodata] = useState([]);
-  const [userId] = useState(JSON.parse(sessionStorage.getItem('userInfo'))?.id);
+  const [filteredData, setFilteredData] = useState([]);
+  const [userId] = useState(JSON.parse(sessionStorage.getItem("userInfo"))?.id);
   const [dataCheck, setDataCheck] = useState(true);
+  const [orderDirection, setOrderDirection] = useState("asc");
+  const [orderBy, setOrderBy] = useState("sO_Date");
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
+  const [loading, setLoading] = useState(false);
 
+  // 🔹 Fetch data from API
   useEffect(() => {
     if (dataCheck) {
       authAxios
         .post(SoApprovalapi, JSON.stringify({ user_id: userId }))
-        .then((res) => setSodata(res.data))
+        .then((res) => {
+          setSodata(res.data);
+          setFilteredData(res.data);
+        })
         .catch((err) => console.log(err?.message));
       setDataCheck(false);
     }
-  }, [sodata, userId, dataCheck]);
+  }, [userId, dataCheck]);
+
+  // 🔹 Handle sorting
+  const handleSortRequest = (property) => {
+    const isAsc = orderBy === property && orderDirection === "asc";
+    setOrderDirection(isAsc ? "desc" : "asc");
+    setOrderBy(property);
+  };
+
+  // 🔹 Sorting logic
+  const sortedData = [...filteredData].sort((a, b) => {
+    const valA = a[orderBy];
+    const valB = b[orderBy];
+    if (orderBy.toLowerCase().includes("date")) {
+      const dateA = new Date(valA);
+      const dateB = new Date(valB);
+      return orderDirection === "asc" ? dateA - dateB : dateB - dateA;
+    }
+    if (!isNaN(valA) && !isNaN(valB)) {
+      return orderDirection === "asc" ? valA - valB : valB - valA;
+    }
+    return orderDirection === "asc"
+      ? String(valA).localeCompare(String(valB))
+      : String(valB).localeCompare(String(valA));
+  });
+
+  // 🔹 Date Filter Logic
+  const handleFilter = () => {
+    if (!fromDate || !toDate) {
+      toast.warning("Please select both From and To dates");
+      return;
+    }
+    setLoading(true);
+    setTimeout(() => {
+      const filtered = sodata.filter((item) => {
+        const itemDate = parseISO(item.sO_Date);
+        return isWithinInterval(itemDate, {
+          start: parseISO(fromDate),
+          end: parseISO(toDate),
+        });
+      });
+      setFilteredData(filtered);
+      setLoading(false);
+    }, 600);
+  };
+
+  const clearFilter = () => {
+    setFromDate("");
+    setToDate("");
+    setFilteredData(sodata);
+  };
 
   return (
     <React.Fragment>
       <CustomPageHeader pageHeaderText="So Approval Form" />
-      <div style={{ width: '96%', margin: 'auto', marginBlock: '5px' }}>
+      <div style={{ width: "96%", margin: "auto", marginBlock: "5px" }}>
+        <Paper elevation={0} sx={{ p: 2, mb: 1 }}>
+          <Typography fontWeight={600} mb={1}>
+            Date Filter:
+          </Typography>
+          <Box display="flex" alignItems="center" gap={2}>
+            <TextField
+              type="date"
+              label="From Date"
+              size="small"
+              InputLabelProps={{ shrink: true }}
+              value={fromDate}
+              onChange={(e) => setFromDate(e.target.value)}
+            />
+            <TextField
+              type="date"
+              label="To Date"
+              size="small"
+              InputLabelProps={{ shrink: true }}
+              value={toDate}
+              onChange={(e) => setToDate(e.target.value)}
+            />
+            <Button
+              variant="contained"
+              color="primary"
+              disabled={loading}
+              onClick={handleFilter}
+            >
+              {loading ? <CircularProgress size={20} color="inherit" /> : "Filter"}
+            </Button>
+            <Button variant="outlined" color="secondary" onClick={clearFilter}>
+              Clear
+            </Button>
+          </Box>
+        </Paper>
+
         <Paper elevation={0}>
           <TableContainer>
             <Table>
+              {/* 🔹 Table Header */}
               <TableHead
                 sx={{
                   fontWeight: 500,
-                  bgcolor: 'rgba(25, 118, 210, 0.08)',
+                  bgcolor: "rgba(25, 118, 210, 0.08)",
                 }}
               >
                 <TableRow>
-                  {soTble_head.map((header) => (
+                  {[
+                    { label: "So Date", key: "sO_Date" },
+                    { label: "Name", key: "c_Name" },
+                    { label: "V_Date", key: "v_Date" },
+                    { label: "So No", key: "sO_N0" },
+                    { label: "So Qty", key: "so_Qty" },
+                    { label: "A/C_Qty", key: "a_Out_Qty" },
+                    { label: "B_Qty", key: "bal_Qty" },
+                    { label: "PMT", key: "r_PMT" },
+                    { label: "Port", key: "port" },
+                    { label: "Type", key: "payment_Type" },
+                    { label: "Remark", key: "remark" },
+                    { label: "Add Vehicle", key: "" },
+                    { label: "Actions", key: "" },
+                  ].map((col) => (
                     <TableCell
-                      className="table-th"
-                      component="th"
-                      key={header}
+                      key={col.key || col.label}
                       align="left"
-                      sx={{ fontSize: 12 }}
+                      sx={{ fontSize: 12, whiteSpace: "nowrap" }}
                     >
-                      {header}
+                      {col.key ? (
+                        <TableSortLabel
+                          active={orderBy === col.key}
+                          direction={orderBy === col.key ? orderDirection : "asc"}
+                          onClick={() => handleSortRequest(col.key)}
+                        >
+                          {col.label}
+                          {orderBy === col.key ? (
+                            <Box component="span" sx={visuallyHidden}>
+                              {orderDirection === "desc"
+                                ? "sorted descending"
+                                : "sorted ascending"}
+                            </Box>
+                          ) : null}
+                        </TableSortLabel>
+                      ) : (
+                        col.label
+                      )}
                     </TableCell>
                   ))}
                 </TableRow>
               </TableHead>
+
+              {/* 🔹 Table Body */}
               <TableBody>
-                {sodata?.map((data, index) => (
-                  <SodataRow
-                    key={index}
-                    data={data}
-                    isOpen={openRow === data.sO_N0}
-                    setOpenRow={setOpenRow}
-                  />
-                ))}
+                {sortedData?.length > 0 ? (
+                  sortedData.map((data, index) => (
+                    <SodataRow
+                      key={index}
+                      data={data}
+                      isOpen={openRow === data.sO_N0}
+                      setOpenRow={setOpenRow}
+                    />
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={13} align="center">
+                      {loading ? (
+                        <CircularProgress />
+                      ) : (
+                        "No records found for selected date range"
+                      )}
+                    </TableCell>
+                  </TableRow>
+                )}
               </TableBody>
             </Table>
           </TableContainer>
         </Paper>
       </div>
+      <ToastContainer />
     </React.Fragment>
   );
 }
 
+// ============================================================
+// 🔹 Child Component (SodataRow)
+// ============================================================
 function SodataRow({ data, isOpen, setOpenRow }) {
   const [vehicle_head] = useState([
-    'Vehicle Name',
-    'Planned Qty',
-    'Actual Qty',
-    'BOE No',
-    'Transporter Name',
-    'Tank Name',
-    'Warehouse Name',
-    'Port Name',
-    'Vessel Name',
-    'Vessel No',
-    'Status',
-    'Remark',
+    "Vehicle Name",
+    "Planned Qty",
+    "Actual Qty",
+    "BOE No",
+    "Transporter Name",
+    "Tank Name",
+    "Warehouse Name",
+    "Port Name",
+    "Vessel Name",
+    "Vessel No",
+    "Status",
+    "Remark",
   ]);
   const [innerData, setInnerData] = useState([]);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [userId] = useState(JSON.parse(sessionStorage.getItem('userInfo'))?.id);
+  const [userId] = useState(JSON.parse(sessionStorage.getItem("userInfo"))?.id);
 
-  function AddVehicle(row) {
-    const previous = new Date().setDate(new Date().getDate() - 0);
+  const AddVehicle = (row) => {
+    const today = new Date();
+    const vDate = new Date(row?.v_Date);
+
     if (row?.bal_Qty <= 0) {
-      // console.log("kishan 123",row?.bal_Qty)
-      toast.info('⚠️ Balance quantity is Negative');
-    } else if (formatDateToUS(row.v_Date) < formatDateToUS(previous)) {
-      toast.info(
-        `⚠️ Validity date is finished!\nExpired on: ${formatDateToUS(
-          row?.v_Date
-        )}`
-      );
-    } else if(formatDateToUS(row.v_Date) >= formatDateToUS(previous)){
-      console.log(formatDateToUS(previous))
+      toast.info("⚠️ Balance quantity is Negative");
+    } else if (vDate < today) {
+      toast.info(`⚠️ Validity date expired on: ${formatDateToUS(row?.v_Date)}`);
+    } else {
       dispatch(setObject(row));
       navigate(`/dashboard/Logistic/logistic_Request_form`);
     }
-  }
+  };
 
   const handleToggle = async () => {
     if (isOpen) {
@@ -163,71 +283,54 @@ function SodataRow({ data, isOpen, setOpenRow }) {
     }
   };
 
-const today = new Date();
-const vDate = new Date(data?.v_Date);
-const isRed = vDate.getDate() < today.getDate();
-const isGreen = vDate.getDate() >= today.getDate();
+  const today = new Date();
+  const vDate = new Date(data?.v_Date);
+  const isExpired = vDate < today;
 
   return (
     <React.Fragment>
-          <TableRow
-          sx={{
-            '& > *': { borderBottom: 'unset' },
-            backgroundColor: isRed
-              ? 'rgba(245, 143, 103, 0.1)' // reddish
-              : isGreen
-              ? 'rgba(114, 227, 131, 0.1)' // greenish
-              : 'inherit',
-          }}
-        >
-        <TableCell
-          sx={{
-
-             
-           // color: isRed ? 'red' : 'inherit',
-           // fontWeight: isRed ? 'bold' : 'normal',
-          }}
-        >
+      <TableRow
+        sx={{
+          "& > *": { borderBottom: "unset" },
+          backgroundColor: isExpired
+            ? "rgba(245, 143, 103, 0.1)" // expired redish
+            : "rgba(114, 227, 131, 0.1)", // valid greenish
+        }}
+      >
+        <TableCell>
           {data?.sO_Date
-            ? new Date(data.sO_Date).toLocaleDateString('en-GB', {
-                day: '2-digit',
-                month: '2-digit',
-                year:'numeric',
-              })
-            : ''}
+            ? new Date(data.sO_Date).toLocaleDateString("en-GB")
+            : ""}
         </TableCell>
 
         <TableCell>{data?.c_Name}</TableCell>
-
         <TableCell>
           {data?.v_Date
-            ? new Date(data.v_Date).toLocaleDateString('en-GB', {
-                day: '2-digit',
-                month: '2-digit',
-                year:'numeric',
-              })
-            : ''}
+            ? new Date(data.v_Date).toLocaleDateString("en-GB")
+            : ""}
         </TableCell>
-
         <TableCell>{data?.sO_N0}</TableCell>
         <TableCell>{data?.so_Qty}</TableCell>
-        <TableCell>{data?.a_Out_Qty}/{data?.a_Count}</TableCell>
+        <TableCell>
+          {data?.a_Out_Qty}/{data?.a_Count}
+        </TableCell>
         <TableCell>{data?.bal_Qty}</TableCell>
         <TableCell>{data?.r_PMT}</TableCell>
         <TableCell>{data?.port}</TableCell>
         <TableCell>{data?.payment_Type}</TableCell>
         <TableCell>{data?.remark}</TableCell>
+
         <TableCell>
           <Button
             variant="outlined"
             sx={{
               p: 1,
               width: 150,
-              fontSize: '12px',
+              fontSize: "12px",
               borderRadius: 6,
-              textTransform: 'capitalize',
+              textTransform: "capitalize",
             }}
-            disabled={data?.v_flg === '0' ? false : true}
+            disabled={data?.v_flg === "0" ? false : true}
             color="success"
             onClick={() => AddVehicle(data)}
           >
@@ -239,43 +342,31 @@ const isGreen = vDate.getDate() >= today.getDate();
         <TableCell>
           <Button
             onClick={handleToggle}
-            color={!isOpen ? 'primary' : 'error'}
+            color={!isOpen ? "primary" : "error"}
             variant="outlined"
           >
-            {!isOpen ? 'Open' : 'Close'}
+            {!isOpen ? "Open" : "Close"}
           </Button>
         </TableCell>
       </TableRow>
 
-      {/* Collapsible Section */}
+      {/* 🔹 Inner Table */}
       <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={16}>
           <Collapse in={isOpen} timeout="auto" unmountOnExit>
             <List component="div" disablePadding>
-              <TableContainer
-                elevation={0}
-                component={Paper}
-                style={{ overflow: 'auto', minWidth: 800 }}
-              >
-                <Table size="small" aria-label="vehicle-details">
+              <TableContainer component={Paper} sx={{ overflow: "auto" }}>
+                <Table size="small">
                   <TableHead
                     sx={{
-                      fontWeight: 500,
-                      bgcolor: 'rgba(240, 114, 223, 0.08)',
+                      bgcolor: "rgba(240, 114, 223, 0.08)",
                     }}
                   >
-                    <TableRow style={{ whiteSpace: 'nowrap' }}>
+                    <TableRow>
                       {vehicle_head.map((head, index) => (
                         <TableCell
-                          component="th"
-                          scope="row"
                           key={index}
-                          align="left"
-                          sx={{
-                            fontSize: 14,
-                            fontWeight: 600,
-                            whiteSpace: 'nowrap',
-                          }}
+                          sx={{ fontSize: 13, fontWeight: 600 }}
                         >
                           {head}
                         </TableCell>
@@ -284,7 +375,7 @@ const isGreen = vDate.getDate() >= today.getDate();
                   </TableHead>
                   <TableBody>
                     {innerData?.map((row, idx) => (
-                      <TableRow key={idx} sx={{ '& > *': { borderBottom: 'unset' } }}>
+                      <TableRow key={idx}>
                         <TableCell>{row?.vehicle_Name}</TableCell>
                         <TableCell>{row?.p_Qty}</TableCell>
                         <TableCell>{row?.a_Qty}</TableCell>
@@ -306,7 +397,6 @@ const isGreen = vDate.getDate() >= today.getDate();
           </Collapse>
         </TableCell>
       </TableRow>
-      <ToastContainer />
     </React.Fragment>
   );
 }

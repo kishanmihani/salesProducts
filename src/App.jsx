@@ -22,12 +22,13 @@ import ApprovalList from './pages/ApprovalList/ApprovalList';
 import ReciptFrom from './pages/reciptFrom/reciptFrom';
 import CloserForm from './pages/closerForm/closerForm';
 import ApprovalPendingForm from './component/sales/Sales list/ApprovalPendingForm';
-import LoginForm from './pages/loginFrom/loginForm';
+import LoginForm from './pages/loginFrom/LoginForm';
 import LogicForm from './component/Dashboard/logistic/LogicForm';
 import Report from './pages/management/report/Report';
 import GraphTable from './pages/management/report/Table/GraphTable';
 import SalesEditForm from './component/sales/SalesEditForm';
 import BillDetails from './pages/BillDetails/BillDetails';
+import 'react-datepicker/dist/react-datepicker.css';
 function App() {
   return (
     <React.Fragment>

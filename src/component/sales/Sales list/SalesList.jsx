@@ -8,7 +8,7 @@ import { salesListApi } from '../../Config/Api/Api';
 import { a11yProps } from '../../commonComponent/CustomTabPanel/CustomTabPanel';
 import api from '../../Config/Api';
 import { FaFileExport } from 'react-icons/fa6';
-import * as XLSX from "xlsx";
+import * as XLSX from "xlsx-js-style";
 import { saveAs } from "file-saver";
 import ExportButton from '../../commonComponent/ExportButton/ExportButton';
 export default function Saleslist() {

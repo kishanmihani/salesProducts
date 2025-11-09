@@ -6,7 +6,7 @@ import EditSquareIcon from '@mui/icons-material/EditSquare';
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { authAxios } from '../../utils/authAxios';
 import { salesListApi } from '../../Config/Api/Api';
-import * as XLSX from "xlsx";
+import * as XLSX from "xlsx-js-style";
 import { saveAs } from "file-saver";
 import { a11yProps } from '../../commonComponent/CustomTabPanel/CustomTabPanel';
 import ExportButton from '../../commonComponent/ExportButton/ExportButton';
