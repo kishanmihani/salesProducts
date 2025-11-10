@@ -26,7 +26,7 @@ import { useNavigate } from "react-router";
 import { useDispatch } from "react-redux";
 import { setObject } from "../features/sodetails";
 import { toast, ToastContainer } from "react-toastify";
-import { parseISO, isWithinInterval } from "date-fns";
+import { parseISO, isWithinInterval, parse } from "date-fns";
 
 export default function SoApproval() {
   const [openRow, setOpenRow] = useState(null);
@@ -87,12 +87,16 @@ export default function SoApproval() {
     setLoading(true);
     setTimeout(() => {
       const filtered = sodata.filter((item) => {
-        const itemDate = parseISO(item.sO_Date);
-        return isWithinInterval(itemDate, {
-          start: parseISO(fromDate),
-          end: parseISO(toDate),
-        });
-      });
+  // Parse your item date correctly
+  const itemDate = parse(item.sO_Date, "MM/dd/yyyy hh:mm:ss a", new Date());
+
+  // Parse from/to dates (assuming they're in 'yyyy-MM-dd' format from input type="date")
+  const startDate = parse(fromDate, "yyyy-MM-dd", new Date());
+  const endDate = parse(toDate, "yyyy-MM-dd", new Date());
+
+  return isWithinInterval(itemDate, { start: startDate, end: endDate });
+});
+      console.log(filtered);
       setFilteredData(filtered);
       setLoading(false);
     }, 600);
