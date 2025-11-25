@@ -3,12 +3,16 @@ import { authAxios } from "../../component/utils/authAxios";
 import formatDateToUS from "../../component/utils/DateFormate";
 import { useSearchParams } from "react-router";
 import { UnpaidRecipt } from "../../component/Config/Api/Api";
+import CustomPageHeader from "../../component/commonComponent/CustomPageHeader/CustomPageHeader";
+import { Button } from "@mui/material";
+import InformAlert from "../../component/commonComponent/informAlert/InformAlert";
 
 const ReceiptForm = () => {
   const [searchParams] = useSearchParams();
   const [encodedData] = useState(searchParams.get("data"));
   const [decodedData] = useState(encodedData ? JSON.parse(decodeURIComponent(encodedData)) : null);
-
+const [alertOpen, setAlertOpen] = useState(false);
+const [alertMsg, setAlertMsg] = useState("");
   const userId = JSON.parse(sessionStorage.getItem("userInfo"))?.id;
 
   const [formData, setFormData] = useState({
@@ -164,6 +168,12 @@ const ReceiptForm = () => {
   // ---------------- FINAL SUBMIT ----------------
   const handleFinalSubmit = () => {
     //debugger
+    const missingIndex = receiptAllocationRows.findIndex(row => !row.billNo);
+    if (missingIndex !== -1) {
+    setAlertMsg(`Bill Number missing in row ${missingIndex + 1}`);
+    setAlertOpen(true);
+    return;
+  }
     const payload = {
       receipts: receiptRows
         .filter(r => r.selected)
@@ -191,29 +201,27 @@ const ReceiptForm = () => {
   const cellStyle = { border: "1px solid black", padding: "8px" };
 
   return (
-    <div style={{ display: "flex", justifyContent: "center", padding: "20px" }}>
-      <div style={{ width: "1300px" }}>
-        <h2 style={{ textAlign: "center" }}>Receipt Form</h2>
-
-        {/* TOP AREA */}
-        <div style={{ display: "flex", gap: "20px", marginBottom: "20px" }}>
+    <div style={{ display: "flex", justifyContent: "center" }}>
+      <div style={{width:"98%"}}>
+         <CustomPageHeader pageHeaderText="Receipt Form" />
+        <div style={{ display: "flex", gap: "20px" ,width: "100%", margin: 4,marginTop:10 }}>
     
           <div>
-            <label>SO No</label>
+            <label style={{fontWeight:600}}>SO No</label> : 
             <input type="text" value={decodedData.so_no} readOnly />
           </div>
 
           <div>
-            <label>Customer Name</label>
+            <label style={{fontWeight:600}}>Customer Name</label> :
             <input type="text" value={decodedData.customer} readOnly />
           </div>
 
-          <button
+          <Button
             onClick={() => setShowPopup(true)}
-            style={{ height: "35px", alignSelf: "end", backgroundColor: "red", color: "white" }}
+            variant="contained" color="error"
           >
             Add Receipt
-          </button>
+          </Button>
         </div>
 
         {/* TABLES SIDE-BY-SIDE */}
@@ -277,6 +285,7 @@ const ReceiptForm = () => {
                     <td style={cellStyle}>{row.b_Bal_Amount}</td>
                     <td style={cellStyle}>
                       <input
+                      style={{p:2,h:40}}
                         type="checkbox"
                         checked={row.selected || false}
                         onChange={() => handleBillCheckboxChange(row.id)}
@@ -415,13 +424,18 @@ const ReceiptForm = () => {
               />
 
               <div style={{ display: "flex", justifyContent: "space-between" }}>
-                <button onClick={() => setShowPopup(false)}>Close</button>
-                <button onClick={handleReceiptEntrySubmit}>Submit</button>
+                <Button variant="contained" color="error" onClick={() => setShowPopup(false)}>Close</Button>
+                <Button variant="contained" color="success" onClick={handleReceiptEntrySubmit}>Submit</Button>
               </div>
             </div>
           </div>
         )}
       </div>
+      <InformAlert
+  open={alertOpen}
+  message={alertMsg}
+  onClose={() => setAlertOpen(false)}
+/>
     </div>
   );
 };

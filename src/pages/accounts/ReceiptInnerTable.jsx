@@ -74,7 +74,7 @@ export default function ReceiptInnerTable({
               backgroundColor: isTransferred ? "#f5f5f5" : "inherit",
             }}
           >
-            {/* {tabs === 1 && !hideRow && (
+            {tabs === 1 && !hideRow && (
               <TableCell>
                 <Checkbox
                   checked={selectedRows.some((r) => r.id === row.id)}
@@ -82,7 +82,7 @@ export default function ReceiptInnerTable({
                   disabled={isTransferred}
                 />
               </TableCell>
-            )} */}
+            )}
 
             <TableCell>{idx + 1}</TableCell>
             <TableCell>{row.customer_Name}</TableCell>
@@ -150,7 +150,7 @@ export default function ReceiptInnerTable({
       <Table size="small">
         <TableHead sx={{ bgcolor: "rgba(240, 114, 223, 0.08)" }}>
           <TableRow>
-            {/* {tabs === 1 && !hideRow && <TableCell>Select</TableCell>} */}
+            {tabs === 1 && !hideRow && <TableCell>Select</TableCell>}
             {tableHeaders.map((head) => (
               <TableCell key={head} sx={{ fontWeight: 600 }}>
                 {head}

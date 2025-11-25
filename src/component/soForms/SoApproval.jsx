@@ -3,7 +3,7 @@ import CustomPageHeader from "../commonComponent/CustomPageHeader/CustomPageHead
 import { SoApprovalapi, soVhicledetails } from "../Config/Api/Api";
 import { authAxios } from "../utils/authAxios";
 import formatDateToUS from "../utils/DateFormate";
-
+import { IoSearchSharp } from "react-icons/io5";
 import {
   Box,
   Button,
@@ -30,6 +30,7 @@ import { setObject } from "../features/sodetails";
 import { toast, ToastContainer } from "react-toastify";
 
 import { parse, isWithinInterval } from "date-fns";
+import SearchInput from "../commonComponent/SearchInput/SearchInput";
 
 export default function SoApproval() {
   const [openRow, setOpenRow] = useState(null);
@@ -151,15 +152,12 @@ export default function SoApproval() {
         {/* ---------------------------------------------------------
             🔎 LIVE SEARCH INPUT
         --------------------------------------------------------- */}
-        <Box mb={2} mt={1}>
-          <TextField
-            label="Search by SO No or Customer Name"
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-            fullWidth
-            size="small"
-          />
-        </Box>
+        <SearchInput
+  value={searchText}
+  onChange={(e) => setSearchText(e.target.value)}
+  placeholder="Search by SO No or Customer Name"
+/>
+
 
         {/* ---------------------------------------------------------
             📅 DATE FILTER UI

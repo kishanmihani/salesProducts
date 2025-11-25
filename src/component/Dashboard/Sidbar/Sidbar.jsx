@@ -426,13 +426,13 @@ const toggleModule = (key) => {
                 primary="Account List"
               />
             </ListItemButton>
-            <ListItemButton
+            {/* <ListItemButton
               component={NavLink}
               to="/dashboard/Account/ReciptFrom"
               selected={location.pathname === "/dashboard/Account/ReciptFrom"}
               sx={{ pl: 4,display: pagelist.includes("Recipt_Form") ? "flex" : "none" }} 
-            >
-              <ListItemIcon color="#756f6f">
+            > */}
+              {/* <ListItemIcon color="#756f6f">
                 {location.pathname === "/dashboard/Account/ReciptFrom" ? (
                   <RadioButtonCheckedIcon
                     style={{ height: 17, width: 17, mr: 2 }}
@@ -443,12 +443,12 @@ const toggleModule = (key) => {
                     style={{ height: 17, width: 17, mr: 2,color:"#756f6f" }}
                   />
                 )}
-              </ListItemIcon>
-              <ListItemText
+              </ListItemIcon> */}
+              {/* <ListItemText
                 primaryTypographyProps={{ fontSize: "12px" }}
                 primary="Receipt Form"
-              />
-            </ListItemButton>
+              /> */}
+            {/* </ListItemButton> */}
             <ListItemButton
               component={NavLink}
               to="/dashboard/Account/CloserForm"

@@ -13,6 +13,7 @@ import DeleteConfirmationDialog from '../../../commonComponent/DeleteConfirmatio
 import CustomeAlerts from '../../../commonComponent/CustomeAlert/CustomeAlert';
 import { vehicleDelete } from '../../../Config/Api/Api';
 import dayjs from "dayjs";
+import SearchInput from '../../../commonComponent/SearchInput/SearchInput';
 
 const tableHeaders = [
   "Date", "So No", "Customer", "Vehicle No", "AQty", "Voyage", 
@@ -167,14 +168,12 @@ export default function Logisticlist() {
 
       {/* 🔍 SEARCH BAR */}
       <Box sx={{ width: "96%", margin: "auto", mb: 2 }}>
-        <TextField
-          label="Search SO No, Customer, Vehicle No"
-          variant="outlined"
-          size="small"
-          fullWidth
-          value={searchText}
-          onChange={(e) => setSearchText(e.target.value)}
-        />
+        <SearchInput 
+  value={searchText}
+  onChange={(e) => setSearchText(e.target.value)}
+  placeholder="Search by SO No or Customer Name"
+/>
+
       </Box>
 
       <Paper sx={{ p: 2 }} elevation={0}>

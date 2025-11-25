@@ -7,9 +7,10 @@ import CustomPageHeader from "../../component/commonComponent/CustomPageHeader/C
 import CustomeAlerts from "../../component/commonComponent/CustomeAlert/CustomeAlert";
 import { AccountAdvance, AccountCreditApi } from "../../component/Config/Api/Api";
 import api from "../../component/Config/Api";
-
+import { IoSearchSharp } from "react-icons/io5";
 import AccountTabs from "./AccountTabs";
 import AccountTable from "./AccountTable";
+import SearchInput from "../../component/commonComponent/SearchInput/SearchInput";
 
 export default function AccountList() {
   const [tabs, setTabs] = useState(0);
@@ -152,20 +153,13 @@ export default function AccountList() {
         <AccountTabs tabs={tabs} handleTabs={handleTabs} tableData={tableData} />
 
         {/* Live Search */}
-        <div style={{ marginBottom: "15px" }}>
-          <input
-            type="text"
-            placeholder="Search by SO No or Customer Name"
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-            style={{
-              padding: "8px",
-              width: "280px",
-              borderRadius: "4px",
-              border: "1px solid #ccc",
-            }}
-          />
-        </div>
+      <SearchInput
+  value={searchText}
+  onChange={(e) => setSearchText(e.target.value)}
+  placeholder="Search by SO No or Customer Name"
+/>
+
+
 
         {/* Table */}
         <AccountTable
