@@ -3,17 +3,17 @@ import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow
 import AccountTableRow from "./AccountTableRow";
 
 const cashHeaders = [
-  "So No", "Customer Name", "Port Name", "Company name",
+ "Date","Remark", "So No", "Customer Name", "Port Name", "Company name",
   "Amount", "Recived", "Balance", "Transfer to Credit", "Receipt Details", "Receipt"
 ];
 
 const advanceHeaders = [
-  "So No", "Customer Name", "Port Name", "Company name",
+  "Date","Remark","So No", "Customer Name", "Port Name", "Company name",
   "Advance", "Recived", "Balance", "Transfer to Credit", "Receipt"
 ];
 
 const creditHeaders = [
-  "So No.", "Customer Name", "Port Name", "Company Name",
+  "Date","Remark","So No.", "Customer Name", "Port Name", "Company Name",
   "Amount", "Recived", "Balance", "Credit Days", "Payments Type", "Receipt Details", "Recipt"
 ];
 

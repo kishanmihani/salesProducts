@@ -17,16 +17,19 @@ export default function AccountList() {
   const [checkTableData, setCheckTableData] = useState(false);
   const [openRow, setOpenRow] = useState(null);
   const [custAlert, setCustAlert] = useState(null);
+
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(25);
+
   const [selectedRows, setSelectedRows] = useState([]);
 
-  const navigate = useNavigate();
-  const [userId] = useState(
-    JSON.parse(sessionStorage.getItem("userInfo"))?.id
-  );
+  const [searchText, setSearchText] = useState("");
+  const [filteredData, setFilteredData] = useState([]);
 
-  // Fetch data
+  const navigate = useNavigate();
+  const [userId] = useState(JSON.parse(sessionStorage.getItem("userInfo"))?.id);
+
+  // Fetch data once
   useEffect(() => {
     if (!checkTableData) fetchTableData();
   }, [checkTableData]);
@@ -44,80 +47,125 @@ export default function AccountList() {
         api2: resTwo.data,
         api3: resThree.data,
       });
+
       setCheckTableData(true);
     } catch (err) {
       showError("Error fetching data");
     }
   };
 
-  const handleTabs = (e, newValue) =>{ setTabs(newValue);setOpenRow(null);setPage(0);fetchTableData() };
+  const handleTabs = (e, newValue) => {
+    setTabs(newValue);
+    setOpenRow(null);
+    setPage(0);
+    setSearchText("");    // reset search when switching tabs
+    setFilteredData([]);  // reset filtered data
+  };
 
   const showSuccess = (msg) => setCustAlert({ type: "success", message: msg });
   const showError = (msg) => setCustAlert({ type: "error", message: msg });
   const handleCloseAlert = () => setCustAlert(null);
 
+  // Pick data based on tab
   const activeData =
-    tabs === 0 ? tableData.api2 || [] : tabs === 1 ? tableData.api1 || [] : tableData.api3 || [];
+    tabs === 0 ? tableData.api2 || [] :
+    tabs === 1 ? tableData.api1 || [] :
+    tableData.api3 || [];
 
-  const paginatedData = activeData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
-   console.log(paginatedData,tableData,activeData)
+  // Live Search (SO No + Customer Name)
+  useEffect(() => {
+    if (!searchText.trim()) {
+      setFilteredData(activeData);
+      return;
+    }
+
+    const result = activeData.filter((row) =>
+      String(row?.so_No).toLowerCase().includes(searchText.toLowerCase()) ||
+      String(row?.customer_Name).toLowerCase().includes(searchText.toLowerCase())
+    );
+
+    setFilteredData(result);
+    setPage(0);
+  }, [searchText, activeData]);
+
+  // Final data before pagination
+  const finalData = searchText ? filteredData : activeData;
+
+  const paginatedData = finalData.slice(
+    page * rowsPerPage,
+    page * rowsPerPage + rowsPerPage
+  );
+
+  // Transfer Record Logic
   async function handleTransferCredit(row, text, totalAmount) {
-  try {
-    let res;
+    try {
+      let res;
 
-    if (text === "Advance Payments") {
-      // Single insert
-      res = await api.post(
-        "BituRep/Api/Account/Credit_RE_insert",
-        JSON.stringify({
-          user_id: userId,
-          Customer_Name: row?.customer_Name,
-          Entry_Date: dayjs(new Date()),
-          Recipt_type: text,
-          So_No: row?.so_No,
-          Tds: 0,
-          Log_id: 0,
-          Amount: row.bal_Adv,
-        })
-      );
-    } else if (text === "Cash Payments") {
-      // Multiple inserts (loop over selectedRows)
-      for (const item of selectedRows) {
+      if (text === "Advance Payments") {
         res = await api.post(
           "BituRep/Api/Account/Credit_RE_insert",
           JSON.stringify({
             user_id: userId,
-            Customer_Name: item?.customer_Name,
-            Entry_Date: item.entry_Date,
-            Recipt_type: "Cash Payments",
-            So_No: item?.so_No,
+            Customer_Name: row?.customer_Name,
+            Entry_Date: dayjs(new Date()),
+            Recipt_type: text,
+            So_No: row?.so_No,
             Tds: 0,
-            Log_id: item.id,
-            Amount: item.b_Bal_Amount,
+            Log_id: 0,
+            Amount: row.bal_Adv,
             
           })
         );
-        console.log(`Transferred for SO No: ${item?.so_No}`);
+      } else if (text === "Cash Payments") {
+        for (const item of selectedRows) {
+          res = await api.post(
+            "BituRep/Api/Account/Credit_RE_insert",
+            JSON.stringify({
+              user_id: userId,
+              Customer_Name: item?.customer_Name,
+              Entry_Date: item.entry_Date,
+              Recipt_type: "Cash Payments",
+              So_No: item?.so_No,
+              Tds: 0,
+              Log_id: item.id,
+              Amount: item.b_Bal_Amount,
+            })
+          );
+        }
       }
+
+      showSuccess("Transferred successfully");
+      await fetchTableData();
+      setSelectedRows([]);
+
+    } catch (err) {
+      showError("Error transferring to credit");
     }
-
-    showSuccess("All records transferred successfully");
-    await fetchTableData();
-    setSelectedRows([]);
-
-  } catch (err) {
-    console.error(err);
-    showError("Error transferring to credit");
   }
-}
-
 
   return (
     <>
       <CustomPageHeader pageHeaderText="Account List" />
       <Paper sx={{ p: 2 }} elevation={0}>
+
         {/* Tabs */}
         <AccountTabs tabs={tabs} handleTabs={handleTabs} tableData={tableData} />
+
+        {/* Live Search */}
+        <div style={{ marginBottom: "15px" }}>
+          <input
+            type="text"
+            placeholder="Search by SO No or Customer Name"
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+            style={{
+              padding: "8px",
+              width: "280px",
+              borderRadius: "4px",
+              border: "1px solid #ccc",
+            }}
+          />
+        </div>
 
         {/* Table */}
         <AccountTable
@@ -134,9 +182,9 @@ export default function AccountList() {
 
         {/* Pagination */}
         <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
+          rowsPerPageOptions={[25, 50, 75, 100]}
           component="div"
-          count={activeData.length}
+          count={finalData.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={(e, newPage) => setPage(newPage)}
@@ -147,9 +195,12 @@ export default function AccountList() {
         />
       </Paper>
 
-      {/* Alerts */}
       {custAlert && (
-        <CustomeAlerts type={custAlert.type} message={custAlert.message} onClose={handleCloseAlert} />
+        <CustomeAlerts
+          type={custAlert.type}
+          message={custAlert.message}
+          onClose={handleCloseAlert}
+        />
       )}
     </>
   );

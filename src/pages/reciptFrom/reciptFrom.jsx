@@ -1,403 +1,429 @@
-import { useEffect, useState } from 'react';
-import {
-  Dialog, DialogTitle, DialogContent, DialogActions, Button,
-  FormControl, Typography, Box, TextField, Paper,
-  TableContainer, TableHead, TableRow, TableCell, Table,
-  TableBody, TablePagination, IconButton
-} from '@mui/material';
-import BillingDropDownTwo from '../../component/commonComponent/BillingDropDown/BillingDropDownTwo';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import dayjs from 'dayjs';
-import DeleteIcon from "@mui/icons-material/Delete";
-import CustomeAlerts from '../../component/commonComponent/CustomeAlert/CustomeAlert';
-import CustomerDropDownTwo from '../../component/commonComponent/CustomerDropDown/CustomerDropDowntwo';
-import ReceiptTypeDropdown from '../../component/commonComponent/recipttype/ReceiptTypeDropdown';
-import { authAxios } from '../../component/utils/authAxios';
-import CustomPageHeader from '../../component/commonComponent/CustomPageHeader/CustomPageHeader';
-import { useLocation } from 'react-router';
-import formatDateToUS from '../../component/utils/DateFormate';
+import React, { useEffect, useState } from "react";
+import { authAxios } from "../../component/utils/authAxios";
+import formatDateToUS from "../../component/utils/DateFormate";
+import { useSearchParams } from "react-router";
+import { UnpaidRecipt } from "../../component/Config/Api/Api";
 
-export default function ReceiptForm() {
-  const [tableHeaders] = useState([
-    "S.N", "Customer Name", "payment_Type", "date", "so_No", "tds", "amount", "Delete"
-  ]);
+const ReceiptForm = () => {
+  const [searchParams] = useSearchParams();
+  const [encodedData] = useState(searchParams.get("data"));
+  const [decodedData] = useState(encodedData ? JSON.parse(decodeURIComponent(encodedData)) : null);
 
-  const [billing, setBilling] = useState("Select");
-  const [billingError, setBillingError] = useState(false);
-  const [entryDate, setEntryDate] = useState(new Date());
-  const [errorDate, setErrorDate] = useState(null);
-  const [receiptData, setReceiptData] = useState([]);
-  const [receiptDataCheck, setReceiptDataCheck] = useState(true);
-  const [custAlert, setCustAlert] = useState(null);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-  const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
+  const userId = JSON.parse(sessionStorage.getItem("userInfo"))?.id;
 
-  const [receipt] = useState(JSON.parse(queryParams.get("data")));
-  const [userId] = useState(JSON.parse(sessionStorage.getItem("userInfo"))?.id);
- console.log(receipt)
   const [formData, setFormData] = useState({
-    so_no: 0,
-    tds: 0,
-    amount: 0,
-    errorSo_no: '',
-    errorTds: "",
-    errorAmount: "",
-    receiptType: '',
-    errorReceiptType: ''
+    date: "",
+    amount: 0
   });
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (receiptDataCheck) {
-        const data = {
-          user_id: userId,
-          Customer_Name: receipt.customer,
-          Payment_type:receipt?.Payment_Type
-        };
+  const [showPopup, setShowPopup] = useState(false);
+  const [receiptRows, setReceiptRows] = useState([]);
+  const [billRows, setBillRows] = useState([]);
+  const [receiptAllocationRows, setReceiptAllocationRows] = useState([]);
 
-        try {
-          const res = await authAxios.post(
-            "BituRep/Api/Account/Recipt_Entry_Select",
-            JSON.stringify(data)
-          );
-          setReceiptData(res.data);
-        } catch (err) {
-          showError(err?.message || "Error fetching receipt data");
-        } finally {
-          setReceiptDataCheck(false);
-        }
-      }
-
-      setBilling(receipt.customer);
-      setFormData((prev) => ({
-        ...prev,
-        so_no: receipt.so_no,
-        receiptType:receipt.Payment_Type
-      }));
-    };
-
-    fetchData();
-  }, [userId, receiptDataCheck, receipt]);
-
-  function FetchDataAgain() {
-    const data = { user_id: userId, Customer_Name: billing };
-    authAxios.post("BituRep/Api/Account/Recipt_Entry_Select", JSON.stringify(data))
-      .then((res) => setReceiptData(res.data))
-      .catch((err) => showError(err?.message || "Error fetching data"));
-  }
-
-  const handleChangePage = (event, newPage) => setPage(newPage);
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
+  // ---------------- API CALL – RECEIPTS ----------------
+  const loadReceipts = async () => {
+    try {
+      const response = await authAxios.post(
+        UnpaidRecipt,
+        JSON.stringify({
+          User_id: userId,
+          Customer_Name: decodedData?.customer
+        })
+      );
+      setReceiptRows(response?.data || []);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
-  const showSuccess = (msg) => setCustAlert({ type: "success", message: msg });
-  const showError = (msg) => setCustAlert({ type: "error", message: msg });
-  const handleCloseAlert = () => setCustAlert(null);
+  // ---------------- API CALL – BILLS ----------------
+  const loadBills = async (soNo) => {
+    try {
+      const response = await authAxios.post(
+        "BituRep/Api/Account/Recipt_Detail_View",
+        JSON.stringify({
+          User_id: userId,
+          So_No: soNo
+        })
+      );
+      setBillRows(response?.data || []);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
-  const paginatedData = receiptData.slice(
-    page * rowsPerPage,
-    page * rowsPerPage + rowsPerPage
+  useEffect(() => {
+    loadReceipts();
+  }, [decodedData?.customer]);
+
+  useEffect(() => {
+    loadBills(decodedData?.so_no);
+  }, [decodedData?.so_no]);
+
+  // ---------------- RECEIPT CHECKBOX ----------------
+  const handleReceiptCheckboxChange = (receiptNo) => {
+    const updatedList = receiptRows.map(row =>
+      row.receipt_No === receiptNo ? { ...row, selected: !row.selected } : row
+    );
+    setReceiptRows(updatedList);
+  };
+
+  // ---------------- BILL CHECKBOX ----------------
+  const handleBillCheckboxChange = (id) => {
+    const updated = billRows.map(row => {
+      if (row.id === id) {
+        const newRow = { ...row, selected: !row.selected };
+
+        if (newRow.selected) {
+          setReceiptAllocationRows(prev => [
+            ...prev,
+            {
+              id: newRow.id,
+              date: newRow.entry_Date,
+              vehicle: newRow.vehicle_Name,
+              qty: newRow.a_Qty,
+              billAmt: newRow.b_Amount,
+              billBalAmt: newRow.b_Bal_Amount,
+              billNo: "",
+              receiptAmt: 0,
+              tds: 0,
+              balance: newRow.b_Bal_Amount
+            }
+          ]);
+        } else {
+          setReceiptAllocationRows(prev =>
+            prev.filter(r => r.id !== newRow.id)
+          );
+        }
+
+        return newRow;
+      }
+      return row;
+    });
+
+    setBillRows(updated);
+  };
+
+  // ---------------- ALLOCATION CHANGE ----------------
+  const handleAllocationChange = (id, field, value) => {
+    setReceiptAllocationRows(prev =>
+      prev.map(row => {
+        if (row.id === id) {
+          const updatedRow = {
+            ...row,
+            [field]: value,
+          };
+
+          updatedRow.receiptAmt = Number(updatedRow.receiptAmt);
+          updatedRow.tds = Number(updatedRow.tds);
+          updatedRow.balance = updatedRow.billAmt - updatedRow.receiptAmt - updatedRow.tds;
+
+          return updatedRow;
+        }
+        return row;
+      })
+    );
+  };
+
+  // ---------------- CALCULATIONS ----------------
+  const totalAmount = receiptRows
+    .filter(r => r.selected)
+    .reduce((sum, r) => sum + Number(r.balance || 0), 0);
+
+  const totalReceiptAllocated = receiptAllocationRows.reduce(
+    (sum, row) => sum + Number(row.receiptAmt || 0),
+    0
   );
 
-  function handleSubmit() {
-    let isValid = true;
- console.log(queryParams)
-    // Billing validation
-    if (billing === "Select") {
-      setBillingError(true);
-      isValid = false;
-    } else {
-      setBillingError(false);
-    }
+  const remainingAmount = totalAmount - totalReceiptAllocated;
 
-    // Entry date validation
-    if (!entryDate) {
-      setErrorDate("Entry date is required");
-      isValid = false;
-    } else {
-      setErrorDate("");
-    }
-
-    // Form field validation
-    let newErrors = {
-      errorSo_no: '',
-      errorTds: '',
-      errorAmount: '',
-      errorReceiptType: ''
+  // ---------------- SUBMIT RECEIPT ENTRY ----------------
+  const handleReceiptEntrySubmit = () => {
+    const payload = {
+      user_id: userId,
+      Customer_Name: decodedData.customer,
+      Entry_Date: formData.date,
+      So_No: decodedData.so_no,
+      Tds: 0,
+      Amount: formData.amount,
+      Recipt_type: decodedData.Payment_Type,
     };
 
-    if (formData.receiptType?.includes("advance")) {
-      if (!formData.so_no || Number(formData.so_no) <= 0) {
-        newErrors.errorSo_no = "So no must be greater than 0";
-        isValid = false;
-      }
-      if (!formData.tds || Number(formData.tds) < 0) {
-        newErrors.errorTds = "TDS must be greater than or equal to 0";
-        isValid = false;
-      }
-    }
+    authAxios
+      .post("/BituRep/Api/Account/Recipt_Entry_insert", JSON.stringify(payload))
+      .then(res => {
+        if (res.data?.massage === "Data insert") {
+          loadReceipts();
+          setShowPopup(false);
+        }
+      })
+      .catch(err => console.error(err));
+  };
 
-    if (!formData.amount || Number(formData.amount) <= 0) {
-      newErrors.errorAmount = "Amount must be greater than 0";
-      isValid = false;
-    }
+  // ---------------- FINAL SUBMIT ----------------
+  const handleFinalSubmit = () => {
+    //debugger
+    const payload = {
+      receipts: receiptRows
+        .filter(r => r.selected)
+        .map(r => ({          
+          reciptNO: r.receipt_No,        
+          balance: Number(r.balance)
+        })),
 
-    if (!formData.receiptType || formData.receiptType === "Select") {
-      newErrors.errorReceiptType = "Receipt Type is required";
-      isValid = false;
-    }
+      bills: receiptAllocationRows.map(b => ({
+        Bill_Id: b.id,
+        Bill_NO: b.billNo,
+        Bill_Rec_Amt: Number(b.receiptAmt),
+        Bill_Tds: b.tds                
+      }))
+    };
 
-    setFormData((prev) => ({ ...prev, ...newErrors }));
+    authAxios
+      .post("BituRep/Api/Account/Recipt_Submit", JSON.stringify(payload))
+      .then(() => alert("Data submitted successfully"))
+      .catch(err => console.log(err));
+  };
 
-    if (isValid) {
-      const payload = {
-        user_id: userId,
-        Customer_Name: billing,
-        Entry_Date: dayjs(entryDate).format("YYYY-MM-DD"),
-        So_No: formData.so_no ,
-        Tds: formData.receiptType.toLowerCase().includes("advance") ? formData.tds : "",
-        Amount: formData.amount,
-        Recipt_type: formData.receiptType
-      };
-
-      authAxios.post("/BituRep/Api/Account/Recipt_Entry_insert", JSON.stringify(payload))
-        .then((res) => {
-          if (res.data.massage === "Data insert") {
-            showSuccess("Records Inserted");
-            FetchDataAgain();
-            ResetHandler();
-          }
-        })
-        .catch((err) => showError(err?.message || "Insert error"));
-
-      console.log("Submitting form with payload:", payload);
-    }
-  }
-
-  function ResetHandler() {
-    setFormData({
-      so_no: 0,
-      tds: 0,
-      amount: 0,
-      errorSo_no: '',
-      errorTds: '',
-      errorAmount: '',
-      receiptType: '',
-      errorReceiptType: ''
-    });
-    setBilling("Select");
-    setBillingError(false);
-    setEntryDate(null);
-    setErrorDate(null);
-  }
-useEffect(()=>{
-setFormData((prev) => ({
-                ...prev,
-                receiptType: receipt?.payment_Type,
-                tds: 0,
-}));
-
-},[]);
-  async function handleDeleteClick(row) {
-    const data = { user_id: userId, Table_Id: row.id };
-    try {
-      const res = await authAxios.post("/BituRep/Api/Account/Recipt_Entry_Delete", data);
-      showSuccess(res.data.massage);
-      FetchDataAgain();
-    } catch (err) {
-      FetchDataAgain();
-      showError(err?.message || "Delete error");
-    }
-  }
+  // ---------------- STYLES ----------------
+  const tableStyle = { width: "100%", borderCollapse: "collapse" };
+  const cellStyle = { border: "1px solid black", padding: "8px" };
 
   return (
-    <div>
-      <CustomPageHeader pageHeaderText="Receipt Form" />
-      <Paper sx={{ p: 2 }} elevation={0}>
-        <Box sx={{ pt: 1, display: 'flex', gap: 2 }}>
-          <CustomerDropDownTwo
-            errorsCustomerName={billingError}
-            selectedCustomer={billing}
-            setSelectedCustomer={setBilling}
-            setErrorsCustomerName={setBillingError}
-            variant="standard"
-          />
-          <FormControl sx={{ pt: 2 }} fullWidth size="small" error={!!errorDate}>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker
-              disabled={true}
-                label="Entry Date"
-                value={entryDate ? dayjs(entryDate) : null}
-                onChange={(newValue) => {
-                  const isError = !newValue;
-                  setErrorDate(isError ? "Entry date is required" : "");
-                  setEntryDate(newValue);
-                }}
-                slotProps={{
-                  textField: {
-                    size: "small",
-                    variant: "outlined",
-                    fullWidth: true,
-                    error: !!errorDate,
-                    helperText: errorDate
-                  }
-                }}
-              />
-            </LocalizationProvider>
-          </FormControl>
-        </Box>
+    <div style={{ display: "flex", justifyContent: "center", padding: "20px" }}>
+      <div style={{ width: "1300px" }}>
+        <h2 style={{ textAlign: "center" }}>Receipt Form</h2>
 
-        <Box sx={{ pt: 2, display: 'flex', gap: 4 }}>
-          <TextField
-            label="SO No"
-            name="so_no"
-            type="number"
-            disabled={formData.receiptType?.toLowerCase() === "advance"}
-            fullWidth
-            variant="standard"
-            size="small"
-            value={formData.so_no}
-            onChange={(e) => {
-              const value = e.target.value;
-              setFormData((prev) => ({
-                ...prev,
-                so_no: value,
-                errorSo_no: !value || Number(value) < 0 ? "SO No must be >= 0" : ''
-              }));
-            }}
-            error={!!formData.errorSo_no}
-            helperText={formData.errorSo_no}
-          />
+        {/* TOP AREA */}
+        <div style={{ display: "flex", gap: "20px", marginBottom: "20px" }}>
+    
+          <div>
+            <label>SO No</label>
+            <input type="text" value={decodedData.so_no} readOnly />
+          </div>
 
-         {/** <TextField
-            label="TDS"
-            name="tds"
-            type="number"
-            disabled={formData.receiptType?.toLowerCase() === "advance"}
-            fullWidth
-            variant="standard"
-            size="small"
-            value={formData.tds}
-            onChange={(e) => {
-              const value = e.target.value;
-              setFormData((prev) => ({
-                ...prev,
-                tds: value,
-                errorTds: value === "" || Number(value) < 0 ? "TDS must be >= 0" : ''
-              }));
-            }}
-            error={!!formData.errorTds}
-            helperText={formData.errorTds}
-          /> */}
-        </Box>
+          <div>
+            <label>Customer Name</label>
+            <input type="text" value={decodedData.customer} readOnly />
+          </div>
 
-        <Box sx={{ pt: 2, display: 'flex', gap: 4 }}>
-          <TextField
-            label="Amount"
-            name="amount"
-            type="number"
-            fullWidth
-            variant="standard"
-            margin="dense"
-            value={formData.amount}
-            onChange={(e) => {
-              const value = e.target.value;
-              setFormData((prev) => ({
-                ...prev,
-                amount: value,
-                errorAmount: !value || Number(value) <= 0 ? "Amount must be > 0" : ''
-              }));
-            }}
-            error={!!formData.errorAmount}
-            helperText={formData.errorAmount}
-          />
-         {receipt ==null   && (
-          <ReceiptTypeDropdown
-            value={formData.receiptType}
-            onChange={(e) => {
-              const value = e.target.value;
-              setFormData((prev) => ({
-                ...prev,
-                receiptType: value,
-                errorReceiptType: !value || value === "Select" ? "Please select receipt type" : ''
-              }));
-            }}
-            error={!!formData.errorReceiptType}
-            helperText={formData.errorReceiptType}
-          />)}
-        </Box>
+          <button
+            onClick={() => setShowPopup(true)}
+            style={{ height: "35px", alignSelf: "end", backgroundColor: "red", color: "white" }}
+          >
+            Add Receipt
+          </button>
+        </div>
 
-        <Box sx={{ display: "flex", justifyContent: "end", gap: 2, pt: 2 }}>
-          <Button variant="contained" onClick={ResetHandler} color="error">Cancel</Button>
-          <Button variant="contained" color="success" onClick={handleSubmit}>Submit</Button>
-        </Box>
-
-        <TableContainer>
-          <Table>
-            <TableHead>
-              <TableRow>
-                {tableHeaders.map((header, index) => (
-                  <TableCell
-                    key={index}
-                    align="left"
-                    sx={{ fontSize: 14, fontWeight: 600, whiteSpace: "nowrap" }}
-                  >
-                    {header}
-                  </TableCell>
+        {/* TABLES SIDE-BY-SIDE */}
+        <div style={{ display: "flex", gap: "20px" }}>
+          {/* RECEIPT TABLE */}
+          <div style={{ width: "50%" }}>
+            <h3>Outstanding Receipt Detail</h3>
+            <table style={tableStyle}>
+              <thead>
+                <tr>
+                  <th style={cellStyle}>Receipt No</th>
+                  <th style={cellStyle}>Date</th>
+                  <th style={cellStyle}>Amount</th>
+                  <th style={cellStyle}>Balance</th>
+                  <th style={cellStyle}>Select</th>
+                </tr>
+              </thead>
+              <tbody>
+                {receiptRows.map(row => (
+                  <tr key={row.receipt_No}>
+                    <td style={cellStyle}>{row.receipt_No}</td>
+                    <td style={cellStyle}>{row.date}</td>
+                    <td style={cellStyle}>{row.amount}</td>
+                    <td style={cellStyle}>{row.balance}</td>
+                    <td style={cellStyle}>
+                      <input
+                        type="checkbox"
+                        checked={row.selected || false}
+                        onChange={() => handleReceiptCheckboxChange(row.receipt_No)}
+                      />
+                    </td>
+                  </tr>
                 ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {paginatedData.map((row) => (
-                <TableRow
-                  key={row.id}
-                  sx={{
-                    '&:hover': { backgroundColor: 'grey.200' },
-                    '&:last-child td, &:last-child th': { border: 0 }
-                  }}
-                >
-                  <TableCell align="left">{row?.id}</TableCell>
-                  <TableCell align="left">{row?.customer_Name}</TableCell>
-                  <TableCell align="left">{row?.payment_Type}</TableCell>
-                  <TableCell align="left">{formatDateToUS(row?.date)}</TableCell>
-                  <TableCell align="left">{row?.so_No}</TableCell>
-                  <TableCell align="left">{row?.tds}</TableCell>
-                  <TableCell align="left">{row?.amount}</TableCell>
-                  <TableCell align="left">
-                    <IconButton aria-label='Delete' onClick={() => handleDeleteClick(row)}>
-                      <DeleteIcon color='error' />
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
+              </tbody>
+            </table>
+          </div>
+
+          {/* BILL TABLE */}
+          <div style={{ width: "50%" }}>
+            <h3>Bill Detail</h3>
+            <table style={tableStyle}>
+              <thead>
+                <tr>
+                  <th style={cellStyle}>ID</th>
+                  <th style={cellStyle}>Date</th>
+                  <th style={cellStyle}>Vehicle</th>
+                  <th style={cellStyle}>Qty</th>
+                  <th style={cellStyle}>Amt</th>
+                  <th style={cellStyle}>Balance</th>
+                  <th style={cellStyle}>Select</th>
+                </tr>
+              </thead>
+              <tbody>
+                {billRows.map(row => (
+                  <tr key={row.id}>
+                    <td style={cellStyle}>{row.id}</td>
+                    <td style={cellStyle}>{formatDateToUS(row.entry_Date)}</td>
+                    <td style={cellStyle}>{row.vehicle_Name}</td>
+                    <td style={cellStyle}>{row.a_Qty}</td>
+                    <td style={cellStyle}>{row.b_Amount}</td>
+                    <td style={cellStyle}>{row.b_Bal_Amount}</td>
+                    <td style={cellStyle}>
+                      <input
+                        type="checkbox"
+                        checked={row.selected || false}
+                        onChange={() => handleBillCheckboxChange(row.id)}
+                      />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* TOTAL AMOUNT */}
+        <div style={{ marginTop: "20px" }}>
+          <label><b>Total Amount: </b></label>
+          <input value={totalAmount} readOnly style={{ width: "200px" }} />
+        </div>
+
+        {/* ALLOCATION TABLE */}
+        <div style={{ marginTop: "20px" }}>
+          <h3>Receipt Allocation</h3>
+          <table style={tableStyle}>
+            <thead>
+              <tr>
+                <th style={cellStyle}>Date</th>
+                <th style={cellStyle}>Vehicle</th>
+                <th style={cellStyle}>Qty</th>
+                <th style={cellStyle}>Bill Amt</th>
+                <th style={cellStyle}>Balance</th>
+                <th style={cellStyle}>Bill No</th>
+                <th style={cellStyle}>Receipt Amt</th>
+                <th style={cellStyle}>TDS</th>
+                <th style={cellStyle}>Net Bal</th>
+              </tr>
+            </thead>
+            <tbody>
+              {receiptAllocationRows.map(row => (
+                <tr key={row.id}>
+                  <td style={cellStyle}>{row.date}</td>
+                  <td style={cellStyle}>{row.vehicle}</td>
+                  <td style={cellStyle}>{row.qty}</td>
+                  <td style={cellStyle}>{row.billAmt}</td>
+                  <td style={cellStyle}>{row.billBalAmt}</td>
+
+                  <td style={cellStyle}>
+                    <input
+                      type="text"
+                      value={row.billNo}
+                      onChange={(e) => handleAllocationChange(row.id, "billNo", e.target.value)}
+                      style={{ width: "100%" }}
+                    />
+                  </td>
+
+                  <td style={cellStyle}>
+                    <input
+                      type="number"
+                      value={row.receiptAmt}
+                      onChange={(e) => handleAllocationChange(row.id, "receiptAmt", e.target.value)}
+                      style={{ width: "100%" }}
+                    />
+                  </td>
+
+                  <td style={cellStyle}>
+                    <input
+                      type="number"
+                      value={row.tds}
+                      onChange={(e) => handleAllocationChange(row.id, "tds", e.target.value)}
+                      style={{ width: "100%" }}
+                    />
+                  </td>
+
+                  <td style={cellStyle}>{row.balance}</td>
+                </tr>
               ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+            </tbody>
+          </table>
+        </div>
 
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          count={receiptData.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
-      </Paper>
+        {/* REMAINING AMOUNT */}
+        <div style={{ marginTop: "20px" }}>
+          <label><b>Remaining Amount: </b></label>
+          <input value={remainingAmount} readOnly style={{ width: "200px" }} />
+        </div>
 
-      {custAlert && (
-        <CustomeAlerts
-          type={custAlert.type}
-          message={custAlert.message}
-          onClose={handleCloseAlert}
-        />
-      )}
+        {/* SUBMIT BUTTON */}
+        <div style={{ marginTop: "20px", display: "flex", gap: "15px" }}>
+          <button
+            onClick={handleFinalSubmit}
+            style={{ padding: "8px 20px", backgroundColor: "green", color: "white" }}
+          >
+            Submit
+          </button>
+
+          <button
+            onClick={() => {
+              setReceiptRows([]);
+              setBillRows([]);
+              setReceiptAllocationRows([]);
+            }}
+            style={{ padding: "8px 20px", backgroundColor: "gray", color: "white" }}
+          >
+            Cancel
+          </button>
+        </div>
+
+        {/* POPUP */}
+        {showPopup && (
+          <div style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgba(0,0,0,0.3)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center"
+          }}>
+            <div style={{ background: "white", padding: "20px", borderRadius: "8px", width: "350px" }}>
+              <h3>Add Receipt</h3>
+
+              <label>Date</label>
+              <input
+                type="date"
+                style={{ width: "100%", marginBottom: "10px" }}
+                value={formData.date}
+                onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+              />
+
+              <label>Amount</label>
+              <input
+                type="number"
+                style={{ width: "100%", marginBottom: "10px" }}
+                value={formData.amount}
+                onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
+              />
+
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <button onClick={() => setShowPopup(false)}>Close</button>
+                <button onClick={handleReceiptEntrySubmit}>Submit</button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
-}
+};
+
+export default ReceiptForm;

@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+
+
+ import React, { useState } from "react";
 import {
   Button,
   Collapse,
@@ -19,26 +21,79 @@ export default function AccountTableRow({
   selectedRows,
   setSelectedRows,
   userId,
-  openRow,       // 👈 from parent
-  setOpenRow,    // 👈 from parent
+  openRow,
+  setOpenRow,
 }) {
   const [innerData, setInnerData] = useState([]);
+  const [billNumber, setBillNumber] = useState("");
+  const [updating, setUpdating] = useState(false);
 
+  // -------------------------------------------------------------
+  // 🔵 TOGGLE + LOAD INNER ROW DETAILS
+  // -------------------------------------------------------------
   const handleToggle = async () => {
     if (openRow === row.so_No) {
-      setOpenRow(null); // close
-    } else {
-      setOpenRow(row.so_No); // open
-      try {
-        const res = await authAxios.post("BituRep/Api/Account/Recipt_Detail_View", {
-          user_id: userId,
-          So_No: row?.so_No,
-        });
-        setInnerData(res.data);
-      } catch (err) {
-        console.log(err);
-      }
+      setOpenRow(null);
+      return;
     }
+
+    setOpenRow(row.so_No);
+
+    try {
+      const res = await authAxios.post("BituRep/Api/Account/Recipt_Detail_View", {
+        user_id: userId,
+        So_No: row.so_No,
+      });
+
+      // Make sure each row has table_id
+      const rowsWithId = res.data.map((r) => ({ ...r, table_id: r.id }));
+      setInnerData(rowsWithId);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  // -------------------------------------------------------------
+  // 🔵 UPDATE BILL FUNCTION
+  // -------------------------------------------------------------
+  const handleUpdateBill = async (e) => {
+    
+// debugger;
+    const entries = Object.entries(billNumber);
+// entries = [ ["101241", "77"] ]
+const [id, value] = entries[0];
+console.log(row);
+    if (!value) {
+      alert("Enter Bill Number");
+      return;
+    }
+    // if (selectedRows.length === 0) {
+    //   alert("Please select at least one row!");
+    //   return;
+    // }
+
+    setUpdating(true);
+
+    try {
+      // for (const r of selectedRows) {
+        await authAxios.post(
+          "BituRep/Api/Account/Account_bill_Update",
+          JSON.stringify({
+            user_id: userId,
+            Table_id:id,
+            Bill: value,
+          })
+        );
+      // }
+
+      alert(`Bill ${value} updated successfully`);
+      setSelectedRows([]);
+    } catch (err) {
+      console.log(err);
+      alert("Error updating bill");
+    }
+
+    setUpdating(false);
   };
 
   const totalAmount = selectedRows.reduce(
@@ -46,44 +101,54 @@ export default function AccountTableRow({
     0
   );
 
+  // -------------------------------------------------------------
+  // RENDER MAIN ROW + COLLAPSIBLE INNER TABLE
+  // -------------------------------------------------------------
   return (
     <>
-      <TableRow
-        sx={{
-          "&:hover": { backgroundColor: "grey.200" },
-          "&:last-child td, &:last-child th": { border: 0 },
-        }}
-      >
-        {/* Advance Payments */}
+      <TableRow sx={{ "&:hover": { backgroundColor: "grey.200" } }}>
+        <TableCell>
+          {new Date(row?.date).toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "short",
+            year: "2-digit",
+          })}
+        </TableCell>
+
+        <TableCell>{row.remark}</TableCell>
+        <TableCell>{row.so_No}</TableCell>
+        <TableCell>{row.customer_Name}</TableCell>
+        <TableCell>{row.port_Name}</TableCell>
+        <TableCell>{row.company_Name}</TableCell>
+
         {tabs === 0 && (
           <>
-            <TableCell>{row?.so_No}</TableCell>
-            <TableCell>{row?.customer_Name}</TableCell>
-            <TableCell>{row?.port_Name}</TableCell>
-            <TableCell>{row?.company_Name}</TableCell>
-            <TableCell>{row?.adv_Value}</TableCell>
-            <TableCell>{row?.rec}</TableCell>
-            <TableCell>{row?.bal_Adv}</TableCell>
+            <TableCell>{row.adv_Value}</TableCell>
+            <TableCell>{row.rec}</TableCell>
+            <TableCell>{row.bal_Adv}</TableCell>
             <TableCell>
               <Button
                 size="small"
-                color="primary"
-                onClick={() => handleTransferCredit(row, "Advance Payments", totalAmount)}
                 variant="contained"
+                onClick={() =>
+                  handleTransferCredit(row, "Advance Payments", totalAmount)
+                }
               >
-                Transfer to Credit
+                Transfer
               </Button>
             </TableCell>
             <TableCell>
               <Button
                 color="primary"
                 onClick={() => {
-                  let data = {
-                    so_no: row?.so_No,
-                    customer: row.customer_Name,
-                    Payment_Type: row?.payment_Type,
-                  };
-                  const query = new URLSearchParams({ data: JSON.stringify(data) }).toString();
+                  const query = new URLSearchParams({
+                    data: JSON.stringify({
+                      so_no: row.so_No,
+                      customer: row.customer_Name,
+                      Payment_Type: row.payment_Type,
+                    }),
+                  }).toString();
+
                   navigate(`/dashboard/Account/ReciptFrom?${query}`);
                 }}
               >
@@ -93,32 +158,28 @@ export default function AccountTableRow({
           </>
         )}
 
-        {/* Cash Payments */}
         {tabs === 1 && (
           <>
-            <TableCell>{row?.so_No}</TableCell>
-            <TableCell>{row?.customer_Name}</TableCell>
-            <TableCell>{row?.port_Name}</TableCell>
-            <TableCell>{row?.company_Name}</TableCell>
-            <TableCell>{row?.amount}</TableCell>
-            <TableCell>{row?.rec}</TableCell>
-            <TableCell>{row?.bal_Adv}</TableCell>
+            <TableCell>{row.amount}</TableCell>
+            <TableCell>{row.rec}</TableCell>
+            <TableCell>{row.bal_Adv}</TableCell>
             <TableCell>
               <Button
-                color="primary"
-                variant="contained"
                 size="small"
+                variant="contained"
                 disabled={!(openRow === row.so_No)}
-                onClick={() => handleTransferCredit(row, "Cash Payments", totalAmount)}
+                onClick={() =>
+                  handleTransferCredit(row, "Cash Payments", totalAmount)
+                }
               >
-                Transfer to Credit
+                Transfer
               </Button>
             </TableCell>
             <TableCell>
               <Button
-                onClick={handleToggle}
-                color={openRow === row.so_No ? "error" : "primary"}
                 variant="outlined"
+                color={openRow === row.so_No ? "error" : "primary"}
+                onClick={handleToggle}
               >
                 {openRow === row.so_No ? "Close" : "Open"}
               </Button>
@@ -126,14 +187,15 @@ export default function AccountTableRow({
             <TableCell>
               <Button
                 color="primary"
-                
                 onClick={() => {
-                  let data = {
-                    so_no: row?.so_No,
-                    customer: row?.customer_Name,
-                    Payment_Type: "Cash Payments",
-                  };
-                  const query = new URLSearchParams({ data: JSON.stringify(data) }).toString();
+                  const query = new URLSearchParams({
+                    data: JSON.stringify({
+                      so_no: row.so_No,
+                      customer: row.customer_Name,
+                      Payment_Type: "Cash Payments",
+                    }),
+                  }).toString();
+
                   navigate(`/dashboard/Account/ReciptFrom?${query}`);
                 }}
               >
@@ -143,23 +205,18 @@ export default function AccountTableRow({
           </>
         )}
 
-        {/* Credit Payments */}
         {tabs === 2 && (
           <>
-            <TableCell>{row?.so_No}</TableCell>
-            <TableCell>{row?.customer_Name}</TableCell>
-            <TableCell>{row?.port_Name}</TableCell>
-            <TableCell>{row?.company_Name}</TableCell>
-            <TableCell>{row?.amount}</TableCell>
-            <TableCell>{row?.rec}</TableCell>
-            <TableCell>{row?.bal_Adv}</TableCell>
-            <TableCell>{row?.c_Days}</TableCell>
-            <TableCell>{row?.payment_Type}</TableCell>
+            <TableCell>{row.amount}</TableCell>
+            <TableCell>{row.rec}</TableCell>
+            <TableCell>{row.bal_Adv}</TableCell>
+            <TableCell>{row.c_Days}</TableCell>
+            <TableCell>{row.payment_Type}</TableCell>
             <TableCell>
               <Button
-                onClick={handleToggle}
-                color={openRow === row.so_No ? "error" : "primary"}
                 variant="outlined"
+                color={openRow === row.so_No ? "error" : "primary"}
+                onClick={handleToggle}
               >
                 {openRow === row.so_No ? "Close" : "Open"}
               </Button>
@@ -168,12 +225,14 @@ export default function AccountTableRow({
               <Button
                 color="primary"
                 onClick={() => {
-                  let data = {
-                    so_no: row?.so_No,
-                    customer: row.customer_Name,
-                    Payment_Type: row?.payment_Type,
-                  };
-                  const query = new URLSearchParams({ data: JSON.stringify(data) }).toString();
+                  const query = new URLSearchParams({
+                    data: JSON.stringify({
+                      so_no: row.so_No,
+                      customer: row.customer_Name,
+                      Payment_Type: row.payment_Type,
+                    }),
+                  }).toString();
+
                   navigate(`/dashboard/Account/ReciptFrom?${query}`);
                 }}
               >
@@ -184,23 +243,38 @@ export default function AccountTableRow({
         )}
       </TableRow>
 
-      {/* Collapsible inner table */}
-      {(tabs === 1 && openRow || tabs === 2 && openRow) && (
+      {/* INNER TABLE COLLAPSE */}
+      {openRow === row.so_No && (tabs === 1 || tabs === 2) && (
         <TableRow>
-          <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={16}>
-            <Collapse in={openRow === row.so_No} timeout="auto" unmountOnExit>
-              <List component="div" disablePadding>
-                <TableContainer
-                  elevation={0}
-                  component={Paper}
-                  style={{ overflow: "auto", minWidth: 800 }}
-                >
+          <TableCell colSpan={16} sx={{ padding: 0 }}>
+            <Collapse in timeout="auto" unmountOnExit>
+              <List disablePadding>
+                <TableContainer component={Paper} elevation={0}>
                   <ReceiptInnerTable
                     tabs={tabs}
                     innerData={innerData}
                     selectedRows={selectedRows}
                     setSelectedRows={setSelectedRows}
+                    billNumber={billNumber}
+                    setBillNumber={setBillNumber}
+                    updating={updating}
+                    onUpdateBill={handleUpdateBill}
                   />
+
+                  {/* BILL INPUT */}
+                  {/* <input
+                    type="text"
+                    placeholder="Enter Bill Number"
+                    value={billNumber}
+                    onChange={(e) => setBillNumber(e.target.value)}
+                    style={{
+                      marginTop: 10,
+                      padding: 6,
+                      width: 200,
+                      borderRadius: 4,
+                      border: "1px solid #ccc",
+                    }}
+                  /> */}
                 </TableContainer>
               </List>
             </Collapse>

@@ -16,15 +16,15 @@ export default function CloserForm() {
         'Actual Out Qty',
         'Product Out Qty',
         'bal Qty',
-        'R PMT',
-        'P Count',
-        'A Count',
-        'R GST PMT',
+        //'R PMT',
+        //'P Count',
+        //'A Count',
+        //'R GST PMT',
         'Validety Date',
-        'Port Name',
-        "Product Name",
-        'Closer Type',
-        'Closer Qty',
+        //'Port Name',
+        //"Product Name",
+        //'Closer Type',
+        //'Closer Qty',
         "Update"
       ]);
       const [sodata, setSodata] = useState([]);
@@ -153,16 +153,7 @@ const handleSubmit = () => {
                                <TableCell>{row?.a_Out_Qty}</TableCell>
                                <TableCell>{row?.p_Out_Qty}</TableCell>
                                <TableCell>{row?.bal_Qty}</TableCell>
-                              <TableCell>{row?.r_PMT}</TableCell>
-                               <TableCell>{row?.p_Count}</TableCell>
-                               <TableCell>{row?.a_Count}</TableCell>
-                               <TableCell>{row?.r_GST_PMT}</TableCell>
                                <TableCell>{row?.v_Date}</TableCell>
-                               <TableCell>{row?.port}</TableCell>
-                               <TableCell>{row?.product}</TableCell>
-                               <TableCell>{row?.c_Type}</TableCell>
-                             
-                               <TableCell>{row?.c_QTY}</TableCell>
                                <TableCell><Button   variant="outlined" size="small" onClick={() => handleUpdateClick(row)}>
                                 Update
                                 </Button></TableCell>

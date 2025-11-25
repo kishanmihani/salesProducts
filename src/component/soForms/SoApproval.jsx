@@ -3,6 +3,7 @@ import CustomPageHeader from "../commonComponent/CustomPageHeader/CustomPageHead
 import { SoApprovalapi, soVhicledetails } from "../Config/Api/Api";
 import { authAxios } from "../utils/authAxios";
 import formatDateToUS from "../utils/DateFormate";
+
 import {
   Box,
   Button,
@@ -20,27 +21,35 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+
 import { visuallyHidden } from "@mui/utils";
 import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOutlined";
 import { useNavigate } from "react-router";
 import { useDispatch } from "react-redux";
 import { setObject } from "../features/sodetails";
 import { toast, ToastContainer } from "react-toastify";
-import { parseISO, isWithinInterval, parse } from "date-fns";
+
+import { parse, isWithinInterval } from "date-fns";
 
 export default function SoApproval() {
   const [openRow, setOpenRow] = useState(null);
   const [sodata, setSodata] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
+
+  const [searchText, setSearchText] = useState("");
+
   const [userId] = useState(JSON.parse(sessionStorage.getItem("userInfo"))?.id);
   const [dataCheck, setDataCheck] = useState(true);
-  const [orderDirection, setOrderDirection] = useState("asc");
+
+  const [orderDirection, setOrderDirection] = useState("desc");
   const [orderBy, setOrderBy] = useState("sO_Date");
+
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
+
   const [loading, setLoading] = useState(false);
 
-  // 🔹 Fetch data from API
+  // 🔹 Fetch SO Data
   useEffect(() => {
     if (dataCheck) {
       authAxios
@@ -50,53 +59,79 @@ export default function SoApproval() {
           setFilteredData(res.data);
         })
         .catch((err) => console.log(err?.message));
+
       setDataCheck(false);
     }
   }, [userId, dataCheck]);
 
-  // 🔹 Handle sorting
+  // =============================================================
+  // 🔍 LIVE SEARCH (SO NO + CUSTOMER NAME)
+  // =============================================================
+  useEffect(() => {
+    if (!searchText.trim()) {
+      setFilteredData(sodata);
+      return;
+    }
+
+    const result = sodata.filter(
+      (row) =>
+        String(row?.sO_N0).toLowerCase().includes(searchText.toLowerCase()) ||
+        String(row?.c_Name).toLowerCase().includes(searchText.toLowerCase())
+    );
+
+    setFilteredData(result);
+  }, [searchText, sodata]);
+
+  // =============================================================
+  // 🔹 SORTING LOGIC
+  // =============================================================
   const handleSortRequest = (property) => {
     const isAsc = orderBy === property && orderDirection === "asc";
     setOrderDirection(isAsc ? "desc" : "asc");
     setOrderBy(property);
   };
 
-  // 🔹 Sorting logic
   const sortedData = [...filteredData].sort((a, b) => {
     const valA = a[orderBy];
     const valB = b[orderBy];
+
     if (orderBy.toLowerCase().includes("date")) {
-      const dateA = new Date(valA);
-      const dateB = new Date(valB);
-      return orderDirection === "asc" ? dateA - dateB : dateB - dateA;
+      return orderDirection === "asc"
+        ? new Date(valA) - new Date(valB)
+        : new Date(valB) - new Date(valA);
     }
+
+    // numeric sort
     if (!isNaN(valA) && !isNaN(valB)) {
       return orderDirection === "asc" ? valA - valB : valB - valA;
     }
+
+    // string sort
     return orderDirection === "asc"
       ? String(valA).localeCompare(String(valB))
       : String(valB).localeCompare(String(valA));
   });
 
-  // 🔹 Date Filter Logic
+  // =============================================================
+  // 📅 DATE FILTER
+  // =============================================================
   const handleFilter = () => {
     if (!fromDate || !toDate) {
       toast.warning("Please select both From and To dates");
       return;
     }
+
     setLoading(true);
+
     setTimeout(() => {
       const filtered = sodata.filter((item) => {
-  // Parse your item date correctly
-  const itemDate = parse(item.sO_Date, "MM/dd/yyyy hh:mm:ss a", new Date());
+        const itemDate = parse(item.sO_Date, "MM/dd/yyyy hh:mm:ss a", new Date());
+        const start = parse(fromDate, "yyyy-MM-dd", new Date());
+        const end = parse(toDate, "yyyy-MM-dd", new Date());
 
-  // Parse from/to dates (assuming they're in 'yyyy-MM-dd' format from input type="date")
-  const startDate = parse(fromDate, "yyyy-MM-dd", new Date());
-  const endDate = parse(toDate, "yyyy-MM-dd", new Date());
+        return isWithinInterval(itemDate, { start, end });
+      });
 
-  return isWithinInterval(itemDate, { start: startDate, end: endDate });
-});
-      console.log(filtered);
       setFilteredData(filtered);
       setLoading(false);
     }, 600);
@@ -109,13 +144,31 @@ export default function SoApproval() {
   };
 
   return (
-    <React.Fragment>
+    <>
       <CustomPageHeader pageHeaderText="So Approval Form" />
-      <div style={{ width: "96%", margin: "auto", marginBlock: "5px" }}>
+
+      <div style={{ width: "96%", margin: "auto" }}>
+        {/* ---------------------------------------------------------
+            🔎 LIVE SEARCH INPUT
+        --------------------------------------------------------- */}
+        <Box mb={2} mt={1}>
+          <TextField
+            label="Search by SO No or Customer Name"
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+            fullWidth
+            size="small"
+          />
+        </Box>
+
+        {/* ---------------------------------------------------------
+            📅 DATE FILTER UI
+        --------------------------------------------------------- */}
         <Paper elevation={0} sx={{ p: 2, mb: 1 }}>
           <Typography fontWeight={600} mb={1}>
             Date Filter:
           </Typography>
+
           <Box display="flex" alignItems="center" gap={2}>
             <TextField
               type="date"
@@ -125,6 +178,7 @@ export default function SoApproval() {
               value={fromDate}
               onChange={(e) => setFromDate(e.target.value)}
             />
+
             <TextField
               type="date"
               label="To Date"
@@ -133,30 +187,28 @@ export default function SoApproval() {
               value={toDate}
               onChange={(e) => setToDate(e.target.value)}
             />
+
             <Button
               variant="contained"
-              color="primary"
               disabled={loading}
               onClick={handleFilter}
             >
-              {loading ? <CircularProgress size={20} color="inherit" /> : "Filter"}
+              {loading ? <CircularProgress size={20} /> : "Filter"}
             </Button>
-            <Button variant="outlined" color="secondary" onClick={clearFilter}>
+
+            <Button variant="outlined" onClick={clearFilter}>
               Clear
             </Button>
           </Box>
         </Paper>
 
+        {/* ---------------------------------------------------------
+            MAIN TABLE
+        --------------------------------------------------------- */}
         <Paper elevation={0}>
           <TableContainer>
             <Table>
-              {/* 🔹 Table Header */}
-              <TableHead
-                sx={{
-                  fontWeight: 500,
-                  bgcolor: "rgba(25, 118, 210, 0.08)",
-                }}
-              >
+              <TableHead sx={{ bgcolor: "rgba(25,118,210,0.08)" }}>
                 <TableRow>
                   {[
                     { label: "So Date", key: "sO_Date" },
@@ -173,11 +225,7 @@ export default function SoApproval() {
                     { label: "Add Vehicle", key: "" },
                     { label: "Actions", key: "" },
                   ].map((col) => (
-                    <TableCell
-                      key={col.key || col.label}
-                      align="left"
-                      sx={{ fontSize: 12, whiteSpace: "nowrap" }}
-                    >
+                    <TableCell key={col.key || col.label}>
                       {col.key ? (
                         <TableSortLabel
                           active={orderBy === col.key}
@@ -201,12 +249,11 @@ export default function SoApproval() {
                 </TableRow>
               </TableHead>
 
-              {/* 🔹 Table Body */}
               <TableBody>
-                {sortedData?.length > 0 ? (
-                  sortedData.map((data, index) => (
+                {sortedData.length ? (
+                  sortedData.map((data) => (
                     <SodataRow
-                      key={index}
+                      key={data.sO_N0}
                       data={data}
                       isOpen={openRow === data.sO_N0}
                       setOpenRow={setOpenRow}
@@ -215,11 +262,7 @@ export default function SoApproval() {
                 ) : (
                   <TableRow>
                     <TableCell colSpan={13} align="center">
-                      {loading ? (
-                        <CircularProgress />
-                      ) : (
-                        "No records found for selected date range"
-                      )}
+                      {loading ? <CircularProgress /> : "No records found"}
                     </TableCell>
                   </TableRow>
                 )}
@@ -228,42 +271,33 @@ export default function SoApproval() {
           </TableContainer>
         </Paper>
       </div>
+
       <ToastContainer />
-    </React.Fragment>
+    </>
   );
 }
 
-// ============================================================
-// 🔹 Child Component (SodataRow)
-// ============================================================
+/* ============================================================
+   CHILD COMPONENT: ROW + COLLAPSE
+============================================================ */
 function SodataRow({ data, isOpen, setOpenRow }) {
-  const [vehicle_head] = useState([
-    "Vehicle Name",
-    "Planned Qty",
-    "Actual Qty",
-    "BOE No",
-    "Transporter Name",
-    "Tank Name",
-    "Warehouse Name",
-    "Port Name",
-    "Vessel Name",
-    "Vessel No",
-    "Status",
-    "Remark",
-  ]);
   const [innerData, setInnerData] = useState([]);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
   const [userId] = useState(JSON.parse(sessionStorage.getItem("userInfo"))?.id);
 
   const AddVehicle = (row) => {
     const today = new Date();
     const vDate = new Date(row?.v_Date);
 
+    today.setHours(0, 0, 0, 0);
+    vDate.setHours(0, 0, 0, 0);
+
     if (row?.bal_Qty <= 0) {
-      toast.info("⚠️ Balance quantity is Negative");
+      toast.info("⚠ Balance quantity is Negative");
     } else if (vDate < today) {
-      toast.info(`⚠️ Validity date expired on: ${formatDateToUS(row?.v_Date)}`);
+      toast.info(`⚠ Validity expired on: ${formatDateToUS(row?.v_Date)}`);
     } else {
       dispatch(setObject(row));
       navigate(`/dashboard/Logistic/logistic_Request_form`);
@@ -273,32 +307,40 @@ function SodataRow({ data, isOpen, setOpenRow }) {
   const handleToggle = async () => {
     if (isOpen) {
       setOpenRow(null);
-    } else {
-      setOpenRow(data.sO_N0);
-      try {
-        const res = await authAxios.post(soVhicledetails, {
-          user_id: userId,
-          So_No: data?.sO_N0,
-        });
-        setInnerData(res.data);
-      } catch (err) {
-        console.log(err);
-      }
+      return;
+    }
+
+    setOpenRow(data.sO_N0);
+
+    try {
+      const res = await authAxios.post(soVhicledetails, {
+        user_id: userId,
+        So_No: data?.sO_N0,
+      });
+      setInnerData(res.data);
+    } catch (err) {
+      console.log(err);
     }
   };
 
-  const today = new Date();
-  const vDate = new Date(data?.v_Date);
-  const isExpired = vDate < today;
+  //const isExpired = new Date(data?.v_Date) < new Date();
+
+const today = new Date(); 
+const vDate = new Date(data?.v_Date);
+ today.setHours(0, 0, 0, 0);
+ vDate.setHours(0, 0, 0, 0); 
+const isExpired = vDate < today;
+
 
   return (
-    <React.Fragment>
+    <>
+      {/* ------- MAIN ROW ------- */}
       <TableRow
         sx={{
           "& > *": { borderBottom: "unset" },
-          backgroundColor: isExpired
-            ? "rgba(245, 143, 103, 0.1)" // expired redish
-            : "rgba(114, 227, 131, 0.1)", // valid greenish
+          bgcolor: isExpired
+            ? "rgba(245, 143, 103, 0.1)"
+            : "rgba(114, 227, 131, 0.1)",
         }}
       >
         <TableCell>
@@ -308,11 +350,13 @@ function SodataRow({ data, isOpen, setOpenRow }) {
         </TableCell>
 
         <TableCell>{data?.c_Name}</TableCell>
+
         <TableCell>
           {data?.v_Date
             ? new Date(data.v_Date).toLocaleDateString("en-GB")
             : ""}
         </TableCell>
+
         <TableCell>{data?.sO_N0}</TableCell>
         <TableCell>{data?.so_Qty}</TableCell>
         <TableCell>
@@ -327,19 +371,13 @@ function SodataRow({ data, isOpen, setOpenRow }) {
         <TableCell>
           <Button
             variant="outlined"
-            sx={{
-              p: 1,
-              width: 150,
-              fontSize: "12px",
-              borderRadius: 6,
-              textTransform: "capitalize",
-            }}
-            disabled={data?.v_flg === "0" ? false : true}
+            disabled={data?.v_flg !== "0"}
             color="success"
             onClick={() => AddVehicle(data)}
+            sx={{ p: 1, width: 150, fontSize: 12 }}
           >
             <AddCircleOutlineOutlinedIcon sx={{ mr: 1 }} />
-            Add Vehicle data
+            Add Vehicle Data
           </Button>
         </TableCell>
 
@@ -354,44 +392,51 @@ function SodataRow({ data, isOpen, setOpenRow }) {
         </TableCell>
       </TableRow>
 
-      {/* 🔹 Inner Table */}
+      {/* ------- COLLAPSE ROW ------- */}
       <TableRow>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={16}>
-          <Collapse in={isOpen} timeout="auto" unmountOnExit>
-            <List component="div" disablePadding>
-              <TableContainer component={Paper} sx={{ overflow: "auto" }}>
+        <TableCell colSpan={16} sx={{ p: 0 }}>
+          <Collapse in={isOpen} unmountOnExit>
+            <List disablePadding>
+              <TableContainer sx={{ maxHeight: 350 }}>
                 <Table size="small">
-                  <TableHead
-                    sx={{
-                      bgcolor: "rgba(240, 114, 223, 0.08)",
-                    }}
-                  >
+                  <TableHead sx={{ bgcolor: "rgba(240,114,223,0.08)" }}>
                     <TableRow>
-                      {vehicle_head.map((head, index) => (
-                        <TableCell
-                          key={index}
-                          sx={{ fontSize: 13, fontWeight: 600 }}
-                        >
-                          {head}
+                      {[
+                        "Vehicle Name",
+                        "Planned Qty",
+                        "Actual Qty",
+                        "BOE No",
+                        "Transporter",
+                        "Tank",
+                        "Warehouse",
+                        "Port",
+                        "Vessel Name",
+                        "Vessel No",
+                        "Status",
+                        "Remark",
+                      ].map((h) => (
+                        <TableCell key={h} sx={{ fontWeight: 600 }}>
+                          {h}
                         </TableCell>
                       ))}
                     </TableRow>
                   </TableHead>
+
                   <TableBody>
-                    {innerData?.map((row, idx) => (
-                      <TableRow key={idx}>
-                        <TableCell>{row?.vehicle_Name}</TableCell>
-                        <TableCell>{row?.p_Qty}</TableCell>
-                        <TableCell>{row?.a_Qty}</TableCell>
-                        <TableCell>{row?.bE_No}</TableCell>
-                        <TableCell>{row?.transporter_Name}</TableCell>
-                        <TableCell>{row?.tank_name}</TableCell>
-                        <TableCell>{row?.warehouse_name}</TableCell>
-                        <TableCell>{row?.port_Name}</TableCell>
-                        <TableCell>{row?.vessel_Name}</TableCell>
-                        <TableCell>{row?.vessel_No}</TableCell>
-                        <TableCell>{row?.status_name}</TableCell>
-                        <TableCell>{row?.remark}</TableCell>
+                    {innerData.map((row, i) => (
+                      <TableRow key={i}>
+                        <TableCell>{row.vehicle_Name}</TableCell>
+                        <TableCell>{row.p_Qty}</TableCell>
+                        <TableCell>{row.a_Qty}</TableCell>
+                        <TableCell>{row.bE_No}</TableCell>
+                        <TableCell>{row.transporter_Name}</TableCell>
+                        <TableCell>{row.tank_name}</TableCell>
+                        <TableCell>{row.warehouse_name}</TableCell>
+                        <TableCell>{row.port_Name}</TableCell>
+                        <TableCell>{row.vessel_Name}</TableCell>
+                        <TableCell>{row.vessel_No}</TableCell>
+                        <TableCell>{row.status_name}</TableCell>
+                        <TableCell>{row.remark}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -401,6 +446,6 @@ function SodataRow({ data, isOpen, setOpenRow }) {
           </Collapse>
         </TableCell>
       </TableRow>
-    </React.Fragment>
+    </>
   );
 }

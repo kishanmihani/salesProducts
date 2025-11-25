@@ -26,3 +26,4 @@ export const closerFormApi="/BituRep/Api/Account/Closer_Entry_insert";
 export const closerFormListApi="/BituRep/Api/Account/Status_Closer_List";
 export const AccountAdvance="BituRep/Api/Account/Account_Adv";
 export const AccountCreditApi="BituRep/Api/Account/Account_Cr";
+export const UnpaidRecipt="BituRep/Api/Account/Recipt_unpaid_Detail";
