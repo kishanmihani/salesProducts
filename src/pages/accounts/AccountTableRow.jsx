@@ -1,6 +1,4 @@
-
-
- import React, { useState } from "react";
+import React, { useState } from "react";
 import {
   Button,
   Collapse,
@@ -20,17 +18,34 @@ export default function AccountTableRow({
   handleTransferCredit,
   selectedRows,
   setSelectedRows,
-  userId,
   openRow,
   setOpenRow,
 }) {
   const [innerData, setInnerData] = useState([]);
-  const [billNumber, setBillNumber] = useState("");
-  const [updating, setUpdating] = useState(false);
+  const [billNumbers, setBillNumbers] = useState({});
+  const [updatingRows, setUpdatingRows] = useState({});
+  const [userId] = useState(JSON.parse(sessionStorage.getItem("userInfo"))?.id);
 
   // -------------------------------------------------------------
-  // 🔵 TOGGLE + LOAD INNER ROW DETAILS
+  // LOAD INNER TABLE CONTENTS
   // -------------------------------------------------------------
+  const loadInnerData = async () => {
+    try {
+      const res = await authAxios.post(
+        "BituRep/Api/Account/Recipt_Detail_View",
+        {
+          user_id: userId,
+          So_No: row.so_No,
+        }
+      );
+
+      const rowsWithId = res.data.map((r) => ({ ...r, table_id: r.id }));
+      setInnerData(rowsWithId);
+    } catch (err) {
+      console.log("INNER LOAD ERROR:", err);
+    }
+  };
+
   const handleToggle = async () => {
     if (openRow === row.so_No) {
       setOpenRow(null);
@@ -38,62 +53,40 @@ export default function AccountTableRow({
     }
 
     setOpenRow(row.so_No);
-
-    try {
-      const res = await authAxios.post("BituRep/Api/Account/Recipt_Detail_View", {
-        user_id: userId,
-        So_No: row.so_No,
-      });
-
-      // Make sure each row has table_id
-      const rowsWithId = res.data.map((r) => ({ ...r, table_id: r.id }));
-      setInnerData(rowsWithId);
-    } catch (err) {
-      console.log(err);
-    }
+    await loadInnerData();
   };
 
   // -------------------------------------------------------------
-  // 🔵 UPDATE BILL FUNCTION
+  // UPDATE BILL + REFRESH TABLE
   // -------------------------------------------------------------
-  const handleUpdateBill = async (e) => {
-    
-// debugger;
-    const entries = Object.entries(billNumber);
-// entries = [ ["101241", "77"] ]
-const [id, value] = entries[0];
-console.log(row);
-    if (!value) {
+  const handleUpdateBill = async (id, bill) => {
+    if (!bill.trim()) {
       alert("Enter Bill Number");
       return;
     }
-    // if (selectedRows.length === 0) {
-    //   alert("Please select at least one row!");
-    //   return;
-    // }
 
-    setUpdating(true);
+    setUpdatingRows((prev) => ({ ...prev, [id]: true }));
 
     try {
-      // for (const r of selectedRows) {
-        await authAxios.post(
-          "BituRep/Api/Account/Account_bill_Update",
-          JSON.stringify({
-            user_id: userId,
-            Table_id:id,
-            Bill: value,
-          })
-        );
-      // }
+      await authAxios.post(
+        "BituRep/Api/Account/Account_bill_Update",
+        JSON.stringify({
+          user_id: userId,
+          Table_id: id,
+          Bill: bill,
+        })
+      );
 
-      alert(`Bill ${value} updated successfully`);
-      setSelectedRows([]);
+      alert(`Bill ${bill} updated successfully`);
+
+      // 🔵 REFRESH TABLE AFTER SAVE
+      await loadInnerData();
     } catch (err) {
       console.log(err);
       alert("Error updating bill");
     }
 
-    setUpdating(false);
+    setUpdatingRows((prev) => ({ ...prev, [id]: false }));
   };
 
   const totalAmount = selectedRows.reduce(
@@ -102,7 +95,7 @@ console.log(row);
   );
 
   // -------------------------------------------------------------
-  // RENDER MAIN ROW + COLLAPSIBLE INNER TABLE
+  // RENDER MAIN TABLE ROW
   // -------------------------------------------------------------
   return (
     <>
@@ -126,6 +119,7 @@ console.log(row);
             <TableCell>{row.adv_Value}</TableCell>
             <TableCell>{row.rec}</TableCell>
             <TableCell>{row.bal_Adv}</TableCell>
+
             <TableCell>
               <Button
                 size="small"
@@ -137,6 +131,7 @@ console.log(row);
                 Transfer
               </Button>
             </TableCell>
+
             <TableCell>
               <Button
                 color="primary"
@@ -163,6 +158,7 @@ console.log(row);
             <TableCell>{row.amount}</TableCell>
             <TableCell>{row.rec}</TableCell>
             <TableCell>{row.bal_Adv}</TableCell>
+
             <TableCell>
               <Button
                 size="small"
@@ -175,6 +171,7 @@ console.log(row);
                 Transfer
               </Button>
             </TableCell>
+
             <TableCell>
               <Button
                 variant="outlined"
@@ -184,6 +181,7 @@ console.log(row);
                 {openRow === row.so_No ? "Close" : "Open"}
               </Button>
             </TableCell>
+
             <TableCell>
               <Button
                 color="primary"
@@ -212,6 +210,7 @@ console.log(row);
             <TableCell>{row.bal_Adv}</TableCell>
             <TableCell>{row.c_Days}</TableCell>
             <TableCell>{row.payment_Type}</TableCell>
+
             <TableCell>
               <Button
                 variant="outlined"
@@ -221,6 +220,7 @@ console.log(row);
                 {openRow === row.so_No ? "Close" : "Open"}
               </Button>
             </TableCell>
+
             <TableCell>
               <Button
                 color="primary"
@@ -243,7 +243,7 @@ console.log(row);
         )}
       </TableRow>
 
-      {/* INNER TABLE COLLAPSE */}
+      {/* INNER TABLE */}
       {openRow === row.so_No && (tabs === 1 || tabs === 2) && (
         <TableRow>
           <TableCell colSpan={16} sx={{ padding: 0 }}>
@@ -255,26 +255,11 @@ console.log(row);
                     innerData={innerData}
                     selectedRows={selectedRows}
                     setSelectedRows={setSelectedRows}
-                    billNumber={billNumber}
-                    setBillNumber={setBillNumber}
-                    updating={updating}
+                    billNumbers={billNumbers}
+                    setBillNumbers={setBillNumbers}
                     onUpdateBill={handleUpdateBill}
+                    updatingRows={updatingRows}
                   />
-
-                  {/* BILL INPUT */}
-                  {/* <input
-                    type="text"
-                    placeholder="Enter Bill Number"
-                    value={billNumber}
-                    onChange={(e) => setBillNumber(e.target.value)}
-                    style={{
-                      marginTop: 10,
-                      padding: 6,
-                      width: 200,
-                      borderRadius: 4,
-                      border: "1px solid #ccc",
-                    }}
-                  /> */}
                 </TableContainer>
               </List>
             </Collapse>

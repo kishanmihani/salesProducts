@@ -11,15 +11,11 @@ const ReceiptForm = () => {
   const [searchParams] = useSearchParams();
   const [encodedData] = useState(searchParams.get("data"));
   const [decodedData] = useState(encodedData ? JSON.parse(decodeURIComponent(encodedData)) : null);
-const [alertOpen, setAlertOpen] = useState(false);
-const [alertMsg, setAlertMsg] = useState("");
+  const [alertOpen, setAlertOpen] = useState(false);
+  const [alertMsg, setAlertMsg] = useState("");
   const userId = JSON.parse(sessionStorage.getItem("userInfo"))?.id;
 
-  const [formData, setFormData] = useState({
-    date: "",
-    amount: 0
-  });
-
+  const [formData, setFormData] = useState({ date: "", amount: 0 });
   const [showPopup, setShowPopup] = useState(false);
   const [receiptRows, setReceiptRows] = useState([]);
   const [billRows, setBillRows] = useState([]);
@@ -30,10 +26,7 @@ const [alertMsg, setAlertMsg] = useState("");
     try {
       const response = await authAxios.post(
         UnpaidRecipt,
-        JSON.stringify({
-          User_id: userId,
-          Customer_Name: decodedData?.customer
-        })
+        JSON.stringify({ User_id: userId, Customer_Name: decodedData?.customer })
       );
       setReceiptRows(response?.data || []);
     } catch (err) {
@@ -46,10 +39,7 @@ const [alertMsg, setAlertMsg] = useState("");
     try {
       const response = await authAxios.post(
         "BituRep/Api/Account/Recipt_Detail_View",
-        JSON.stringify({
-          User_id: userId,
-          So_No: soNo
-        })
+        JSON.stringify({ User_id: userId, So_No: soNo })
       );
       setBillRows(response?.data || []);
     } catch (err) {
@@ -57,13 +47,8 @@ const [alertMsg, setAlertMsg] = useState("");
     }
   };
 
-  useEffect(() => {
-    loadReceipts();
-  }, [decodedData?.customer]);
-
-  useEffect(() => {
-    loadBills(decodedData?.so_no);
-  }, [decodedData?.so_no]);
+  useEffect(() => { loadReceipts(); }, [decodedData?.customer]);
+  useEffect(() => { loadBills(decodedData?.so_no); }, [decodedData?.so_no]);
 
   // ---------------- RECEIPT CHECKBOX ----------------
   const handleReceiptCheckboxChange = (receiptNo) => {
@@ -78,7 +63,6 @@ const [alertMsg, setAlertMsg] = useState("");
     const updated = billRows.map(row => {
       if (row.id === id) {
         const newRow = { ...row, selected: !row.selected };
-
         if (newRow.selected) {
           setReceiptAllocationRows(prev => [
             ...prev,
@@ -89,23 +73,20 @@ const [alertMsg, setAlertMsg] = useState("");
               qty: newRow.a_Qty,
               billAmt: newRow.b_Amount,
               billBalAmt: newRow.b_Bal_Amount,
-              billNo: "",
-              receiptAmt: 0,
+              billNo: newRow.billNo || "",
+              receiptAmt: newRow.b_Bal_Amount,    // set Receipt Amt = Balance
+              creditNote: newRow.creditNote || "", // copy Credit Note
               tds: 0,
               balance: newRow.b_Bal_Amount
             }
           ]);
         } else {
-          setReceiptAllocationRows(prev =>
-            prev.filter(r => r.id !== newRow.id)
-          );
+          setReceiptAllocationRows(prev => prev.filter(r => r.id !== newRow.id));
         }
-
         return newRow;
       }
       return row;
     });
-
     setBillRows(updated);
   };
 
@@ -114,15 +95,10 @@ const [alertMsg, setAlertMsg] = useState("");
     setReceiptAllocationRows(prev =>
       prev.map(row => {
         if (row.id === id) {
-          const updatedRow = {
-            ...row,
-            [field]: value,
-          };
-
+          const updatedRow = { ...row, [field]: value };
           updatedRow.receiptAmt = Number(updatedRow.receiptAmt);
           updatedRow.tds = Number(updatedRow.tds);
           updatedRow.balance = updatedRow.billAmt - updatedRow.receiptAmt - updatedRow.tds;
-
           return updatedRow;
         }
         return row;
@@ -153,7 +129,6 @@ const [alertMsg, setAlertMsg] = useState("");
       Amount: formData.amount,
       Recipt_type: decodedData.Payment_Type,
     };
-
     authAxios
       .post("/BituRep/Api/Account/Recipt_Entry_insert", JSON.stringify(payload))
       .then(res => {
@@ -167,29 +142,25 @@ const [alertMsg, setAlertMsg] = useState("");
 
   // ---------------- FINAL SUBMIT ----------------
   const handleFinalSubmit = () => {
-    //debugger
     const missingIndex = receiptAllocationRows.findIndex(row => !row.billNo);
     if (missingIndex !== -1) {
-    setAlertMsg(`Bill Number missing in row ${missingIndex + 1}`);
-    setAlertOpen(true);
-    return;
-  }
+      setAlertMsg(`Bill Number missing in row ${missingIndex + 1}`);
+      setAlertOpen(true);
+      return;
+    }
     const payload = {
       receipts: receiptRows
         .filter(r => r.selected)
-        .map(r => ({          
-          reciptNO: r.receipt_No,        
-          balance: Number(r.balance)
-        })),
-
+        .map(r => ({ reciptNO: r.receipt_No, balance: Number(r.balance) })),
       bills: receiptAllocationRows.map(b => ({
         Bill_Id: b.id,
         Bill_NO: b.billNo,
         Bill_Rec_Amt: Number(b.receiptAmt),
-        Bill_Tds: b.tds                
+        Bill_Tds: b.tds,
+        CreditNote: b.discount || ""
+
       }))
     };
-
     authAxios
       .post("BituRep/Api/Account/Recipt_Submit", JSON.stringify(payload))
       .then(() => alert("Data submitted successfully"))
@@ -199,35 +170,28 @@ const [alertMsg, setAlertMsg] = useState("");
   // ---------------- STYLES ----------------
   const tableStyle = { width: "100%", borderCollapse: "collapse" };
   const cellStyle = { border: "1px solid black", padding: "8px" };
+  const scrollStyle = { maxHeight: "240px", overflowY: "auto" };
 
   return (
     <div style={{ display: "flex", justifyContent: "center" }}>
-      <div style={{width:"98%"}}>
-         <CustomPageHeader pageHeaderText="Receipt Form" />
-        <div style={{ display: "flex", gap: "20px" ,width: "100%", margin: 4,marginTop:10 }}>
-    
+      <div style={{ width: "98%" }}>
+        <CustomPageHeader pageHeaderText="Receipt Form" />
+        <div style={{ display: "flex", gap: "20px", width: "100%", margin: 4, marginTop: 10 }}>
           <div>
-            <label style={{fontWeight:600}}>SO No</label> : 
+            <label style={{ fontWeight: 600 }}>SO No</label> :
             <input type="text" value={decodedData.so_no} readOnly />
           </div>
-
           <div>
-            <label style={{fontWeight:600}}>Customer Name</label> :
+            <label style={{ fontWeight: 600 }}>Customer Name</label> :
             <input type="text" value={decodedData.customer} readOnly />
           </div>
-
-          <Button
-            onClick={() => setShowPopup(true)}
-            variant="contained" color="error"
-          >
-            Add Receipt
-          </Button>
+          <Button onClick={() => setShowPopup(true)} variant="contained" color="error">Add Receipt</Button>
         </div>
 
         {/* TABLES SIDE-BY-SIDE */}
         <div style={{ display: "flex", gap: "20px" }}>
           {/* RECEIPT TABLE */}
-          <div style={{ width: "50%" }}>
+          <div style={{ width: "50%", ...scrollStyle }}>
             <h3>Outstanding Receipt Detail</h3>
             <table style={tableStyle}>
               <thead>
@@ -260,7 +224,7 @@ const [alertMsg, setAlertMsg] = useState("");
           </div>
 
           {/* BILL TABLE */}
-          <div style={{ width: "50%" }}>
+          <div style={{ width: "50%", ...scrollStyle }}>
             <h3>Bill Detail</h3>
             <table style={tableStyle}>
               <thead>
@@ -271,6 +235,8 @@ const [alertMsg, setAlertMsg] = useState("");
                   <th style={cellStyle}>Qty</th>
                   <th style={cellStyle}>Amt</th>
                   <th style={cellStyle}>Balance</th>
+                  <th style={cellStyle}>Bill No</th>
+                  <th style={cellStyle}>Credit Note</th>
                   <th style={cellStyle}>Select</th>
                 </tr>
               </thead>
@@ -283,9 +249,10 @@ const [alertMsg, setAlertMsg] = useState("");
                     <td style={cellStyle}>{row.a_Qty}</td>
                     <td style={cellStyle}>{row.b_Amount}</td>
                     <td style={cellStyle}>{row.b_Bal_Amount}</td>
+                    <td style={cellStyle}>{row.bill || ""} </td>
+                    <td style={cellStyle}>{row.discount || ""}</td>
                     <td style={cellStyle}>
                       <input
-                      style={{p:2,h:40}}
                         type="checkbox"
                         checked={row.selected || false}
                         onChange={() => handleBillCheckboxChange(row.id)}
@@ -305,7 +272,7 @@ const [alertMsg, setAlertMsg] = useState("");
         </div>
 
         {/* ALLOCATION TABLE */}
-        <div style={{ marginTop: "20px" }}>
+        <div style={{ marginTop: "20px", ...scrollStyle }}>
           <h3>Receipt Allocation</h3>
           <table style={tableStyle}>
             <thead>
@@ -317,6 +284,7 @@ const [alertMsg, setAlertMsg] = useState("");
                 <th style={cellStyle}>Balance</th>
                 <th style={cellStyle}>Bill No</th>
                 <th style={cellStyle}>Receipt Amt</th>
+                <th style={cellStyle}>Credit Note</th>
                 <th style={cellStyle}>TDS</th>
                 <th style={cellStyle}>Net Bal</th>
               </tr>
@@ -329,7 +297,6 @@ const [alertMsg, setAlertMsg] = useState("");
                   <td style={cellStyle}>{row.qty}</td>
                   <td style={cellStyle}>{row.billAmt}</td>
                   <td style={cellStyle}>{row.billBalAmt}</td>
-
                   <td style={cellStyle}>
                     <input
                       type="text"
@@ -338,7 +305,6 @@ const [alertMsg, setAlertMsg] = useState("");
                       style={{ width: "100%" }}
                     />
                   </td>
-
                   <td style={cellStyle}>
                     <input
                       type="number"
@@ -347,7 +313,14 @@ const [alertMsg, setAlertMsg] = useState("");
                       style={{ width: "100%" }}
                     />
                   </td>
-
+                  <td style={cellStyle}>
+                    <input
+                      type="text"
+                      value={row.creditNote || ""}
+                      onChange={(e) => handleAllocationChange(row.id, "creditNote", e.target.value)}
+                      style={{ width: "100%" }}
+                    />
+                  </td>
                   <td style={cellStyle}>
                     <input
                       type="number"
@@ -356,7 +329,6 @@ const [alertMsg, setAlertMsg] = useState("");
                       style={{ width: "100%" }}
                     />
                   </td>
-
                   <td style={cellStyle}>{row.balance}</td>
                 </tr>
               ))}
@@ -378,7 +350,6 @@ const [alertMsg, setAlertMsg] = useState("");
           >
             Submit
           </button>
-
           <button
             onClick={() => {
               setReceiptRows([]);
@@ -406,7 +377,6 @@ const [alertMsg, setAlertMsg] = useState("");
           }}>
             <div style={{ background: "white", padding: "20px", borderRadius: "8px", width: "350px" }}>
               <h3>Add Receipt</h3>
-
               <label>Date</label>
               <input
                 type="date"
@@ -414,7 +384,6 @@ const [alertMsg, setAlertMsg] = useState("");
                 value={formData.date}
                 onChange={(e) => setFormData({ ...formData, date: e.target.value })}
               />
-
               <label>Amount</label>
               <input
                 type="number"
@@ -422,7 +391,6 @@ const [alertMsg, setAlertMsg] = useState("");
                 value={formData.amount}
                 onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
               />
-
               <div style={{ display: "flex", justifyContent: "space-between" }}>
                 <Button variant="contained" color="error" onClick={() => setShowPopup(false)}>Close</Button>
                 <Button variant="contained" color="success" onClick={handleReceiptEntrySubmit}>Submit</Button>
@@ -431,11 +399,7 @@ const [alertMsg, setAlertMsg] = useState("");
           </div>
         )}
       </div>
-      <InformAlert
-  open={alertOpen}
-  message={alertMsg}
-  onClose={() => setAlertOpen(false)}
-/>
+      <InformAlert open={alertOpen} message={alertMsg} onClose={() => setAlertOpen(false)} />
     </div>
   );
 };

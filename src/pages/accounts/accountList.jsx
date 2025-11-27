@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { Paper, TablePagination } from "@mui/material";
 import { useNavigate } from "react-router";
 import dayjs from "dayjs";
@@ -7,33 +7,41 @@ import CustomPageHeader from "../../component/commonComponent/CustomPageHeader/C
 import CustomeAlerts from "../../component/commonComponent/CustomeAlert/CustomeAlert";
 import { AccountAdvance, AccountCreditApi } from "../../component/Config/Api/Api";
 import api from "../../component/Config/Api";
-import { IoSearchSharp } from "react-icons/io5";
 import AccountTabs from "./AccountTabs";
 import AccountTable from "./AccountTable";
 import SearchInput from "../../component/commonComponent/SearchInput/SearchInput";
 
 export default function AccountList() {
-  const [tabs, setTabs] = useState(0);
-  const [tableData, setTableData] = useState({ api1: [], api2: [], api3: [] });
-  const [checkTableData, setCheckTableData] = useState(false);
-  const [openRow, setOpenRow] = useState(null);
-  const [custAlert, setCustAlert] = useState(null);
-
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(25);
-
-  const [selectedRows, setSelectedRows] = useState([]);
-
-  const [searchText, setSearchText] = useState("");
-  const [filteredData, setFilteredData] = useState([]);
-
   const navigate = useNavigate();
   const [userId] = useState(JSON.parse(sessionStorage.getItem("userInfo"))?.id);
 
-  // Fetch data once
+  // Tabs & table data
+  const [tabs, setTabs] = useState(0);
+  const [tableData, setTableData] = useState({ api1: [], api2: [], api3: [] });
+  const [dataLoaded, setDataLoaded] = useState(false);
+
+  // Alerts
+  const [custAlert, setCustAlert] = useState(null);
+
+  // Pagination
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(25);
+
+  // Row selection
+  const [selectedRows, setSelectedRows] = useState([]);
+  const [openRow, setOpenRow] = useState(null);
+
+  // Search
+  const [searchText, setSearchText] = useState("");
+
+  // Sorting
+  const [sortField, setSortField] = useState("entry_Date");
+  const [sortOrder, setSortOrder] = useState("desc");
+
+  // Fetch all 3 APIs
   useEffect(() => {
-    if (!checkTableData) fetchTableData();
-  }, [checkTableData]);
+    if (!dataLoaded) fetchTableData();
+  }, [dataLoaded]);
 
   const fetchTableData = async () => {
     try {
@@ -49,84 +57,110 @@ export default function AccountList() {
         api3: resThree.data,
       });
 
-      setCheckTableData(true);
+      setDataLoaded(true);
     } catch (err) {
       showError("Error fetching data");
     }
   };
 
-  const handleTabs = (e, newValue) => {
-    setTabs(newValue);
-    setOpenRow(null);
-    setPage(0);
-    setSearchText("");    // reset search when switching tabs
-    setFilteredData([]);  // reset filtered data
+  // Active tab dataset
+  const activeData = useMemo(() => {
+    return tabs === 0 ? tableData.api2 : tabs === 1 ? tableData.api1 : tableData.api3;
+  }, [tabs, tableData]);
+
+  // Sorting handler
+  const handleSort = (field) => {
+    if (sortField === field) {
+      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+    } else {
+      setSortField(field);
+      setSortOrder("desc");
+    }
   };
 
-  const showSuccess = (msg) => setCustAlert({ type: "success", message: msg });
-  const showError = (msg) => setCustAlert({ type: "error", message: msg });
-  const handleCloseAlert = () => setCustAlert(null);
+  // Apply sorting
+  const sortedData = useMemo(() => {
+    return [...activeData].sort((a, b) => {
+      const av = a[sortField];
+      const bv = b[sortField];
 
-  // Pick data based on tab
-  const activeData =
-    tabs === 0 ? tableData.api2 || [] :
-    tabs === 1 ? tableData.api1 || [] :
-    tableData.api3 || [];
+      // Date sorting
+      if (sortField.toLowerCase().includes("date")) {
+        return sortOrder === "asc"
+          ? new Date(av) - new Date(bv)
+          : new Date(bv) - new Date(av);
+      }
 
-  // Live Search (SO No + Customer Name)
-  useEffect(() => {
-    if (!searchText.trim()) {
-      setFilteredData(activeData);
-      return;
-    }
+      // String/number sorting
+      return sortOrder === "asc"
+        ? String(av).localeCompare(String(bv))
+        : String(bv).localeCompare(String(av));
+    });
+  }, [activeData, sortField, sortOrder]);
 
-    const result = activeData.filter((row) =>
-      String(row?.so_No).toLowerCase().includes(searchText.toLowerCase()) ||
-      String(row?.customer_Name).toLowerCase().includes(searchText.toLowerCase())
+  // Apply search (SO No, Customer Name, Remark)
+  const filteredData = useMemo(() => {
+    if (!searchText.trim()) return sortedData;
+
+    const s = searchText.toLowerCase();
+
+    return sortedData.filter((row) =>
+      String(row?.so_No).toLowerCase().includes(s) ||
+      String(row?.customer_Name).toLowerCase().includes(s) ||
+      String(row?.remark || row?.Remark || "").toLowerCase().includes(s)
     );
+  }, [searchText, sortedData]);
 
-    setFilteredData(result);
-    setPage(0);
-  }, [searchText, activeData]);
-
-  // Final data before pagination
-  const finalData = searchText ? filteredData : activeData;
-
-  const paginatedData = finalData.slice(
+  // Pagination data
+  const paginatedData = filteredData.slice(
     page * rowsPerPage,
     page * rowsPerPage + rowsPerPage
   );
 
-  // Transfer Record Logic
-  async function handleTransferCredit(row, text, totalAmount) {
+  // Tab Change Reset
+  const handleTabs = (e, newValue) => {
+    setTabs(newValue);
+    setPage(0);
+    setSearchText("");
+    setSortField("entry_Date");
+    setSortOrder("desc");
+    setOpenRow(null);
+  };
+
+  // Alerts
+  const showSuccess = (msg) => setCustAlert({ type: "success", message: msg });
+  const showError = (msg) => setCustAlert({ type: "error", message: msg });
+  const closeAlert = () => setCustAlert(null);
+
+  // Transfer to Credit
+  async function handleTransferCredit(row, type) {
     try {
       let res;
 
-      if (text === "Advance Payments") {
+      if (type === "Advance Payments") {
         res = await api.post(
           "BituRep/Api/Account/Credit_RE_insert",
           JSON.stringify({
             user_id: userId,
-            Customer_Name: row?.customer_Name,
+            Customer_Name: row.customer_Name,
             Entry_Date: dayjs(new Date()),
-            Recipt_type: text,
-            So_No: row?.so_No,
+            Recipt_type: type,
+            So_No: row.so_No,
             Tds: 0,
             Log_id: 0,
             Amount: row.bal_Adv,
-            
           })
         );
-      } else if (text === "Cash Payments") {
+      } else if (type === "Cash Payments") {
         for (const item of selectedRows) {
           res = await api.post(
             "BituRep/Api/Account/Credit_RE_insert",
             JSON.stringify({
               user_id: userId,
-              Customer_Name: item?.customer_Name,
+              Customer_Name: item.customer_Name,
               Entry_Date: item.entry_Date,
               Recipt_type: "Cash Payments",
-              So_No: item?.so_No,
+              So_No: item.so_No,
               Tds: 0,
               Log_id: item.id,
               Amount: item.b_Bal_Amount,
@@ -136,7 +170,7 @@ export default function AccountList() {
       }
 
       showSuccess("Transferred successfully");
-      await fetchTableData();
+      fetchTableData();
       setSelectedRows([]);
 
     } catch (err) {
@@ -147,40 +181,42 @@ export default function AccountList() {
   return (
     <>
       <CustomPageHeader pageHeaderText="Account List" />
-      <Paper sx={{ p: 2 }} elevation={0}>
 
+      <Paper sx={{ p: 2 }} elevation={0}>
         {/* Tabs */}
         <AccountTabs tabs={tabs} handleTabs={handleTabs} tableData={tableData} />
 
-        {/* Live Search */}
-      <SearchInput
-  value={searchText}
-  onChange={(e) => setSearchText(e.target.value)}
-  placeholder="Search by SO No or Customer Name"
-/>
-
-
+        {/* Search */}
+        <SearchInput
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+          placeholder="Search by SO No, Customer Name or Remark"
+        />
 
         {/* Table */}
         <AccountTable
           tabs={tabs}
           paginatedData={paginatedData}
           navigate={navigate}
-          handleTransferCredit={handleTransferCredit}
+          openRow={openRow}
+          setOpenRow={setOpenRow}
           selectedRows={selectedRows}
           setSelectedRows={setSelectedRows}
-          userId={userId}
-          setOpenRow={setOpenRow}
-          openRow={openRow}
+          handleTransferCredit={handleTransferCredit}
+
+          /* Sorting props */
+          sortField={sortField}
+          sortOrder={sortOrder}
+          handleSort={handleSort}
         />
 
         {/* Pagination */}
         <TablePagination
-          rowsPerPageOptions={[25, 50, 75, 100]}
           component="div"
-          count={finalData.length}
+          count={filteredData.length}
           rowsPerPage={rowsPerPage}
           page={page}
+          rowsPerPageOptions={[25, 50, 75, 100]}
           onPageChange={(e, newPage) => setPage(newPage)}
           onRowsPerPageChange={(e) => {
             setRowsPerPage(parseInt(e.target.value, 10));
@@ -193,7 +229,7 @@ export default function AccountList() {
         <CustomeAlerts
           type={custAlert.type}
           message={custAlert.message}
-          onClose={handleCloseAlert}
+          onClose={closeAlert}
         />
       )}
     </>

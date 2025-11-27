@@ -153,7 +153,7 @@ const handleSubmit = () => {
                                <TableCell>{row?.a_Out_Qty}</TableCell>
                                <TableCell>{row?.p_Out_Qty}</TableCell>
                                <TableCell>{row?.bal_Qty}</TableCell>
-                               <TableCell>{row?.v_Date}</TableCell>
+                               <TableCell>{formatDateToUS( row?.v_Date)}</TableCell>
                                <TableCell><Button   variant="outlined" size="small" onClick={() => handleUpdateClick(row)}>
                                 Update
                                 </Button></TableCell>

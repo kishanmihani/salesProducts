@@ -13,11 +13,21 @@ import DeleteConfirmationDialog from '../../../commonComponent/DeleteConfirmatio
 import CustomeAlerts from '../../../commonComponent/CustomeAlert/CustomeAlert';
 import { vehicleDelete } from '../../../Config/Api/Api';
 import dayjs from "dayjs";
-import SearchInput from '../../../commonComponent/SearchInput/SearchInput';
 
 const tableHeaders = [
-  "Date", "So No", "Customer", "Vehicle No", "AQty", "Voyage", 
-  "Port", "Transporter", "Tank", "Remark", "Status", "Edit", "Delete"
+  { label: "Date", key: "entry_Date" },
+  { label: "So No", key: "so_No" },
+  { label: "Customer", key: "customer_Name" },
+  { label: "Vehicle No", key: "vehicle_Name" },
+  { label: "AQty", key: "a_Qty" },
+  { label: "Voyage" },
+  { label: "Port" },
+  { label: "Transporter" },
+  { label: "Tank" },
+  { label: "Remark" },
+  { label: "Status" },
+  { label: "Edit" },
+  { label: "Delete" },
 ];
 
 export default function Logisticlist() {
@@ -27,36 +37,43 @@ export default function Logisticlist() {
   const [custAlert, setCustAlert] = useState(null);
 
   const [tableData, setTableData] = useState([]);
-  const [filteredData, setFilteredData] = useState([]); // 🔍 Filtered Data
-  const [searchText, setSearchText] = useState(""); // 🔍 Search input
+  const [filteredData, setFilteredData] = useState([]);
+  const [searchText, setSearchText] = useState("");
 
   const [checkTableData, setCheckTableData] = useState(false);
   const [statusListCheck, setStatusListCheck] = useState(true);
   const [statuslist, setStatuslist] = useState([]);
 
-  const [page, setPage] = useState(0); 
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(25);
+
+  const [orderBy, setOrderBy] = useState("entry_Date");   // default sorting column
+  const [order, setOrder] = useState("desc");             // default descending
 
   const navigate = useNavigate();
   const userId = JSON.parse(sessionStorage.getItem("userInfo"))?.id;
 
-  // Pagination handlers
   const handleChangePage = (event, newPage) => setPage(newPage);
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
 
-  // Fetch Status List
+  const handleSort = (column) => {
+    if (!column) return;
+    const isAsc = orderBy === column && order === "asc";
+    setOrder(isAsc ? "desc" : "asc");
+    setOrderBy(column);
+  };
+
   useEffect(() => {
     if (statusListCheck) {
       authAxios.post("/BituRep/Api/Account/Status_List", JSON.stringify({ "User_Id": userId }))
         .then(res => { setStatuslist(res.data); setStatusListCheck(false) })
-        .catch(err => { console.log(err.message); setStatusListCheck(false); });
+        .catch(() => setStatusListCheck(false));
     }
   }, [userId, statusListCheck]);
 
-  // Fetch Table Data
   useEffect(() => {
     if (!checkTableData && tableData.length === 0) {
       fetchTableData();
@@ -70,7 +87,7 @@ export default function Logisticlist() {
         JSON.stringify({ user_id: userId, Role: "entry" })
       );
       setTableData(response.data);
-      setFilteredData(response.data); // default
+      setFilteredData(response.data);
     } catch (error) {
       showError(error);
     } finally {
@@ -78,9 +95,6 @@ export default function Logisticlist() {
     }
   };
 
-  // ============================================================
-  // 🔍 LIVE SEARCH EFFECT (SO No + Customer + Vehicle No)
-  // ============================================================
   useEffect(() => {
     if (!searchText.trim()) {
       setFilteredData(tableData);
@@ -103,24 +117,25 @@ export default function Logisticlist() {
     setPage(0);
   }, [searchText, tableData]);
 
-  // ============================================================
-
-  // Sort data
   const sortedData = [...filteredData].sort((a, b) => {
-    const dateA = new Date(a.entry_Date), dateB = new Date(b.entry_Date);
-    if (dateB - dateA !== 0) return dateB - dateA;
-    const customerA = (a.customer_Name || "").toLowerCase();
-    const customerB = (b.customer_Name || "").toLowerCase();
-    if (customerA !== customerB) return customerA.localeCompare(customerB);
-    return (a.so_No || "").toString().localeCompare((b.so_No || "").toString());
+    let valA = a[orderBy];
+    let valB = b[orderBy];
+
+    if (orderBy === "entry_Date") {
+      valA = new Date(valA);
+      valB = new Date(valB);
+    }
+
+    if (valA < valB) return order === "asc" ? -1 : 1;
+    if (valA > valB) return order === "asc" ? 1 : -1;
+    return 0;
   });
 
   const paginatedData = sortedData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
-  // Status change handler
   async function StatusChange(row, value) {
-    setTableData((prevState) => 
-      prevState.map((tableData) => 
+    setTableData((prevState) =>
+      prevState.map((tableData) =>
         tableData.table_id === row.table_id ? { ...tableData, status_name: value } : tableData
       )
     );
@@ -133,7 +148,6 @@ export default function Logisticlist() {
     }
   }
 
-  // Delete handlers
   const handleDeleteClick = (item) => setDeleteDialog({ isOpen: true, itemToDelete: item });
   const handleCloseDeleteDialog = () => setDeleteDialog({ isOpen: false, itemToDelete: null });
 
@@ -147,7 +161,6 @@ export default function Logisticlist() {
     }
   };
 
-  // Status dialog
   const StatusOpen = (item) => {
     const { row, value } = item;
     if (!["No Reported", "Reported"].includes(value) && (!row?.a_Qty || Number(row?.a_Qty) === 0)) {
@@ -157,7 +170,6 @@ export default function Logisticlist() {
     setStatusDialog({ isOpen: true, itemToStatus: row, value: value });
   };
 
-  // Alert helpers
   const showSuccess = (message) => setCustAlert({ type: "success", message });
   const showError = (message) => setCustAlert({ type: "error", message });
   const handleCloseAlert = () => setCustAlert(null);
@@ -166,24 +178,40 @@ export default function Logisticlist() {
     <React.Fragment>
       <CustomPageHeader pageHeaderText="Vehicle Pool" />
 
-      {/* 🔍 SEARCH BAR */}
       <Box sx={{ width: "96%", margin: "auto", mb: 2 }}>
-        <SearchInput 
-  value={searchText}
-  onChange={(e) => setSearchText(e.target.value)}
-  placeholder="Search by SO No or Customer Name"
-/>
-
+        <TextField
+          label="Search SO No, Customer, Vehicle No"
+          variant="outlined"
+          size="small"
+          fullWidth
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+        />
       </Box>
 
       <Paper sx={{ p: 2 }} elevation={0}>
         <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 650 }} size="small">
+          <Table size="small">
             <TableHead sx={{ bgcolor: "rgba(25, 118, 210, 0.08)" }}>
               <TableRow>
-                {tableHeaders.map((header, index) => (
-                  <TableCell key={index} sx={{ fontWeight: 600, whiteSpace: "nowrap" }}>
-                    {header}
+                {tableHeaders.map((col, index) => (
+                  <TableCell
+                    key={index}
+                    onClick={() => col.key && handleSort(col.key)}
+                    sx={{
+                      fontWeight: 600,
+                      whiteSpace: "nowrap",
+                      cursor: col.key ? "pointer" : "default",
+                      userSelect: "none"
+                    }}
+                  >
+                    {col.label}
+
+                    {col.key && orderBy === col.key && (
+                      <span style={{ marginLeft: 4 }}>
+                        {order === "asc" ? "▲" : "▼"}
+                      </span>
+                    )}
                   </TableCell>
                 ))}
               </TableRow>
@@ -222,7 +250,7 @@ export default function Logisticlist() {
                       transition: "background-color 0.3s ease",
                     }}
                   >
-                    <TableCell>{row?.entry_Date ? dayjs(row.entry_Date).format("DD-MM-YY") : ""}</TableCell>
+                  <TableCell>{row?.entry_Date ? dayjs(row.entry_Date).format("DD-MMM-YY") : ""}</TableCell>
                     <TableCell>{row?.so_No}</TableCell>
                     <TableCell>{row?.customer_Name}</TableCell>
                     <TableCell>{row?.vehicle_Name}</TableCell>
@@ -289,7 +317,7 @@ export default function Logisticlist() {
         </TableContainer>
 
         <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
+          rowsPerPageOptions={[25, 50, 75,100]}
           component="div"
           count={filteredData.length}
           rowsPerPage={rowsPerPage}
@@ -299,7 +327,6 @@ export default function Logisticlist() {
         />
       </Paper>
 
-      {/* Delete Confirmation */}
       <DeleteConfirmationDialog
         isOpen={deleteDialog.isOpen}
         onClose={handleCloseDeleteDialog}
@@ -307,7 +334,6 @@ export default function Logisticlist() {
         itemToDelete={deleteDialog.itemToDelete}
       />
 
-      {/* Status Confirmation */}
       <StatusConfirm
         isOpen={statusDialog.isOpen}
         onClose={() => setStatusDialog({ isOpen: false, itemToStatus: null, value: null })}
@@ -316,14 +342,12 @@ export default function Logisticlist() {
         value={statusDialog?.value}
       />
 
-      {/* Status Error */}
       <Dialog open={Boolean(statusError)} onClose={() => setStatusError(null)}>
         <DialogTitle>Error</DialogTitle>
         <DialogContent><Typography>{statusError}</Typography></DialogContent>
         <DialogActions><Button onClick={() => setStatusError(null)}>OK</Button></DialogActions>
       </Dialog>
 
-      {/* Alerts */}
       {custAlert && (
         <CustomeAlerts type={custAlert.type} message={custAlert.message} onClose={handleCloseAlert} />
       )}
@@ -331,7 +355,6 @@ export default function Logisticlist() {
   );
 }
 
-// Status Confirmation Component
 function StatusConfirm({ isOpen, onClose, onConfirm, itemToStatus, value }) {
   const handleConfirm = () => { onConfirm(itemToStatus, value); onClose(); };
   return (

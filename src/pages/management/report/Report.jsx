@@ -11,6 +11,7 @@ import SoldQuantityTable from "./Table/SoldQuantityTable";
 import SoldQuantityTableYealy from "./Table/SoldQuantityTableYearly";
 import SalesTable from "./Table/SoldQuantityTableYearly";
 import GraphTable from "./Table/GraphTable";
+import { formatNumberIndian } from "../../../component/commonComponent/InPriceFromate/InPriceFromate";
 
 export default function Report() {
   const [fetchdata, setFetchData] = useState([]);
@@ -32,11 +33,11 @@ const naigate=useNavigate();
   };
 
   const summaryData = [
-    { label: "Total Sales", value: fetchdata?.count_Container?.[0]?.t_Sale },
-    { label: "Sales Quantity", value: fetchdata?.count_Container?.[0]?.sale_Qty },
-    { label: "Max Selling Rate", value: fetchdata?.count_Container?.[0]?.max_Selling_Rate },
-    { label: "Min Selling Rate", value: fetchdata?.count_Container?.[0]?.min_Selling_Rate },
-    { label: "Avg Rate", value: fetchdata?.count_Container?.[0]?.avg_Selling_Rate },
+    { label: "Total Sales", value: formatNumberIndian( fetchdata?.count_Container?.[0]?.t_Sale) },
+    { label: "Sales Quantity", value: formatNumberIndian(fetchdata?.count_Container?.[0]?.sale_Qty) },
+    { label: "Max Selling Rate", value:  formatNumberIndian(fetchdata?.count_Container?.[0]?.max_Selling_Rate) },
+    { label: "Min Selling Rate", value:formatNumberIndian( fetchdata?.count_Container?.[0]?.min_Selling_Rate) },
+    { label: "Avg Rate", value:formatNumberIndian(  fetchdata?.count_Container?.[0]?.avg_Selling_Rate) },
   ];
 
   if (!checkFetchData)

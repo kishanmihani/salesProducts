@@ -342,17 +342,14 @@ const isExpired = vDate < today;
         }}
       >
         <TableCell>
-          {data?.sO_Date
-            ? new Date(data.sO_Date).toLocaleDateString("en-GB")
-            : ""}
+          {formatDateToUS(data?.sO_Date)}
         </TableCell>
 
         <TableCell>{data?.c_Name}</TableCell>
 
         <TableCell>
-          {data?.v_Date
-            ? new Date(data.v_Date).toLocaleDateString("en-GB")
-            : ""}
+          {formatDateToUS( data?.v_Date)}
+            
         </TableCell>
 
         <TableCell>{data?.sO_N0}</TableCell>
