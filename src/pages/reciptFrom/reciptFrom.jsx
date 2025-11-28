@@ -142,12 +142,12 @@ const ReceiptForm = () => {
 
   // ---------------- FINAL SUBMIT ----------------
   const handleFinalSubmit = () => {
-    const missingIndex = receiptAllocationRows.findIndex(row => !row.billNo);
-    if (missingIndex !== -1) {
-      setAlertMsg(`Bill Number missing in row ${missingIndex + 1}`);
-      setAlertOpen(true);
-      return;
-    }
+    // const missingIndex = receiptAllocationRows.findIndex(row => !row.billNo);
+    // if (missingIndex !== -1) {
+    //   setAlertMsg(`Bill Number missing in row ${missingIndex + 1}`);
+    //   setAlertOpen(true);
+    //   return;
+    // }
     const payload = {
       receipts: receiptRows
         .filter(r => r.selected)
@@ -207,7 +207,7 @@ const ReceiptForm = () => {
                 {receiptRows.map(row => (
                   <tr key={row.receipt_No}>
                     <td style={cellStyle}>{row.receipt_No}</td>
-                    <td style={cellStyle}>{row.date}</td>
+                    <td style={cellStyle}>{formatDateToUS( row.date)}</td>
                     <td style={cellStyle}>{row.amount}</td>
                     <td style={cellStyle}>{row.balance}</td>
                     <td style={cellStyle}>
@@ -292,7 +292,7 @@ const ReceiptForm = () => {
             <tbody>
               {receiptAllocationRows.map(row => (
                 <tr key={row.id}>
-                  <td style={cellStyle}>{row.date}</td>
+                  <td style={cellStyle}>{formatDateToUS(row.date)}</td>
                   <td style={cellStyle}>{row.vehicle}</td>
                   <td style={cellStyle}>{row.qty}</td>
                   <td style={cellStyle}>{row.billAmt}</td>

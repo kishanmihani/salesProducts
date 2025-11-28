@@ -31,6 +31,7 @@ import { toast, ToastContainer } from "react-toastify";
 
 import { parse, isWithinInterval } from "date-fns";
 import SearchInput from "../commonComponent/SearchInput/SearchInput";
+import DateFilter from "../commonComponent/DateFilter/DateFilter";
 
 export default function SoApproval() {
   const [openRow, setOpenRow] = useState(null);
@@ -162,44 +163,15 @@ export default function SoApproval() {
         {/* ---------------------------------------------------------
             📅 DATE FILTER UI
         --------------------------------------------------------- */}
-        <Paper elevation={0} sx={{ p: 2, mb: 1 }}>
-          <Typography fontWeight={600} mb={1}>
-            Date Filter:
-          </Typography>
-
-          <Box display="flex" alignItems="center" gap={2}>
-            <TextField
-              type="date"
-              label="From Date"
-              size="small"
-              InputLabelProps={{ shrink: true }}
-              value={fromDate}
-              onChange={(e) => setFromDate(e.target.value)}
-            />
-
-            <TextField
-              type="date"
-              label="To Date"
-              size="small"
-              InputLabelProps={{ shrink: true }}
-              value={toDate}
-              onChange={(e) => setToDate(e.target.value)}
-            />
-
-            <Button
-              variant="contained"
-              disabled={loading}
-              onClick={handleFilter}
-            >
-              {loading ? <CircularProgress size={20} /> : "Filter"}
-            </Button>
-
-            <Button variant="outlined" onClick={clearFilter}>
-              Clear
-            </Button>
-          </Box>
-        </Paper>
-
+          <DateFilter
+        fromDate={fromDate}
+        toDate={toDate}
+        setFromDate={setFromDate}
+        setToDate={setToDate}
+        loading={loading}
+        onFilter={handleFilter}
+        onClear={clearFilter}
+      />
         {/* ---------------------------------------------------------
             MAIN TABLE
         --------------------------------------------------------- */}
